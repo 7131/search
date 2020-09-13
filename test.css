@@ -1,0 +1,54 @@
+@charset "utf-8";
+
+nav span {
+    margin-right: 1ex;
+}
+
+article {
+    margin-bottom: 10ex;
+}
+
+input {
+    width: 90%;
+}
+
+input[type="button"] {
+    margin-top: 2ex;
+}
+
+table.border {
+    border: 1px outset gray;
+    border-collapse: collapse;
+    margin-bottom: 2ex;
+}
+
+table.border tr th {
+    border: 1px inset gray;
+    padding: 0.5ex 1ex;
+}
+
+table.border tr td {
+    border: 1px inset gray;
+    padding: 0.5ex 1ex;
+}
+
+code {
+    font-family: "Courier New", monospace;
+}
+
+.symbol {
+    text-align: center;
+}
+
+.error {
+    color: red;
+}
+
+@media (min-width: 768px) {
+
+    input[type="button"] {
+        width: auto;
+    }
+
+}
+

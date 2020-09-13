@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./standard.css">
+<script src="https://peterolson.github.io/BigInteger.js/BigInteger.min.js"></script>
+<script src="./iterator.js"></script>
+<script src="./pattern.js"></script>
+<script src="./parser.js"></script>
+<script src="./standard.js"></script>
+<title>Siteswap Search Service</title>
+</head>
+
+<body>
+<nav id="top">
+<span>Standard</span>
+<span><a href="./notation.html">notation</a></span>
+<span>|</span>
+<span><a href="./professional.html">Professional</a></span>
+<span><a href="./ssql.html">SsQL</a></span>
+</nav>
+
+<article>
+<h1>Siteswap Search Service - Standard version</h1>
+
+<div class="table">
+  <div class="row">
+    <div class="cell"><label for="pattern">Pattern</label></div>
+    <div class="cell"><input type="text" id="pattern"></div>
+    <div class="cell"><input type="button" id="search" value="Search"></div>
+    <div class="cell" id="message_area"></div>
+  </div>
+  <div class="row">
+    <div class="cell">Total number searched</div>
+    <div class="cell"><span id="result_total">&nbsp;</span></div>
+  </div>
+  <div class="row">
+    <div class="cell">Number found</div>
+    <div class="cell"><span id="result_count">&nbsp;</span></div>
+  </div>
+  <div class="row">
+    <div class="cell">Execution time (sec)</div>
+    <div class="cell"><span id="result_time">&nbsp;</span></div>
+  </div>
+</div>
+
+<div id="result_area">
+</div>
+
+<section class="box">
+<h2>Stop settings</h2>
+<div class="table">
+  <div class="row">
+    <div class="cell"><label for="limit_count">Maximum number to search</label></div>
+    <div class="cell"><input type="number" name="limit_count" value="100" id="limit_count"></div>
+    <div class="cell note"><label for="limit_count"><span id="min_count">1</span>-<span id="max_count">1,000</span></label></div>
+  </div>
+  <div class="row">
+    <div class="cell"><label for="limit_time">Time limit to search (sec)</label></div>
+    <div class="cell"><input type="number" name="limit_time" value="3" id="limit_time"></div>
+    <div class="cell note"><label for="limit_time"><span id="min_time">1</span>-<span id="max_time">100</span></label></div>
+  </div>
+</div>
+</section>
+
+<section class="box">
+<h2>Display settings</h2>
+<div class="table">
+  <div class="row">
+    <div class="cell"><input type="checkbox" name="setting_balls" id="setting_balls"><label for="setting_balls">Show the number of balls</label></div>
+  </div>
+  <div class="row">
+    <div class="cell"><input type="checkbox" name="setting_sort" id="setting_sort"><label for="setting_sort">Specify sort condition</label></div>
+    <div class="cell item">
+      <div><input type="radio" name="sort" value="length" id="sort_length" checked="checked"><label for="sort_length">Length order</label></div>
+      <div><input type="radio" name="sort" value="balls" id="sort_balls"><label for="sort_balls">Order of the number of balls</label></div>
+      <div><input type="radio" name="sort" value="dictionary" id="sort_dictionary"><label for="sort_dictionary">Dictionary order</label></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="cell"><input type="checkbox" name="setting_repetition" id="setting_repetition"><label for="setting_repetition">Omit repetition</label></div>
+  </div>
+  <div class="row">
+    <div class="cell"><input type="checkbox" name="setting_all" id="setting_all"><label for="setting_all">Show all searched items</label></div>
+  </div>
+  <div class="row" id="area_numbers">
+    <div class="cell"><input type="checkbox" name="setting_numbers" id="setting_numbers"><label for="setting_numbers">Specify the number of balls</label></div>
+    <div class="cell"><input type="number" name="value_numbers" value="3" id="value_numbers"></div>
+    <div class="cell note"><label for="value_numbers"><span id="min_numbers">1</span>-<span id="max_numbers">35</span></label></div>
+  </div>
+  <div class="row" id="area_single">
+    <div class="cell"><input type="checkbox" name="setting_single" id="setting_single"><label for="setting_single">Exclude same value</label></div>
+    <div class="cell item"><input type="checkbox" name="setting_rotation" id="setting_rotation"><label for="setting_rotation">Exclude circular equivalence</label></div>
+  </div>
+</div>
+</section>
+
+</article>
+</body>
+
+</html>

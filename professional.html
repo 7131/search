@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./professional.css">
+<script src="https://peterolson.github.io/BigInteger.js/BigInteger.min.js"></script>
+<script src="./iterator.js"></script>
+<script src="./pattern.js"></script>
+<script src="./parser.js"></script>
+<script src="./syntax.js"></script>
+<script src="./query.js"></script>
+<script src="./professional.js"></script>
+<title>Siteswap Search Service</title>
+</head>
+
+<body>
+<nav id="top">
+<span><a href="./standard.html">Standard</a></span>
+<span><a href="./notation.html">notation</a></span>
+<span>|</span>
+<span>Professional</span>
+<span><a href="./ssql.html">SsQL</a></span>
+</nav>
+
+<article>
+<h1>Siteswap Search Service - Professional version</h1>
+
+<div class="table">
+  <div class="row">
+    <div class="cell"><label for="query">SsQL text</label></div>
+    <div class="cell"><textarea id="query"></textarea></div>
+    <div class="cell">
+      <div><input type="button" name="start" id="start" value="Start"></div>
+      <div><input type="button" name="stop" id="stop" value="Stop"></div>
+    </div>
+    <div class="cell" id="message_area"></div>
+  </div>
+  <div class="row">
+    <div class="cell">Total number searched</div>
+    <div class="cell"><span id="result_total">&nbsp;</span></div>
+  </div>
+  <div class="row">
+    <div class="cell">Number found</div>
+    <div class="cell"><span id="result_count">&nbsp;</span></div>
+  </div>
+  <div class="row">
+    <div class="cell">Execution time (sec)</div>
+    <div class="cell"><span id="result_time">&nbsp;</span></div>
+  </div>
+</div>
+
+<div id="result_area">
+</div>
+
+</article>
+</body>
+
+</html>

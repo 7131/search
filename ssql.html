@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./professional.css">
+<title>SsQL</title>
+</head>
+
+<body>
+<nav id="top">
+<span><a href="./standard.html">Standard</a></span>
+<span><a href="./notation.html">notation</a></span>
+<span>|</span>
+<span><a href="./professional.html">Professional</a></span>
+<span>SsQL</span>
+</nav>
+
+<article>
+<h1>Siteswap Query Language</h1>
+<div>
+<p>By using the Siteswap Query Language (SsQL), you can specify the search method and the display method of results in detail. The complete syntax is:</p>
+<pre>
+FROM "pattern"
+WHERE acquisition-condition
+SELECT display-items
+ORDER BY sort-condition
+LIMIT number
+</pre>
+<p>However, you can omit everything except the FROM clause. Specify the clauses that are not omitted in this order.</p>
+<p>In the FROM clause, describe the search <a href="./notation.html">pattern</a> with double quotation marks. If you want to use double quotation marks in your pattern, you must escape them with \.</p>
+<p>Only the maximum number can be specified in the LIMIT clause. The time limit can not be specified, so if you want to stop the search halfway, press the stop button. If you omit the LIMIT clause, the search continues indefinitely.</p>
+</div>
+
+<section>
+<h2>Acquisition condition</h2>
+<p>Specify the acquisition condition by combining variables, properties, and operators in the WHERE clause. For example:</p>
+<pre>
+WHERE $0.balls==3
+</pre>
+<p>If the condition is satisfied, the string is acquired, and if not, it is not acquired. If you omit the WHERE clause, you get all the generated strings.</p>
+<p>The variables available are $0, $1, $2, ... $0 represents the entire string, and $1, $2, etc. represent the first group, second group, etc. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the strings are assigned to the variables as follows.</p>
+<table class="border">
+  <tr><th>&nbsp;</th><th>$0</th><th>$1</th><th>$2</th></tr>
+  <tr><td>1st</td><td>51</td><td>5</td><td>1</td></tr>
+  <tr><td>2nd</td><td>53</td><td>5</td><td>3</td></tr>
+  <tr><td>3rd</td><td>551</td><td>55</td><td>1</td></tr>
+  <tr><td>4th</td><td>553</td><td>55</td><td>3</td></tr>
+  <tr><td>5th</td><td>5551</td><td>555</td><td>1</td></tr>
+  <tr><td>:</td><td>:</td><td>:</td><td>:</td></tr>
+</table>
+<p>Properties are specified after variable and dot.</p>
+<table class="border">
+  <tr><th>property</th><th>explanation</th><th>example</th></tr>
+  <tr><td>pattern</td><td>the string itself</td><td>315315</td></tr>
+  <tr><td>length</td><td>string length</td><td>6</td></tr>
+  <tr><td>reverse</td><td>reverse order</td><td>513513</td></tr>
+  <tr><td>ascending</td><td>ascending order</td><td>153153</td></tr>
+  <tr><td>descending</td><td>descending order</td><td>531531</td></tr>
+  <tr><td>omission</td><td>abbreviation</td><td>315</td></tr>
+  <tr><td>standard</td><td>standard form</td><td>531</td></tr>
+  <tr><td>jugglable</td><td>whether jugglable</td><td>1</td></tr>
+  <tr><td>valid</td><td>whether valid siteswap</td><td>1</td></tr>
+  <tr><td>balls</td><td>number of balls</td><td>3</td></tr>
+  <tr><td>period</td><td>siteswap period</td><td>3</td></tr>
+  <tr><td>state</td><td>siteswap state</td><td>19</td></tr>
+  <tr><td>int10</td><td>base 10 value</td><td>315315</td></tr>
+  <tr><td>int36</td><td>base 36 value</td><td>183315353</td></tr>
+</table>
+<p>The value of "jugglable" is 1 if it is juggable and 0 otherwise. "valid" is similar. "balls", "period", and "state" will be all -1 if the pattern is not a siteswap. "int10" is a numerical value from the beginning to the position where it can be regarded as a decimal integer. "int36" is similar. Property can be omitted. If omitted, it is assumed that "pattern" is specified.</p>
+<p>The following is a list of operators by priority.</p>
+<table class="border">
+  <tr><th>priority</th><th>operator</th><th>meaning</th></tr>
+  <tr><td>1</td><td>.</td><td>the string on the right is a property</td></tr>
+  <tr><td rowspan="3">2</td><td>*</td><td>multiplication</td></tr>
+  <tr><td>/</td><td>quotient of integer division</td></tr>
+  <tr><td>%</td><td>remainder of integer division</td></tr>
+  <tr><td rowspan="3">3</td><td>+</td><td>addition</td></tr>
+  <tr><td>-</td><td>subtraction</td></tr>
+  <tr><td>&amp;</td><td>concatenation of strings</td></tr>
+  <tr><td rowspan="9">4</td><td>==</td><td>left and right values are equal</td></tr>
+  <tr><td>!=</td><td rowspan="2">left and right values are different</td></tr>
+  <tr><td>&lt;&gt;</td></tr>
+  <tr><td>&lt;</td><td>left value is less than right value</td></tr>
+  <tr><td>&lt;=</td><td>left value is less than or equal to right value</td></tr>
+  <tr><td>&gt;</td><td>left value is more than right value</td></tr>
+  <tr><td>&gt;=</td><td>left value is more than or equal to right value</td></tr>
+  <tr><td>IN(...)</td><td>left value is contained in ...</td></tr>
+  <tr><td>NOT IN(...)</td><td>left value is not contained in ...</td></tr>
+  <tr><td>5</td><td>AND</td><td>both left and right conditions are true</td></tr>
+  <tr><td>6</td><td>OR</td><td>either left or right condition is true</td></tr>
+</table>
+<p>If operators with the same priority are listed, they are evaluated from the left. When you want to change the priority, enclose the part in parentheses, such as 2*(3+4).</p>
+<p>Only decimal integers are treated as numbers. When performing numerical calculation on a string, it is assumed that the "int10" property is implicitly specified. The result of the comparison operation is 1 for true and 0 for false. In the operation of AND and OR, only the number 0, the string "0", and the empty string represent false, and true otherwise.</p>
+<p>The IN operator is used as follows:</p>
+<pre>
+$0.standard IN("71", "62", "53")
+</pre>
+<p>In this case, it will be true (or 1) if the standard form of the variable $0 is 71, 62, or 53.</p>
+</section>
+
+<section>
+<h2>Display items</h2>
+<p>Specify display items such as variables and constants separated by white space in the SELECT clause. For example:</p>
+<pre>
+SELECT $0 "(" $0.balls ")"
+</pre>
+<p>White spaces are not included in the displayed string, so specify the spaces in double quotation marks if necessary. The string enclosed in double quotation marks is output as is. If you omit the SELECT clause, you get the entire generated string (assuming $0.pattern was specified).</p>
+<p>You can also use operators by using parentheses. For example:</p>
+<pre>
+SELECT $0.int10 "+1=" ($0.int10 + 1)
+</pre>
+<p>genarates 3+1=4 etc. Please note that if you forget the parentheses you will get an error.</p>
+<p>To suppress the output of the same string, specify DISTINCT after SELECT. If you want to generate only unique strings, describe as follows.</p>
+<pre>
+SELECT DISTINCT $0
+</pre>
+<p>DISTINCT is similar to the WHERE clause in that it limits the number of strings displayed, but WHERE covers the conditions that the generated string satisfies, whereas DISTINCT only covers whether the entire string processed by SELECT already exists.</p>
+</section>
+
+<section>
+<h2>Sort condition</h2>
+<p>Specify sorting conditions separated by commas in the ORDER BY clause.</p>
+<pre>
+ORDER BY $0.period DESC, $0
+</pre>
+<p>If you specify DESC after the condition, the order will be descending. If you specify ASC or nothing, the order will be ascending. The above example means "descending by siteswap period, then ascending by string itself". If the strings generated are 3, 441, 531, then the longer siteswap periods 441 and 531 come first and the shorter period 3 comes later. In 441 and 531, 441 is smaller as a string, so it comes earlier, and finally 441 531 3 is output.</p>
+<p>If you omit the ORDER BY clause, they are displayed in the order they were generated.</p>
+</section>
+
+<section>
+<h2>Comments and other</h2>
+<p>You can also write a comment in SsQL.</p>
+<pre>
+-- 1 line comment
+/* Multi-
+line
+comment */
+</pre>
+<p>Line comments are from -- to the end of the line, block comments are from /* to */. Only one line comment can be specified per line, and it can not span multiple lines. On the other hand, a block comment can be written over multiple lines, or multiple block comments can be written in the middle of a line. However, you can not nest comments.</p>
+<p>You can write SsQL in free format. That is spaces, line breaks, and comments between keywords are ignored.</p>
+<p>Uppercase letters are converted to lowercase. The message when there is an error is also displayed as a string converted to lowercase letters.</p>
+</section>
+
+<section>
+<h2>Language specifications</h2>
+<p>For reference, I describe the specifications of the accepted SsQL in <a href="../haba/notation.html">HABA format</a>.</p>
+<pre>
+Query ::= From Where? Select? Order? Limit? ;
+From ::= 'FROM' String ;
+String ::= """(\\""|[^""])*""" ;
+Where ::= 'WHERE' Condition ;
+Condition ::= Sequence ('OR' Sequence)* ;
+Sequence ::= Expression ('AND' Expression)* ;
+Expression ::= Term (Compare Term | Clause)? ;
+Term ::= Factor (('+' | '-' | '&') Factor)* ;
+Factor ::= Value (('*' | '/' | '%') Value)* ;
+Value ::= Element ('.' Property)? ;
+Element ::= Variable | Literal | '(' Condition ')' ;
+Variable ::= "\$[0-9]*" ;
+Literal ::= String | Integer ;
+Integer ::= "[0-9]+" ;
+Property ::= 'pattern' | 'length' | 'reverse' | 'ascending' | 'descending' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
+Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
+Clause ::= 'NOT'? 'IN' '(' List ')' ;
+List ::= Literal (',' Literal)* ;
+Select ::= 'SELECT' 'DISTINCT'? View ;
+View ::= Value+ ;
+Order ::= 'ORDER' 'BY' Multiple ;
+Multiple ::= Single (',' Single)* ;
+Single ::= Value ('ASC' | 'DESC')? ;
+Limit ::= 'LIMIT' Integer ;
+Space ::= "\s+" ;
+Line ::= "--[^\n]*(\n|$)" ;
+Block ::= "/\*((?!\*/)[\s\S])*\*/" ;
+</pre>
+</section>
+
+</article>
+</body>
+
+</html>

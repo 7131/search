@@ -1,0 +1,119 @@
+@charset "utf-8";
+
+nav span {
+    margin-right: 1ex;
+}
+
+article {
+    margin-bottom: 10ex;
+}
+
+input {
+    width: 90%;
+}
+
+input[type="button"] {
+    margin-top: 2ex;
+}
+
+input[type="checkbox"], input[type="radio"] {
+    width: auto;
+}
+
+table.border {
+    border: 1px outset gray;
+    border-collapse: collapse;
+    margin-bottom: 2ex;
+}
+
+table.border tr th {
+    border: 1px inset gray;
+    padding: 0.5ex 1ex;
+}
+
+table.border tr td {
+    border: 1px inset gray;
+    padding: 0.5ex 1ex;
+}
+
+code {
+    font-family: "Courier New", monospace;
+}
+
+pre {
+    line-height: 150%;
+    white-space: pre-wrap;
+}
+
+.table .row {
+    margin-top: 2ex;
+}
+
+.table .row .note {
+    padding-left: 1ex;
+    font-size: small;
+}
+
+.table .row .item {
+    padding-left: 2ex;
+}
+
+.error {
+    color: red;
+}
+
+.invalid {
+    background-color: pink;
+}
+
+#result_area ul {
+    list-style-type: none;
+    padding: 0ex;
+}
+
+#result_area ul li {
+    display: inline-block;
+    margin-right: 1ex;
+}
+
+@media (min-width: 768px) {
+
+    #pattern {
+        width: 50ex;
+    }
+
+    input[type="button"] {
+        margin-top: 0ex;
+        width: auto;
+    }
+
+    section.box {
+        margin: 3ex 0ex;
+        border: 1px solid gray;
+        padding: 2ex;
+    }
+
+    section.box h2 {
+        margin: 0ex 0ex 1ex;
+    }
+
+    section.box input[type="number"] {
+        width: 10ex;
+    }
+
+    .table {
+        display: table;
+    }
+
+    .table .row {
+        display: table-row;
+    }
+
+    .table .row .cell {
+        display: table-cell;
+        padding: 0.5ex 2ex 0.5ex 0ex;
+        vertical-align: middle;
+    }
+
+}
+

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./standard.css">
+<title>Pattern notation</title>
+</head>
+
+<body>
+<nav id="top">
+<span><a href="./standard.html">Standard</a></span>
+<span>notation</span>
+<span>|</span>
+<span><a href="./professional.html">Professional</a></span>
+<span><a href="./ssql.html">SsQL</a></span>
+</nav>
+
+<article>
+<h1>Pattern notation</h1>
+<div>
+<p>You can execute an infinite search of siteswaps with a regular expression style like [531]*. In addition to alphanumeric characters, you can use repetitions and wildcards. Only vanilla siteswaps that do not include multiplex or synchronous are searched.</p>
+</div>
+
+<section>
+<h2>Repetition</h2>
+<table class="border">
+  <tr><th>*</th><td>0 or more times</td></tr>
+  <tr><th>+</th><td>1 or more times</td></tr>
+  <tr><th>?</th><td>0 times or 1 time</td></tr>
+  <tr><th>{n}</th><td>just n times</td></tr>
+  <tr><th>{n,}</th><td>n or more times</td></tr>
+  <tr><th>{n,m}</th><td>from n times to m times</td></tr>
+</table>
+<p>Both n and m are integers greater than or equal to 0. Do not put a space between symbols (it will cause an error).</p>
+<p>The repetition operates on the element immediately preceding it. For example, if you specify 51+, it will operate on the 1 before the + and generate strings in the order 51, 511, 5111, 51111, ...</p>
+</section>
+
+<section>
+<h2>Wildcard and character class</h2>
+<table class="border">
+  <tr><th>#</th><td>1 character number, same as [0-9]</td></tr>
+  <tr><th>$</th><td>1 character alphabet, same as [a-z]</td></tr>
+  <tr><th>.</th><td>1 alphanumeric character, same as [0-9a-z]</td></tr>
+  <tr><th>[531]</th><td>any one character of 5, 3, 1</td></tr>
+  <tr><th>[a-e]</th><td>any one character from a to e</td></tr>
+</table>
+<p>The character class enclosed in [ ] is treated as one element as a whole. For example, if you specify [51]+, that means "5 or 1 repeated one or more times", so it will generate the strings 5, 1, 55, 51, 15, 11, 555, ...</p>
+<p>Even if the same characters are specified in [ ], they will be combined into one. [abaa-b] is the same as [ab]. It is case-insensitive and it will be searched for as all lowercase. Special characters such as wildcards cannot be used within [ ].</p>
+</section>
+
+<section>
+<h2>Selection and grouping</h2>
+<table class="border">
+  <tr><th>a|b</th><td>the string a or b</td></tr>
+  <tr><th>(ab)</th><td>the string ab</td></tr>
+</table>
+<p>The group enclosed in ( ) is treated as one element as a whole. For example, if you specify (51)+, it will generate strings in the order 51, 5151, 515151, 51515151, ...</p>
+<p>You can treat "ab or ba" into one element by combining selection and grouping like (ab|ba).</p>
+<p>The group can contain other elements, so you can nest infinite searches. For example, (53*1)+ will generate 51, 531, 5151, 53151, 51531, 5331, 515151, ...</p>
+</section>
+
+<section>
+<h2>Other characters</h2>
+<p>Uppercase letters are converted to lowercase. Even if you specify ABC, the output is abc.</p>
+<p>If you want to use the special character as it is, put \ before it and escape it. If you want to use the \ itself, put a \ in front of it and say \\.</p>
+<p>For example, even if you enter #.## to want to represent a number with 1 digit in the integer part and 2 digits in the decimal part, the result will be 4 characters, that is 1 digit + 1 alphanumeric character + 2 digits. In this case, enter #\.##.</p>
+<p>Non-alphanumeric characters are not used in siteswap decisions or ball count calculations. Even if 5.31 or <5,3,1> or 5/3=1 were generated, they would all be calculated as 531.</p>
+</section>
+
+<section>
+<h2>Language specifications</h2>
+<p>For reference, I describe the specifications of the accepted pattern in <a href="../haba/notation.html">HABA format</a>.</p>
+<pre>
+Selection ::= Sequence ('|' Sequence)* ;
+Sequence ::= Factor+ ;
+Factor ::= (Letter | Class | Group) Iteration? ;
+Letter ::= Digit | NonDigit ;
+Digit ::= "[0-9]" ;
+NonDigit ::= "\\?." ;
+Class ::= '#' | '$' | '.' | '[' (Letter ('-' Letter)?)+ ']' ;
+Group ::= '(' Selection ')' ;
+Iteration ::= '*' | '+' | '?' | '{' Integer (',' Integer?)? '}' ;
+Integer ::= Digit+ ;
+</pre>
+</section>
+
+</article>
+</body>
+
+</html>
