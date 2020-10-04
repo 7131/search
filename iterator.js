@@ -606,8 +606,8 @@ var PatternValue = function(pattern) {
     this._functions = {
         "length": this._getLength.bind(this),
         "reverse": this._getReverse.bind(this),
-        "ascending": this._getAscending.bind(this),
-        "descending": this._getDescending.bind(this),
+        "min": this._getMin.bind(this),
+        "max": this._getMax.bind(this),
         "omission": this._getOmission.bind(this),
         "standard": this._getStandard.bind(this),
         "jugglable": this._isJugglable.bind(this),
@@ -646,8 +646,8 @@ PatternValue.prototype = {
         return this._pattern.split("").reverse().join("");
     },
 
-    // get ascending pattern
-    "_getAscending": function() {
+    // get minimum pattern
+    "_getMin": function() {
         var target = this._pattern;
         if (target.length <= 1) {
             return target;
@@ -669,14 +669,14 @@ PatternValue.prototype = {
         return candidates[0];
     },
 
-    // get descending pattern
-    "_getDescending": function() {
+    // get maximum pattern
+    "_getMax": function() {
         var target = this._pattern;
         if (target.length <= 1) {
             return target;
         }
 
-        // get minimum character
+        // get maximum character
         var max = target.charCodeAt(0);
         var index = 0;
         for (var i = 1; i < target.length; i++) {
@@ -699,7 +699,7 @@ PatternValue.prototype = {
 
     // get standard format
     "_getStandard": function() {
-        return this._getOmissionText(this.getProperty("descending"));
+        return this._getOmissionText(this.getProperty("max"));
     },
 
     // get whether jugglable

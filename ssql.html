@@ -56,8 +56,8 @@ WHERE $0.balls==3
   <tr><td>pattern</td><td>the string itself</td><td>315315</td></tr>
   <tr><td>length</td><td>string length</td><td>6</td></tr>
   <tr><td>reverse</td><td>reverse order</td><td>513513</td></tr>
-  <tr><td>ascending</td><td>ascending order</td><td>153153</td></tr>
-  <tr><td>descending</td><td>descending order</td><td>531531</td></tr>
+  <tr><td>min</td><td>minimum pattern</td><td>153153</td></tr>
+  <tr><td>max</td><td>maximum pattern</td><td>531531</td></tr>
   <tr><td>omission</td><td>abbreviation</td><td>315</td></tr>
   <tr><td>standard</td><td>standard form</td><td>531</td></tr>
   <tr><td>jugglable</td><td>whether jugglable</td><td>1</td></tr>
@@ -161,7 +161,7 @@ Element ::= Variable | Literal | '(' Condition ')' ;
 Variable ::= "\$[0-9]*" ;
 Literal ::= String | Integer ;
 Integer ::= "[0-9]+" ;
-Property ::= 'pattern' | 'length' | 'reverse' | 'ascending' | 'descending' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
+Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
 Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
 Clause ::= 'NOT'? 'IN' '(' List ')' ;
 List ::= Literal (',' Literal)* ;

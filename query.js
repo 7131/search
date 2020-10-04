@@ -20,8 +20,8 @@ var QueryGrammar = {
         "pattern",
         "length",
         "reverse",
-        "ascending",
-        "descending",
+        "min",
+        "max",
         "omission",
         "standard",
         "jugglable",
@@ -436,7 +436,7 @@ var QueryConverter = {
         tree.value = tree.children[0].text;
     },
 
-    // Property ::= 'pattern' | 'length' | 'reverse' | 'ascending' | 'descending' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
+    // Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
     "Property": function(tree) {
         tree.value = tree.children[0].text;
     },
