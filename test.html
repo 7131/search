@@ -154,8 +154,9 @@
   <tr><td></td><td>&#xFF46;&#xFF52;&#xFF4F;&#xFF4D;&#x3000;&#x201C;&#xFF21;&#xFF22;&#xFF23;&#x201D;</td><td>abc</td><td></td>
   <tr><td></td><td>FROM "(42(3+))+"<br>WHERE $2==33<br>SELECT $0 "," $1 "," $2<br>LIMIT 2</td><td>4233,4233,33 4234233,4233,33</td><td></td>
   <tr><td></td><td>FROM "(2+)|3+"<br>SELECT "'" $1 "'"<br>LIMIT 5</td><td>'2' '' '22' '' '222'</td><td></td>
-  <tr><td></td><td>FROM "(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2<br>SELECT $ "=" $.balls</td><td>2x7=14 05x2=10</td><td></td>
-  <tr><td></td><td>FROM "(#+)x(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2 * $3<br>SELECT $</td><td>3x5x1 5x1x3</td><td></td>
+  <tr><td></td><td>FROM "#{3}"<br>WHERE $.valid AND $.reverse == $ AND $.omission.length == $.length<br>LIMIT 5</td><td>030 060 090 141 171</td><td></td>
+  <tr><td></td><td>FROM "(#+)x(#+)"<br>WHERE $.balls == $1 * $2<br>SELECT $ "=" $.balls</td><td>2x7=14 05x2=10</td><td></td>
+  <tr><td></td><td>FROM "(#+)x(#+)x(#+)"<br>WHERE $.balls == $1 * $2 * $3<br>SELECT $</td><td>3x5x1 5x1x3</td><td></td>
 </table>
 <input type="button" id="professional" value="Execute">
 </section>

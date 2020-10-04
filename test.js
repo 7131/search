@@ -74,7 +74,7 @@ Controller.prototype = {
     "_searchStandard": function(row) {
         // preparation
         var pattern = row.cells[ColNum.TARGET].innerText;
-        if (row.cells[ColNum.EXPECT].innerText == "") {
+        if (!row.cells[ColNum.EXPECT].innerText) {
             this._count = 0;
         } else {
             var expect = row.cells[ColNum.EXPECT].innerText.split(" ");
@@ -188,7 +188,7 @@ Controller.prototype = {
         // execute the next test
         do {
             this._index++;
-        } while (this._index < rows.length && rows[this._index].cells[ColNum.TARGET].innerText == "");
+        } while (this._index < rows.length && !rows[this._index].cells[ColNum.TARGET].innerText);
         if (rows.length <= this._index) {
             // finished
             this._button.disabled = false;

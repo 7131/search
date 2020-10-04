@@ -166,7 +166,7 @@ SyntaxExpression.prototype = {
         var text = this.first.getText(patterns);
         if (this.clause == null) {
             // no comparison target
-            if (this.compare == "") {
+            if (!this.compare) {
                 return text;
             }
 
@@ -299,7 +299,7 @@ SyntaxFactor.prototype = {
 var SyntaxValue = function(element) {
     // properties
     this.element = element;
-    this.property = "";
+    this.properties = [];
 }
 
 // Operator value prototype
@@ -307,15 +307,13 @@ SyntaxValue.prototype = {
 
     // get result text
     "getText": function(patterns) {
-        // check the properties
+        // convert to pattern value
         var text = this.element.getText(patterns);
-        if (this.property == "pattern") {
-            return text;
+        for (var i = 0; i < this.properties.length; i++) {
+            var value = new PatternValue(text);
+            text = value.getProperty(this.properties[i]);
         }
-
-        // get pattern value
-        var value = new PatternValue(text);
-        return value.getProperty(this.property);
+        return text;
     },
 
 }
