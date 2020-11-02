@@ -116,14 +116,14 @@ SyntaxCondition.prototype = {
 
 }
 
-// Condition sequence class
-var SyntaxSequence = function() {
+// Condition part class
+var SyntaxPart = function() {
     // properties
     this.list = [];
 }
 
-// Condition sequence prototype
-SyntaxSequence.prototype = {
+// Condition part prototype
+SyntaxPart.prototype = {
 
     // get result text
     "getText": function(patterns) {
@@ -142,6 +142,33 @@ SyntaxSequence.prototype = {
             if (!text || text === "0") {
                 return 0;
             }
+        }
+        return 1;
+    },
+
+}
+
+// Condition unit class
+var SyntaxUnit = function() {
+    // properties
+    this.not = false;
+    this.expression = null;
+}
+
+// Condition unit prototype
+SyntaxUnit.prototype = {
+
+    // get result text
+    "getText": function(patterns) {
+        // text
+        var text = this.expression.getText(patterns);
+        if (!this.not) {
+            return text;
+        }
+
+        // deal the NOT
+        if (text && text !== "0") {
+            return 0;
         }
         return 1;
     },

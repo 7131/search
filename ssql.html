@@ -88,11 +88,12 @@ WHERE $0.balls==3
   <tr><td>&gt;=</td><td>left value is more than or equal to right value</td></tr>
   <tr><td>IN(...)</td><td>left value is contained in ...</td></tr>
   <tr><td>NOT IN(...)</td><td>left value is not contained in ...</td></tr>
-  <tr><td>5</td><td>AND</td><td>both left and right conditions are true</td></tr>
-  <tr><td>6</td><td>OR</td><td>either left or right condition is true</td></tr>
+  <tr><td>5</td><td>NOT</td><td>right condition is false</td></tr>
+  <tr><td>6</td><td>AND</td><td>both left and right conditions are true</td></tr>
+  <tr><td>7</td><td>OR</td><td>either left or right condition is true</td></tr>
 </table>
 <p>If operators with the same priority are listed, they are evaluated from the left. When you want to change the priority, enclose the part in parentheses, such as 2*(3+4).</p>
-<p>Only decimal integers are treated as numbers. When performing numerical calculation on a string, it is assumed that the "int10" property is implicitly specified. The result of the comparison operation is 1 for true and 0 for false. In the operation of AND and OR, only the number 0, the string "0", and the empty string represent false, and true otherwise.</p>
+<p>Only decimal integers are treated as numbers. When performing numerical calculation on a string, it is assumed that the "int10" property is implicitly specified. The result of the comparison operation is 1 for true and 0 for false. In the operation of NOT, AND and OR, only the number 0, the string "0", and the empty string represent false, and true otherwise.</p>
 <p>The IN operator is used as follows:</p>
 <pre>
 $0.standard IN("71", "62", "53")
@@ -151,8 +152,9 @@ Query ::= From Where? Select? Order? Limit? ;
 From ::= 'FROM' String ;
 String ::= """(\\""|[^""])*""" ;
 Where ::= 'WHERE' Condition ;
-Condition ::= Sequence ('OR' Sequence)* ;
-Sequence ::= Expression ('AND' Expression)* ;
+Condition ::= Part ('OR' Part)* ;
+Part ::= Unit ('AND' Unit)* ;
+Unit ::= 'NOT'? Expression ;
 Expression ::= Term (Compare Term | Clause)? ;
 Term ::= Factor (('+' | '-' | '&') Factor)* ;
 Factor ::= Value (('*' | '/' | '%') Value)* ;
