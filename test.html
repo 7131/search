@@ -147,7 +147,7 @@
   <tr><td></td><td>FROM "3"<br>WHERE $ OR " "</td><td>3</td><td></td>
   <tr><td></td><td>FROM "#{4}"<br>WHERE $.standard IN("71", "62", "53")</td><td>7171 6262 5353 3535 2626 1717</td><td></td>
   <tr><td></td><td>FROM "[12][34]"<br>SELECT $ "(" $.balls ")"</td><td>13(2) 23(-1) 14(-1) 24(3)</td><td></td>
-  <tr><td></td><td>FROM "3"<br>SELECT $.int10 "+1=" ($.int10 + 1)</td><td>3+1=4</td><td></td>
+  <tr><td></td><td>FROM "3"<br>SELECT $.int10 "+1=" $.int10 + 1</td><td>3+1=4</td><td></td>
   <tr><td></td><td>FROM "[12][34]"<br>SELECT DISTINCT $.state</td><td>5 -1 11</td><td></td>
   <tr><td></td><td>FROM "3|441|531"<br>ORDER BY $.period DESC, $</td><td>441 531 3</td><td></td>
   <tr><td></td><td>FROM "51|42|60|3|531|441"</td><td>51 42 60 3 531 441</td><td></td>

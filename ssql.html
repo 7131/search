@@ -108,11 +108,11 @@ $0.standard IN("71", "62", "53")
 SELECT $0 "(" $0.balls ")"
 </pre>
 <p>White spaces are not included in the displayed string, so specify the spaces in double quotation marks if necessary. The string enclosed in double quotation marks is output as is. If you omit the SELECT clause, you get the entire generated string (assuming $0.pattern was specified).</p>
-<p>You can also use operators by using parentheses. For example:</p>
+<p>You can also use operators. For example:</p>
 <pre>
-SELECT $0.int10 "+1=" ($0.int10 + 1)
+SELECT $0.int10 "+1=" $0.int10 + 1
 </pre>
-<p>genarates 3+1=4 etc. Please note that if you forget the parentheses you will get an error.</p>
+<p>genarates 3+1=4 etc.</p>
 <p>To suppress the output of the same string, specify DISTINCT after SELECT. If you want to generate only unique strings, describe as follows.</p>
 <pre>
 SELECT DISTINCT $0
@@ -168,7 +168,7 @@ Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
 Clause ::= 'NOT'? 'IN' '(' List ')' ;
 List ::= Literal (',' Literal)* ;
 Select ::= 'SELECT' 'DISTINCT'? View ;
-View ::= Value+ ;
+View ::= Term+ ;
 Order ::= 'ORDER' 'BY' Multiple ;
 Multiple ::= Single (',' Single)* ;
 Single ::= Value ('ASC' | 'DESC')? ;
