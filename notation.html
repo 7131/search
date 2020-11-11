@@ -45,6 +45,7 @@
   <tr><th>.</th><td>1 alphanumeric character, same as [0-9a-z]</td></tr>
   <tr><th>[531]</th><td>any one character of 5, 3, 1</td></tr>
   <tr><th>[a-e]</th><td>any one character from a to e</td></tr>
+  <tr><th>[^x]</th><td>other than x, same as [0-9a-wy-z]</td></tr>
 </table>
 <p>The character class enclosed in [ ] is treated as one element as a whole. For example, if you specify [51]+, that means "5 or 1 repeated one or more times", so it will generate the strings 5, 1, 55, 51, 15, 11, 555, ...</p>
 <p>Even if the same characters are specified in [ ], they will be combined into one. [abaa-b] is the same as [ab]. It is case-insensitive and it will be searched for as all lowercase. Special characters such as wildcards cannot be used within [ ].</p>
@@ -79,7 +80,7 @@ Factor ::= (Letter | Class | Group) Iteration? ;
 Letter ::= Digit | NonDigit ;
 Digit ::= "[0-9]" ;
 NonDigit ::= "\\?." ;
-Class ::= '#' | '$' | '.' | '[' (Letter ('-' Letter)?)+ ']' ;
+Class ::= '#' | '$' | '.' | '[' '^'? (Letter ('-' Letter)?)+ ']' ;
 Group ::= '(' Selection ')' ;
 Iteration ::= '*' | '+' | '?' | '{' Integer (',' Integer?)? '}' ;
 Integer ::= Digit+ ;
