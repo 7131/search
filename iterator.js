@@ -21,9 +21,14 @@ var PatternCommon = {
         }
     },
 
+    // whether it is an integer
+    "isInt": function(text) {
+        return text instanceof bigInt;
+    },
+
     // convert to lowercase letters
     "toSmall": function(text) {
-        var half = text.replace(/[\uFF01-\uFF5E]/g, this._toHankaku);
+        var half = text.replace(/[\uFF01-\uFF5E]/g, PatternCommon._toHankaku);
         var quote = half.replace(/[\u201C\u201D]/g, "\"").replace("\u2018", "`").replace("\u2019", "'");
         var other = quote.replace("\u3000", " ").replace("\u301C", "~").replace("\uFFE5", "\u00A5");
         return other.toLowerCase();

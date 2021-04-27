@@ -197,20 +197,46 @@ SyntaxExpression.prototype = {
                 return text;
             }
 
-            // compare
+            // get the comparison target
             var second = this.second.getText(patterns);
-            if (this.compare == "==") {
-                result = (text == second);
-            } else if (this.compare == "!=" || this.compare == "<>") {
-                result = (text != second);
-            } else if (this.compare == "<") {
-                result = (text < second);
-            } else if (this.compare == "<=") {
-                result = (text <= second);
-            } else if (this.compare == ">") {
-                result = (text > second);
-            } else if (this.compare == ">=") {
-                result = (text >= second);
+            if (PatternCommon.isInt(text) && !PatternCommon.isInt(second)) {
+                second = PatternCommon.toInt(second);
+            }
+            if (!PatternCommon.isInt(text) && PatternCommon.isInt(second)) {
+                text = PatternCommon.toInt(text);
+            }
+
+            // compare
+            if (PatternCommon.isInt(text)) {
+                // for BigInt
+                if (this.compare == "==") {
+                    result = text.equals(second);
+                } else if (this.compare == "!=" || this.compare == "<>") {
+                    result = text.notEquals(second);
+                } else if (this.compare == "<") {
+                    result = text.lesser(second);
+                } else if (this.compare == "<=") {
+                    result = text.lesserOrEquals(second);
+                } else if (this.compare == ">") {
+                    result = text.greater(second);
+                } else if (this.compare == ">=") {
+                    result = text.greaterOrEquals(second);
+                }
+            } else {
+                // otherwise
+                if (this.compare == "==") {
+                    result = (text == second);
+                } else if (this.compare == "!=" || this.compare == "<>") {
+                    result = (text != second);
+                } else if (this.compare == "<") {
+                    result = (text < second);
+                } else if (this.compare == "<=") {
+                    result = (text <= second);
+                } else if (this.compare == ">") {
+                    result = (text > second);
+                } else if (this.compare == ">=") {
+                    result = (text >= second);
+                }
             }
         } else {
             // IN clause
