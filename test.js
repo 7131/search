@@ -1,5 +1,5 @@
 // Column number constants
-var ColNum = {
+const ColNum = {
     "NUMBER": 0,
     "TARGET": 1,
     "EXPECT": 2,
@@ -7,7 +7,7 @@ var ColNum = {
 }
 
 // Controller class
-var Controller = function() {
+const Controller = function() {
     // fields
     this._parser = new Parser(PatternGrammar, PatternConverter);
     this._ssql = new Parser(QueryGrammar, QueryConverter);
@@ -22,16 +22,16 @@ Controller.prototype = {
     // initialize the page
     "_initialize": function() {
         // associate buttons with search functions
-        var standard = document.getElementById("standard");
-        var professional = document.getElementById("professional");
+        const standard = document.getElementById("standard");
+        const professional = document.getElementById("professional");
         this._function = new Map();
         this._function.set(standard, this._searchStandard.bind(this));
         this._function.set(professional, this._searchProfessional.bind(this));
         this._function.forEach(function(value, key) { key.addEventListener("click", this._start.bind(this), false); }, this);
 
         // associate buttons with table rows
-        var patterns = document.getElementById("patterns");
-        var queries = document.getElementById("queries");
+        const patterns = document.getElementById("patterns");
+        const queries = document.getElementById("queries");
         this._rows = new Map();
         this._rows.set(standard, patterns.rows);
         this._rows.set(professional, queries.rows);
@@ -43,8 +43,8 @@ Controller.prototype = {
         // initialize fields
         this._button = e.currentTarget;
         this._button.disabled = true;
-        var search = this._function.get(this._button);
-        var rows = this._rows.get(this._button);
+        const search = this._function.get(this._button);
+        const rows = this._rows.get(this._button);
 
         // execute the first test
         this._resetTable(rows);
@@ -54,8 +54,8 @@ Controller.prototype = {
 
     // set the table row numbers
     "_setRowNumbers": function(rows) {
-        for (var i = 1; i < rows.length; i++) {
-            var number = rows[i].cells[ColNum.NUMBER];
+        for (let i = 1; i < rows.length; i++) {
+            const number = rows[i].cells[ColNum.NUMBER];
             number.innerText = i;
             number.className = "symbol";
         }
@@ -63,8 +63,8 @@ Controller.prototype = {
 
     // reset table rows
     "_resetTable": function(rows) {
-        for (var i = 1; i < rows.length; i++) {
-            var result = rows[i].cells[ColNum.RESULT];
+        for (let i = 1; i < rows.length; i++) {
+            const result = rows[i].cells[ColNum.RESULT];
             result.innerText = "";
             result.className = "";
         }
@@ -73,36 +73,36 @@ Controller.prototype = {
     // search in standard version
     "_searchStandard": function(row) {
         // preparation
-        var pattern = row.cells[ColNum.TARGET].innerText;
+        const pattern = row.cells[ColNum.TARGET].innerText;
         if (!row.cells[ColNum.EXPECT].innerText) {
             this._count = 0;
         } else {
-            var expect = row.cells[ColNum.EXPECT].innerText.split(" ");
+            const expect = row.cells[ColNum.EXPECT].innerText.split(" ");
             this._count = expect.length;
         }
         this._actual = [];
 
         // pattern analysis
-        var result = this._parser.tokenize(PatternCommon.toSmall(pattern));
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid);
+        const lex = this._parser.tokenize(PatternCommon.toSmall(pattern));
+        if (lex.tokens == null) {
+            this._setError(lex.valid, lex.invalid);
             return;
         }
-        result = this._parser.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid);
+        const syntax = this._parser.parse(lex.tokens);
+        if (syntax.tree == null) {
+            this._setError(syntax.valid, syntax.invalid);
             return;
         }
 
         // preparation for execution
-        var creator = new PatternCreator(result.tree.iterator);
+        const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showStandard.bind(this);
         creator.cancelEvent = this._cancelStandard.bind(this);
         creator.acceptEvent = this._acceptStandard.bind(this);
 
         // execution
-        this._endless = result.tree.iterator.endless;
+        this._endless = syntax.tree.iterator.endless;
         this._stopTime = Date.now() + 3000;
         creator.start();
     },
@@ -110,36 +110,36 @@ Controller.prototype = {
     // search in professional version
     "_searchProfessional": function(row) {
         // preparation
-        var query = row.cells[ColNum.TARGET].innerText;
+        const query = row.cells[ColNum.TARGET].innerText;
         this._actual = [];
 
         // query analysis
-        var result = this._ssql.tokenize(PatternCommon.toSmall(query));
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid);
+        const ssql = this._ssql.tokenize(PatternCommon.toSmall(query));
+        if (ssql.tokens == null) {
+            this._setError(ssql.valid, ssql.invalid);
             return;
         }
-        result = this._ssql.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid);
+        const pattern = this._ssql.parse(ssql.tokens);
+        if (pattern.tree == null) {
+            this._setError(pattern.valid, pattern.invalid);
             return;
         }
-        this._syntax = result.tree.value;
+        this._syntax = pattern.tree.value;
 
         // pattern analysis
-        result = this._parser.tokenize(this._syntax.from);
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid);
+        const lex = this._parser.tokenize(this._syntax.from);
+        if (lex.tokens == null) {
+            this._setError(lex.valid, lex.invalid);
             return;
         }
-        result = this._parser.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid);
+        const syntax = this._parser.parse(lex.tokens);
+        if (syntax.tree == null) {
+            this._setError(syntax.valid, syntax.invalid);
             return;
         }
 
         // preparation for execution
-        var creator = new PatternCreator(result.tree.iterator);
+        const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showProfessional.bind(this);
         creator.cancelEvent = this._cancelProfessional.bind(this);
@@ -152,8 +152,8 @@ Controller.prototype = {
 
     // show the progress
     "_showProgress": function(number, second) {
-        var value = Math.floor(second * 10) / 10;
-        var rows = this._rows.get(this._button);
+        const value = Math.floor(second * 10) / 10;
+        const rows = this._rows.get(this._button);
         rows[this._index].cells[ColNum.RESULT].innerText = value;
     },
 
@@ -168,16 +168,16 @@ Controller.prototype = {
         this._actual.sort(this._syntax.order.compare.bind(this._syntax.order));
 
         // display
-        var method = function(acc, cur) { return acc + " " + cur.text; };
-        var text = this._actual.reduce(method, "").substring(1);
+        const method = function(acc, cur) { return acc + " " + cur.text; };
+        const text = this._actual.reduce(method, "").substring(1);
         this._showResult(text);
     },
 
     // show the result string
     "_showResult": function(text) {
         // get the result string
-        var rows = this._rows.get(this._button);
-        var row = rows[this._index];
+        const rows = this._rows.get(this._button);
+        const row = rows[this._index];
         if (text == row.cells[ColNum.EXPECT].innerText) {
             row.cells[ColNum.RESULT].innerText = "OK";
         } else {
@@ -194,7 +194,7 @@ Controller.prototype = {
             this._button.disabled = false;
             return;
         }
-        var search = this._function.get(this._button);
+        const search = this._function.get(this._button);
         search(rows[this._index]);
     },
 
@@ -222,7 +222,7 @@ Controller.prototype = {
 
     // acceptance process in standard version
     "_acceptStandard": function(patterns) {
-        var value = new PatternValue(patterns[0]);
+        const value = new PatternValue(patterns[0]);
         if (value.getProperty("valid")) {
             this._actual.push(value.getProperty("pattern"));
         }
@@ -237,11 +237,11 @@ Controller.prototype = {
             }
 
             // display items
-            var text = this._syntax.select.getText(patterns);
-            var value = { "text": text, "patterns": patterns };
+            const text = this._syntax.select.getText(patterns);
+            const value = { "text": text, "patterns": patterns };
             if (this._syntax.select.distinct) {
                 // excluding duplication
-                var find = function(element) { return element.text == text; };
+                const find = function(element) { return element.text == text; };
                 if (0 < this._actual.filter(find).length) {
                     return;
                 }
@@ -255,8 +255,8 @@ Controller.prototype = {
 
     // set an error
     "_setError": function(valid, invalid) {
-        var rows = this._rows.get(this._button);
-        var result = rows[this._index].cells[ColNum.RESULT];
+        const rows = this._rows.get(this._button);
+        const result = rows[this._index].cells[ColNum.RESULT];
         result.innerText = "parsing failure: " + invalid;
         result.className = "error";
     },

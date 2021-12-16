@@ -1,5 +1,5 @@
 // Token class
-var Token = function(label) {
+const Token = function(label) {
     this.setPattern(label, "");
 }
 
@@ -24,7 +24,7 @@ Token.prototype = {
 }
 
 // Syntax tree class
-var Tree = function(label, text) {
+const Tree = function(label, text) {
     if (label == null) {
         this.label = "";
     } else {
@@ -39,7 +39,7 @@ var Tree = function(label, text) {
 }
 
 // State stack class
-var StateStack = function() {
+const StateStack = function() {
     this._stack = [];
 }
 
@@ -48,24 +48,24 @@ StateStack.prototype = {
 
     // push a state pair to the stack top
     "push": function(tree, state) {
-        var pair = { "tree": tree, "state": state };
+        const pair = { "tree": tree, "state": state };
         this._stack.push(pair);
     },
 
     // pop a state pair from the stack top, remove it, and return the tree
     "popTree": function() {
-        var last = this._stack.length - 1;
+        const last = this._stack.length - 1;
         if (last < 0) {
             return null;
         } else {
-            var pair = this._stack.pop();
+            const pair = this._stack.pop();
             return pair.tree;
         }
     },
 
     // peek the state number of the stack top
     "peekState": function() {
-        var last = this._stack.length - 1;
+        const last = this._stack.length - 1;
         if (last < 0) {
             return 0;
         } else {
@@ -81,24 +81,24 @@ StateStack.prototype = {
 }
 
 // Syntax parser class
-var Parser = function(grammar, converter) {
+const Parser = function(grammar, converter) {
     // terminal symbols
-    var terms = grammar.terminals.concat(grammar.dummies);
+    const terms = grammar.terminals.concat(grammar.dummies);
     this._terminals = terms.map(this._quoteSingle);
     this._dummies = grammar.dummies.map(this._quoteSingle);
 
     // lexical analysis elements
     this._elements = [];
-    for (var i = 0; i < terms.length; i++) {
+    for (let i = 0; i < terms.length; i++) {
         this._elements.push(new RegExp("^(" + terms[i] + ")", grammar.flag));
     }
 
     // production rules
     this._rules = [];
-    var nonterms = [];
-    for (var i = 0; i < grammar.rules.length; i++) {
-        var pair = grammar.rules[i].split("=");
-        var symbol = pair[0];
+    const nonterms = [];
+    for (let i = 0; i < grammar.rules.length; i++) {
+        const pair = grammar.rules[i].split("=");
+        const symbol = pair[0];
         this._rules.push({ "symbol": symbol, "count": parseInt(pair[1], 10) });
         if (0 < i && nonterms.indexOf(symbol) < 0) {
             // non-terminal symbols
@@ -106,17 +106,17 @@ var Parser = function(grammar, converter) {
         }
     }
     nonterms.unshift("$");
-    var symbols = grammar.terminals.map(this._quoteSingle).concat(nonterms);
+    const symbols = grammar.terminals.map(this._quoteSingle).concat(nonterms);
 
     // parsing table
     this._table = [];
-    for (var i = 0; i < grammar.table.length; i++) {
-        var row = {};
-        for (var j = 0; j < symbols.length; j++) {
-            var match = grammar.table[i][j].match(/^(s|r|g)([0-9]+)$/);
+    for (let i = 0; i < grammar.table.length; i++) {
+        const row = {};
+        for (let j = 0; j < symbols.length; j++) {
+            const match = grammar.table[i][j].match(/^(s|r|g)([0-9]+)$/);
             if (match) {
-                var symbol = match[1];
-                var number = parseInt(match[2], 10);
+                const symbol = match[1];
+                const number = parseInt(match[2], 10);
                 row[symbols[j]] = { "symbol": symbol, "number": number };
             }
         }
@@ -130,11 +130,11 @@ Parser.prototype = {
 
     // lexical analysis
     "tokenize": function(text) {
-        var tokens = [];
+        const tokens = [];
         while (0 < text.length) {
-            var max = new Token();
-            for (var i = 0; i < this._elements.length; i++) {
-                var result = this._elements[i].exec(text);
+            const max = new Token();
+            for (let i = 0; i < this._elements.length; i++) {
+                const result = this._elements[i].exec(text);
                 if (result != null && max.length < result[0].length) {
                     // get the longest and the first token
                     max.setPattern(this._terminals[i], result[0]);
@@ -154,7 +154,7 @@ Parser.prototype = {
 
         // get the result
         if (0 < text.length) {
-            var valid = tokens.reduce(this._joinTokens, "");
+            const valid = tokens.reduce(this._joinTokens, "");
             return { "tokens": null, "valid": valid.trim(), "invalid": text };
         }
         return { "tokens": tokens };
@@ -162,30 +162,30 @@ Parser.prototype = {
 
     // syntactic analysis
     "parse": function(tokens) {
-        var stack = new StateStack();
+        const stack = new StateStack();
 
         // dealing all tokens
         tokens.push(new Token("$"));
         while (0 < tokens.length) {
-            var next = tokens[0];
-            var label = next.label;
+            const next = tokens[0];
+            const label = next.label;
 
             // execute an action
-            var action = this._table[stack.peekState()][label];
+            const action = this._table[stack.peekState()][label];
             if (!action) {
                 break;
             }
             if (action.symbol == "s") {
                 // shift
-                var leaf = new Tree(label, next.text);
+                const leaf = new Tree(label, next.text);
                 stack.push(leaf, action.number);
                 tokens.shift();
             } else {
                 // reduce
-                var rule = this._rules[action.number];
-                var nodes = [];
-                for (var i = 0; i < rule.count; i++) {
-                    var top = stack.popTree();
+                const rule = this._rules[action.number];
+                const nodes = [];
+                for (let i = 0; i < rule.count; i++) {
+                    const top = stack.popTree();
                     if (top.label.charAt(0) == "#") {
                         // a non-terminal symbol that should be removed
                         Array.prototype.unshift.apply(nodes, top.children);
@@ -195,7 +195,7 @@ Parser.prototype = {
                 }
 
                 // create a syntax tree
-                var node = new Tree(rule.symbol);
+                const node = new Tree(rule.symbol);
                 Array.prototype.push.apply(node.children, nodes);
                 if (this._converter[node.label]) {
                     this._converter[node.label](node);
@@ -207,27 +207,27 @@ Parser.prototype = {
                 }
 
                 // transit
-                action = this._table[stack.peekState()][node.label];
-                if (!action) {
+                const goto = this._table[stack.peekState()][node.label];
+                if (!goto) {
                     break;
                 }
-                stack.push(node, action.number);
+                stack.push(node, goto.number);
             }
         }
 
         // the case of not to accept
-        var valid = "";
+        let valid = "";
         while (0 < stack.getCount()) {
-            var tree = stack.popTree();
+            const tree = stack.popTree();
             valid = this._joinTree(tree) + " " + valid;
         }
-        var invalid = tokens.reduce(this._joinTokens, "");
+        const invalid = tokens.reduce(this._joinTokens, "");
         return { "tree": null, "valid": valid.trim(), "invalid": invalid.trim() };
     },
 
     // add the single quatations
     "_quoteSingle": function(cur) {
-        var text = cur.replace(/\\(.)/g, "$1");
+        const text = cur.replace(/\\(.)/g, "$1");
         return "'" + text + "'";
     },
 
@@ -243,8 +243,8 @@ Parser.prototype = {
         }
 
         // join all child elements
-        var text = "";
-        for (var i = 0; i < tree.children.length; i++) {
+        let text = "";
+        for (let i = 0; i < tree.children.length; i++) {
             text += " " + this._joinTree(tree.children[i]);
         }
         return text;

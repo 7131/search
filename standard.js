@@ -1,5 +1,5 @@
 // Controller class
-var Controller = function() {
+const Controller = function() {
     // fields
     this._parser = new Parser(PatternGrammar, PatternConverter);
 
@@ -86,19 +86,19 @@ Controller.prototype = {
         this._showProgress(0, 0);
 
         // pattern analysis
-        var result = this._parser.tokenize(PatternCommon.toSmall(this._pattern.value));
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid);
+        const lex = this._parser.tokenize(PatternCommon.toSmall(this._pattern.value));
+        if (lex.tokens == null) {
+            this._setError(lex.valid, lex.invalid);
             return;
         }
-        result = this._parser.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid);
+        const syntax = this._parser.parse(lex.tokens);
+        if (syntax.tree == null) {
+            this._setError(syntax.valid, syntax.invalid);
             return;
         }
 
         // preparation for execution
-        var creator = new PatternCreator(result.tree.iterator);
+        const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showResult.bind(this);
         creator.cancelEvent = this._canceled.bind(this);
@@ -131,11 +131,11 @@ Controller.prototype = {
 
     // change whether to show all items
     "_changeAll": function(e) {
-        var style = "visible";
+        let style = "visible";
         if (this._settingAll.checked) {
             style = "hidden";
         }
-        for (var i = 0; i < this._groupAll.length; i++) {
+        for (let i = 0; i < this._groupAll.length; i++) {
             this._groupAll[i].style.visibility = style;
         }
     },
@@ -157,7 +157,7 @@ Controller.prototype = {
 
     // set textbox status
     "_setStatus": function(input, min, max) {
-        var number = parseInt(input.value, 10);
+        const number = parseInt(input.value, 10);
         if (isNaN(number) || number < min || max < number) {
             // invalid
             input.className = "invalid";
@@ -169,15 +169,15 @@ Controller.prototype = {
 
     // switch enable/disable of input item
     "_setEnabled": function(group, enabled) {
-        for (var i = 0; i < group.length; i++) {
+        for (let i = 0; i < group.length; i++) {
             group[i].disabled = !enabled;
         }
     },
 
     // get an integer value
     "_getInt": function(text) {
-        var after = text.replace(/,/g, "");
-        var number = parseInt(after, 10);
+        const after = text.replace(/,/g, "");
+        let number = parseInt(after, 10);
         if (isNaN(number)) {
             number = 0;
         }
@@ -186,7 +186,7 @@ Controller.prototype = {
 
     // get a valid integer value
     "_getValidInt": function(text, min, max, init) {
-        var number = this._getInt(text);
+        let number = this._getInt(text);
         if (number < min || max < number) {
             number = init;
         }
@@ -213,7 +213,7 @@ Controller.prototype = {
         }
 
         // title
-        var h2 = document.createElement("h2");
+        const h2 = document.createElement("h2");
         h2.innerText = "Result";
         this._resultArea.appendChild(h2);
         if (!Array.isArray(this._values)) {
@@ -223,15 +223,15 @@ Controller.prototype = {
 
         // sort
         if (this._settingSort.checked) {
-            var compare = null;
+            let compare = null;
             if (this._groupSort[0].checked) {
                 compare = function(a, b) { return a.getProperty("length") - b.getProperty("length"); };
             } else if (this._groupSort[1].checked) {
                 compare = function(a, b) { return a.getProperty("balls") - b.getProperty("balls"); };
             } else {
                 compare = function(a, b) {
-                    var x = a.getProperty("pattern");
-                    var y = b.getProperty("pattern");
+                    const x = a.getProperty("pattern");
+                    const y = b.getProperty("pattern");
                     if (x < y) {
                         return -1;
                     }
@@ -245,10 +245,10 @@ Controller.prototype = {
         }
 
         // list
-        var ul = document.createElement("ul");
-        for (var i = 0; i < this._values.length; i++) {
-            var li = document.createElement("li");
-            var text = this._values[i].getProperty("pattern");
+        const ul = document.createElement("ul");
+        for (let i = 0; i < this._values.length; i++) {
+            const li = document.createElement("li");
+            let text = this._values[i].getProperty("pattern");
 
             // show the number of balls
             if (this._settingBalls.checked) {
@@ -275,7 +275,7 @@ Controller.prototype = {
     // accept pattern
     "_accept": function(patterns) {
         // create pattern value
-        var value = new PatternValue(patterns[0]);
+        let value = new PatternValue(patterns[0]);
         if (this._settingIteration.checked) {
             value = new PatternValue(value.getProperty("omission"));
         }
@@ -295,13 +295,13 @@ Controller.prototype = {
 
             // equivalence exclusion
             if (this._settingSingle.checked) {
-                var name = "pattern";
+                let name = "pattern";
                 if (this._settingRotation.checked) {
                     // circular equivalence
                     name = "standard";
                 }
-                var text = value.getProperty(name);
-                var find = function(element) { return element.getProperty(name) == text; };
+                const text = value.getProperty(name);
+                const find = function(element) { return element.getProperty(name) == text; };
                 if (0 < this._values.filter(find).length) {
                     return;
                 }
@@ -319,9 +319,9 @@ Controller.prototype = {
         }
 
         // display items
-        var head = document.createElement("div");
-        var ok = document.createElement("div");
-        var ng = document.createElement("div");
+        const head = document.createElement("div");
+        const ok = document.createElement("div");
+        const ng = document.createElement("div");
         head.innerHTML = "Error";
         head.className = "error";
         ok.innerHTML = valid;

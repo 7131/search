@@ -1,5 +1,5 @@
 // WHERE syntax class
-var SyntaxWhere = function() {
+const SyntaxWhere = function() {
     // properties
     this.condition = null;
 }
@@ -25,7 +25,7 @@ SyntaxWhere.prototype = {
 }
 
 // SELECT syntax class
-var SyntaxSelect = function() {
+const SyntaxSelect = function() {
     // properties
     this.distinct = false;
     this.list = [];
@@ -42,8 +42,8 @@ SyntaxSelect.prototype = {
         }
 
         // get value
-        var text = "";
-        for (var i = 0; i < this.list.length; i++) {
+        let text = "";
+        for (let i = 0; i < this.list.length; i++) {
             text += this.list[i].getText(patterns);
         }
         return text;
@@ -52,7 +52,7 @@ SyntaxSelect.prototype = {
 }
 
 // ORDER BY syntax class
-var SyntaxOrder = function() {
+const SyntaxOrder = function() {
     // properties
     this.list = [];
 }
@@ -62,13 +62,13 @@ SyntaxOrder.prototype = {
 
     // compare the magnitude of two values
     "compare": function(a, b) {
-        for (var i = 0; i < this.list.length; i++) {
+        for (let i = 0; i < this.list.length; i++) {
             // compare in order
-            var single = this.list[i];
-            var x = single.value.getText(a.patterns);
-            var y = single.value.getText(b.patterns);
+            const single = this.list[i];
+            const x = single.value.getText(a.patterns);
+            const y = single.value.getText(b.patterns);
             if (x != y) {
-                var result = 1;
+                let result = 1;
                 if (x < y) {
                     result = -1;
                 }
@@ -85,7 +85,7 @@ SyntaxOrder.prototype = {
 }
 
 // Search condition class
-var SyntaxCondition = function() {
+const SyntaxCondition = function() {
     // properties
     this.list = [];
 }
@@ -96,7 +96,7 @@ SyntaxCondition.prototype = {
     // get result text
     "getText": function(patterns) {
         // first text
-        var text = this.list[0].getText(patterns);
+        let text = this.list[0].getText(patterns);
         if (this.list.length == 1) {
             return text;
         }
@@ -105,7 +105,7 @@ SyntaxCondition.prototype = {
         }
 
         // second and subsequent text
-        for (var i = 1; i < this.list.length; i++) {
+        for (let i = 1; i < this.list.length; i++) {
             text = this.list[i].getText(patterns);
             if (text && text !== "0") {
                 return 1;
@@ -117,7 +117,7 @@ SyntaxCondition.prototype = {
 }
 
 // Condition part class
-var SyntaxPart = function() {
+const SyntaxPart = function() {
     // properties
     this.list = [];
 }
@@ -128,7 +128,7 @@ SyntaxPart.prototype = {
     // get result text
     "getText": function(patterns) {
         // first text
-        var text = this.list[0].getText(patterns);
+        let text = this.list[0].getText(patterns);
         if (this.list.length == 1) {
             return text;
         }
@@ -137,7 +137,7 @@ SyntaxPart.prototype = {
         }
 
         // second and subsequent text
-        for (var i = 1; i < this.list.length; i++) {
+        for (let i = 1; i < this.list.length; i++) {
             text = this.list[i].getText(patterns);
             if (!text || text === "0") {
                 return 0;
@@ -149,7 +149,7 @@ SyntaxPart.prototype = {
 }
 
 // Condition unit class
-var SyntaxUnit = function() {
+const SyntaxUnit = function() {
     // properties
     this.not = false;
     this.expression = null;
@@ -161,7 +161,7 @@ SyntaxUnit.prototype = {
     // get result text
     "getText": function(patterns) {
         // text
-        var text = this.expression.getText(patterns);
+        const text = this.expression.getText(patterns);
         if (!this.not) {
             return text;
         }
@@ -176,7 +176,7 @@ SyntaxUnit.prototype = {
 }
 
 // Condition expression class
-var SyntaxExpression = function(first) {
+const SyntaxExpression = function(first) {
     // properties
     this.first = first;
     this.compare = "";
@@ -189,8 +189,8 @@ SyntaxExpression.prototype = {
 
     // get result text
     "getText": function(patterns) {
-        var result = false;
-        var text = this.first.getText(patterns);
+        let result = false;
+        let text = this.first.getText(patterns);
         if (this.clause == null) {
             // no comparison target
             if (!this.compare) {
@@ -198,7 +198,7 @@ SyntaxExpression.prototype = {
             }
 
             // get the comparison target
-            var second = this.second.getText(patterns);
+            let second = this.second.getText(patterns);
             if (PatternCommon.isInt(text) && !PatternCommon.isInt(second)) {
                 second = PatternCommon.toInt(second);
             }
@@ -240,7 +240,7 @@ SyntaxExpression.prototype = {
             }
         } else {
             // IN clause
-            var i = 0;
+            let i = 0;
             while (!result && i < this.clause.list.length) {
                 if (this.clause.list[i] == text) {
                     result = true;
@@ -263,7 +263,7 @@ SyntaxExpression.prototype = {
 }
 
 // Operator term class
-var SyntaxTerm = function(first) {
+const SyntaxTerm = function(first) {
     // properties
     this.first = first;
     this.operators = [];
@@ -282,15 +282,15 @@ SyntaxTerm.prototype = {
     // get result text
     "getText": function(patterns) {
         // check the properties
-        var text = this.first.getText(patterns);
+        let text = this.first.getText(patterns);
         if (this.operators.length == 0) {
             return text;
         }
 
         // addition and subtraction
-        for (var i = 0; i < this.operators.length; i++) {
-            var operator = this.operators[i];
-            var follow = this.follows[i].getText(patterns);
+        for (let i = 0; i < this.operators.length; i++) {
+            const operator = this.operators[i];
+            const follow = this.follows[i].getText(patterns);
             if (operator == "+") {
                 text = PatternCommon.toInt(text).add(PatternCommon.toInt(follow));
             } else if (operator == "-") {
@@ -305,7 +305,7 @@ SyntaxTerm.prototype = {
 }
 
 // Operator factor class
-var SyntaxFactor = function(first) {
+const SyntaxFactor = function(first) {
     // properties
     this.first = first;
     this.operators = [];
@@ -325,16 +325,16 @@ SyntaxFactor.prototype = {
     // get result text
     "getText": function(patterns) {
         // check the properties
-        var text = this.first.getText(patterns);
+        const text = this.first.getText(patterns);
         if (this.operators.length == 0) {
             return text;
         }
 
         // multiplication and division
-        var value = PatternCommon.toInt(text);
-        for (var i = 0; i < this.operators.length; i++) {
-            var operator = this.operators[i];
-            var follow = PatternCommon.toInt(this.follows[i].getText(patterns));
+        let value = PatternCommon.toInt(text);
+        for (let i = 0; i < this.operators.length; i++) {
+            const operator = this.operators[i];
+            const follow = PatternCommon.toInt(this.follows[i].getText(patterns));
             if (operator == "*") {
                 value = value.multiply(follow);
             } else if (operator == "/") {
@@ -349,7 +349,7 @@ SyntaxFactor.prototype = {
 }
 
 // Operator value class
-var SyntaxValue = function(element) {
+const SyntaxValue = function(element) {
     // properties
     this.element = element;
     this.properties = [];
@@ -361,9 +361,9 @@ SyntaxValue.prototype = {
     // get result text
     "getText": function(patterns) {
         // convert to pattern value
-        var text = this.element.getText(patterns);
-        for (var i = 0; i < this.properties.length; i++) {
-            var value = new PatternValue(text);
+        let text = this.element.getText(patterns);
+        for (let i = 0; i < this.properties.length; i++) {
+            const value = new PatternValue(text);
             text = value.getProperty(this.properties[i]);
         }
         return text;
@@ -372,7 +372,7 @@ SyntaxValue.prototype = {
 }
 
 // Variable class
-var SyntaxVariable = function(number) {
+const SyntaxVariable = function(number) {
     // fields
     if (isNaN(number)) {
         this._number = 0;
@@ -396,7 +396,7 @@ SyntaxVariable.prototype = {
 }
 
 // Literal value class
-var SyntaxLiteral = function(text) {
+const SyntaxLiteral = function(text) {
     // fields
     this._text = text;
 }

@@ -1,5 +1,5 @@
 // Query grammar object
-var QueryGrammar = {
+const QueryGrammar = {
 
     "flag": "i",
 
@@ -280,13 +280,13 @@ var QueryGrammar = {
 }
 
 // Query syntax converter
-var QueryConverter = {
+const QueryConverter = {
 
     // Query ::= From Where? Select? Order? Limit? ;
     "Query": function(tree) {
         // FROM
-        var query = { "from": tree.children[0].value };
-        var index = 1;
+        const query = { "from": tree.children[0].value };
+        let index = 1;
 
         // WHERE
         if (index < tree.children.length && tree.children[index].label == "Where") {
@@ -329,21 +329,21 @@ var QueryConverter = {
 
     // String ::= """(\\""|[^""])*""" ;
     "String": function(tree) {
-        var text = tree.children[0].text.replace("\\\"", "\"");
+        const text = tree.children[0].text.replace("\\\"", "\"");
         tree.value = text.substring(1, text.length - 1);
     },
 
     // Where ::= 'WHERE' Condition ;
     "Where": function(tree) {
-        var where = new SyntaxWhere();
+        const where = new SyntaxWhere();
         where.condition = tree.children[1].value;
         tree.value = where;
     },
 
     // Condition ::= Part ('OR' Part)* ;
     "Condition": function(tree) {
-        var condition = new SyntaxCondition();
-        for (var i = 0; i < tree.children.length; i += 2) {
+        const condition = new SyntaxCondition();
+        for (let i = 0; i < tree.children.length; i += 2) {
             condition.list.push(tree.children[i].value);
         }
         tree.value = condition;
@@ -351,8 +351,8 @@ var QueryConverter = {
 
     // Part ::= Unit ('AND' Unit)* ;
     "Part": function(tree) {
-        var part = new SyntaxPart();
-        for (var i = 0; i < tree.children.length; i += 2) {
+        const part = new SyntaxPart();
+        for (let i = 0; i < tree.children.length; i += 2) {
             part.list.push(tree.children[i].value);
         }
         tree.value = part;
@@ -360,7 +360,7 @@ var QueryConverter = {
 
     // Unit ::= 'NOT'? Expression ;
     "Unit": function(tree) {
-        var unit = new SyntaxUnit();
+        const unit = new SyntaxUnit();
         if (1 < tree.children.length) {
             // with NOT
             unit.not = true;
@@ -374,7 +374,7 @@ var QueryConverter = {
 
     // Expression ::= Term (Compare Term | Clause)? ;
     "Expression": function(tree) {
-        var expression = new SyntaxExpression(tree.children[0].value);
+        const expression = new SyntaxExpression(tree.children[0].value);
         if (tree.children.length == 3) {
             // Term Compare Term
             expression.compare = tree.children[1].value;
@@ -388,8 +388,8 @@ var QueryConverter = {
 
     // Term ::= Factor (('+' | '-' | '&') Factor)* ;
     "Term": function(tree) {
-        var term = new SyntaxTerm(tree.children[0].value);
-        for (var i = 2; i < tree.children.length; i += 2) {
+        const term = new SyntaxTerm(tree.children[0].value);
+        for (let i = 2; i < tree.children.length; i += 2) {
             term.add(tree.children[i - 1].text, tree.children[i].value);
         }
         tree.value = term;
@@ -397,8 +397,8 @@ var QueryConverter = {
 
     // Factor ::= Value (('*' | '/' | '%') Value)* ;
     "Factor": function(tree) {
-        var factor = new SyntaxFactor(tree.children[0].value);
-        for (var i = 2; i < tree.children.length; i += 2) {
+        const factor = new SyntaxFactor(tree.children[0].value);
+        for (let i = 2; i < tree.children.length; i += 2) {
             factor.add(tree.children[i - 1].text, tree.children[i].value);
         }
         tree.value = factor;
@@ -406,9 +406,9 @@ var QueryConverter = {
 
     // Value ::= Element ('.' Property)* ;
     "Value": function(tree) {
-        var value = new SyntaxValue(tree.children[0].value);
-        for (var i = 2; i < tree.children.length; i += 2) {
-            var property = tree.children[i].value;
+        const value = new SyntaxValue(tree.children[0].value);
+        for (let i = 2; i < tree.children.length; i += 2) {
+            let property = tree.children[i].value;
             if (!property) {
                 // without property
                 property = "pattern";
@@ -421,7 +421,7 @@ var QueryConverter = {
     // Element ::= Variable | Literal | '(' Condition ')' ;
     "Element": function(tree) {
         if (tree.children.length == 1) {
-            var child = tree.children[0];
+            const child = tree.children[0];
             if (child.label == "Variable") {
                 // Variable
                 tree.value = new SyntaxVariable(child.value);
@@ -437,7 +437,7 @@ var QueryConverter = {
 
     // Variable ::= "\$[0-9]*" ;
     "Variable": function(tree) {
-        var text = tree.children[0].text.substring(1);
+        const text = tree.children[0].text.substring(1);
         if (0 < text.length) {
             // with variable number
             tree.value = parseInt(text, 10);
@@ -469,7 +469,7 @@ var QueryConverter = {
 
     // Clause ::= 'NOT'? 'IN' '(' List ')' ;
     "Clause": function(tree) {
-        var clause = { "not": false , "list": [] };
+        const clause = { "not": false , "list": [] };
         if (4 < tree.children.length) {
             // with NOT
             clause.not = true;
@@ -484,14 +484,14 @@ var QueryConverter = {
     // List ::= Literal (',' Literal)* ;
     "List": function(tree) {
         tree.list = [];
-        for (var i = 0; i < tree.children.length; i += 2) {
+        for (let i = 0; i < tree.children.length; i += 2) {
             tree.list.push(tree.children[i].value);
         }
     },
 
     // Select ::= 'SELECT' 'DISTINCT'? View ;
     "Select": function(tree) {
-        var select = new SyntaxSelect();
+        const select = new SyntaxSelect();
         if (2 < tree.children.length) {
             // with DISTINCT
             select.distinct = true;
@@ -506,14 +506,14 @@ var QueryConverter = {
     // View ::= Term+ ;
     "View": function(tree) {
         tree.list = [];
-        for (var i = 0; i < tree.children.length; i++) {
+        for (let i = 0; i < tree.children.length; i++) {
             tree.list.push(tree.children[i].value);
         }
     },
 
     // Order ::= 'ORDER' 'BY' Multiple ;
     "Order": function(tree) {
-        var order = new SyntaxOrder();
+        const order = new SyntaxOrder();
         Array.prototype.push.apply(order.list, tree.children[2].list);
         tree.value = order;
     },
@@ -521,14 +521,14 @@ var QueryConverter = {
     // Multiple ::= Single (',' Single)* ;
     "Multiple": function(tree) {
         tree.list = [];
-        for (var i = 0; i < tree.children.length; i += 2) {
+        for (let i = 0; i < tree.children.length; i += 2) {
             tree.list.push(tree.children[i].value);
         }
     },
 
     // Single ::= Value ('ASC' | 'DESC')? ;
     "Single": function(tree) {
-        var single = { "value": tree.children[0].value, "desc": false };
+        const single = { "value": tree.children[0].value, "desc": false };
         if (1 < tree.children.length && tree.children[1].label == "'DESC'") {
             single.desc = true;
         }

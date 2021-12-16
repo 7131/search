@@ -1,5 +1,5 @@
 // Controller class
-var Controller = function() {
+const Controller = function() {
     // fields
     this._parser = new Parser(PatternGrammar, PatternConverter);
     this._ssql = new Parser(QueryGrammar, QueryConverter);
@@ -40,32 +40,32 @@ Controller.prototype = {
         this._showProgress(0, 0);
 
         // query analysis
-        var result = this._ssql.tokenize(PatternCommon.toSmall(this._query.value));
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid, "SsQL error");
+        const ssql = this._ssql.tokenize(PatternCommon.toSmall(this._query.value));
+        if (ssql.tokens == null) {
+            this._setError(ssql.valid, ssql.invalid, "SsQL error");
             return;
         }
-        result = this._ssql.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid, "SsQL error");
+        const pattern = this._ssql.parse(ssql.tokens);
+        if (pattern.tree == null) {
+            this._setError(pattern.valid, pattern.invalid, "SsQL error");
             return;
         }
-        this._syntax = result.tree.value;
+        this._syntax = pattern.tree.value;
 
         // pattern analysis
-        result = this._parser.tokenize(this._syntax.from);
-        if (result.tokens == null) {
-            this._setError(result.valid, result.invalid, "pattern error");
+        const lex = this._parser.tokenize(this._syntax.from);
+        if (lex.tokens == null) {
+            this._setError(lex.valid, lex.invalid, "pattern error");
             return;
         }
-        result = this._parser.parse(result.tokens);
-        if (result.tree == null) {
-            this._setError(result.valid, result.invalid, "pattern error");
+        const syntax = this._parser.parse(lex.tokens);
+        if (syntax.tree == null) {
+            this._setError(syntax.valid, syntax.invalid, "pattern error");
             return;
         }
 
         // preparation for execution
-        var creator = new PatternCreator(result.tree.iterator);
+        const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showResult.bind(this);
         creator.cancelEvent = this._canceled.bind(this);
@@ -92,7 +92,7 @@ Controller.prototype = {
     // show the result
     "_showResult": function(completed) {
         // title
-        var h2 = document.createElement("h2");
+        const h2 = document.createElement("h2");
         h2.innerText = "Result";
         this._resultArea.appendChild(h2);
         if (!Array.isArray(this._values)) {
@@ -105,9 +105,9 @@ Controller.prototype = {
         this._values.sort(this._syntax.order.compare.bind(this._syntax.order));
 
         // list
-        var ul = document.createElement("ul");
-        for (var i = 0; i < this._values.length; i++) {
-            var li = document.createElement("li");
+        const ul = document.createElement("ul");
+        for (let i = 0; i < this._values.length; i++) {
+            const li = document.createElement("li");
             li.innerText = this._values[i].text;
             ul.appendChild(li);
         }
@@ -136,11 +136,11 @@ Controller.prototype = {
             }
 
             // display items
-            var text = this._syntax.select.getText(patterns);
-            var value = { "text": text, "patterns": patterns };
+            const text = this._syntax.select.getText(patterns);
+            const value = { "text": text, "patterns": patterns };
             if (this._syntax.select.distinct) {
                 // excluding duplication
-                var find = function(element) { return element.text == text; };
+                const find = function(element) { return element.text == text; };
                 if (0 < this._values.filter(find).length) {
                     return;
                 }
@@ -162,9 +162,9 @@ Controller.prototype = {
         }
 
         // display items
-        var head = document.createElement("div");
-        var ok = document.createElement("div");
-        var ng = document.createElement("div");
+        const head = document.createElement("div");
+        const ok = document.createElement("div");
+        const ng = document.createElement("div");
         head.innerHTML = title;
         head.className = "error";
         ok.innerHTML = valid;

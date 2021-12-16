@@ -1,5 +1,5 @@
 // Pattern grammar object
-var PatternGrammar = {
+const PatternGrammar = {
 
     "flag": "i",
 
@@ -130,12 +130,12 @@ var PatternGrammar = {
 }
 
 // Pattern syntax converter
-var PatternConverter = {
+const PatternConverter = {
 
     // Selection ::= Sequence ('|' Sequence)* ;
     "Selection": function(tree) {
-        var iterators = [];
-        for (var i = 0; i < tree.children.length; i += 2) {
+        const iterators = [];
+        for (let i = 0; i < tree.children.length; i += 2) {
             iterators.push(tree.children[i].iterator);
         }
         tree.iterator = new SelectionIterator(iterators);
@@ -143,8 +143,8 @@ var PatternConverter = {
 
     // Sequence ::= Factor+ ;
     "Sequence": function(tree) {
-        var iterators = [];
-        for (var i = 0; i < tree.children.length; i++) {
+        const iterators = [];
+        for (let i = 0; i < tree.children.length; i++) {
             iterators.push(tree.children[i].iterator);
         }
         tree.iterator = new SequenceIterator(iterators);
@@ -153,16 +153,16 @@ var PatternConverter = {
     // Factor ::= (Letter | Class | Group) Iteration? ;
     "Factor": function(tree) {
         // number of iterations
-        var min = 1;
-        var max = 1;
+        let min = 1;
+        let max = 1;
         if (1 < tree.children.length) {
-            var iteration = tree.children[1];
+            const iteration = tree.children[1];
             min = iteration.min;
             max = iteration.max;
         }
 
         // create a iterator
-        var child = tree.children[0];
+        const child = tree.children[0];
         tree.iterator = new FactorIterator(child.iterator, min, max);
     },
 
@@ -179,7 +179,7 @@ var PatternConverter = {
 
     // NonDigit ::= "\\?." ;
     "NonDigit": function(tree) {
-        var text = tree.children[0].text;
+        const text = tree.children[0].text;
         if (1 < text.length) {
             tree.text = text.substring(1);
         } else {
@@ -189,7 +189,7 @@ var PatternConverter = {
 
     // Class ::= '#' | '$' | '.' | '[' '^'? (Letter ('-' Letter)?)+ ']' ;
     "Class": function(tree) {
-        var texts = [];
+        let texts = [];
         switch (tree.children[0].text) {
             case "#":
                 texts = this._numbers.split("");
@@ -204,9 +204,9 @@ var PatternConverter = {
                 break;
 
             default:
-                var last = tree.children.length - 2;
-                var i = 1;
-                var negative = false;
+                const last = tree.children.length - 2;
+                let i = 1;
+                let negative = false;
                 if (tree.children[i].text == "^" && tree.children[i].label != "Letter") {
                     // negative character class
                     negative = true;
@@ -214,8 +214,8 @@ var PatternConverter = {
                 }
                 while (i <= last) {
                     // first value
-                    var head = tree.children[i].text;
-                    var tail = head;
+                    const head = tree.children[i].text;
+                    let tail = head;
                     i++;
                     if (tree.children[i].text == "-") {
                         // subsequent value
@@ -224,8 +224,8 @@ var PatternConverter = {
                     }
 
                     // create a list of values
-                    for (var j = head.charCodeAt(0); j <= tail.charCodeAt(0); j++) {
-                        var letter = String.fromCharCode(j);
+                    for (let j = head.charCodeAt(0); j <= tail.charCodeAt(0); j++) {
+                        const letter = String.fromCharCode(j);
                         if (texts.indexOf(letter) < 0) {
                             texts.push(letter);
                         }
@@ -233,8 +233,8 @@ var PatternConverter = {
                 }
                 if (negative) {
                     // negative character class
-                    var removes = texts;
-                    var find = function(element) { return removes.indexOf(element) < 0; };
+                    const removes = texts;
+                    const find = function(element) { return removes.indexOf(element) < 0; };
                     texts = (this._numbers + this._alphabets).split("").filter(find);
                 }
                 break;
@@ -284,8 +284,8 @@ var PatternConverter = {
 
     // Integer ::= Digit+ ;
     "Integer": function(tree) {
-        var text = "";
-        for (var i = 0; i < tree.children.length; i++) {
+        let text = "";
+        for (let i = 0; i < tree.children.length; i++) {
             text += tree.children[i].text;
         }
         tree.value = parseInt(text, 10);
