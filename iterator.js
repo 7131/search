@@ -753,12 +753,19 @@ PatternValue.prototype = {
 
     // get the number of balls
     "_getBalls": function() {
-        if (!this.getProperty("valid")) {
+        if (!this.getProperty("jugglable")) {
             return -1;
         }
         const numbers = this._getNumbers();
-        const sum = function(acc, cur) { return acc + cur; };
-        return numbers.reduce(sum, 0) / numbers.length;
+        if (this.getProperty("valid")) {
+            // siteswap
+            const sum = function(acc, cur) { return acc + cur; };
+            return numbers.reduce(sum, 0) / numbers.length;
+        } else {
+            // not siteswap
+            const find = function(element, index) { return numbers.length <= element + index; };
+            return numbers.filter(find).length;
+        }
     },
 
     // get period of the pattern
@@ -772,7 +779,7 @@ PatternValue.prototype = {
 
     // get the state number
     "_getState": function() {
-        if (!this.getProperty("valid")) {
+        if (!this.getProperty("jugglable")) {
             return -1;
         }
 
@@ -790,10 +797,13 @@ PatternValue.prototype = {
         }
 
         // expand a numeric array
-        const count = Math.ceil(max / numbers.length);
-        let expand = [];
-        for (let i = 0; i < count; i++) {
-            expand = expand.concat(numbers);
+        const expand = [].concat(numbers);
+        if (this.getProperty("valid")) {
+            // siteswap
+            const count = Math.ceil(max / numbers.length) - 1;
+            for (let i = 0; i < count; i++) {
+                Array.prototype.push.apply(expand, numbers);
+            }
         }
 
         // calculate the drop points

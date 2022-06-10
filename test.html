@@ -106,9 +106,9 @@
   <tr><td></td><td>FROM "315315"<br>SELECT $.int36</td><td>183315353</td><td></td>
   <tr><td></td><td>FROM "5[124]"<br>SELECT $.jugglable</td><td>1 1 0</td><td></td>
   <tr><td></td><td>FROM "5[124]"<br>SELECT $.valid</td><td>1 0 0</td><td></td>
-  <tr><td></td><td>FROM "5[124]"<br>SELECT $.balls</td><td>3 -1 -1</td><td></td>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.balls</td><td>3 2 -1</td><td></td>
   <tr><td></td><td>FROM "5[124]"<br>SELECT $.period</td><td>2 -1 -1</td><td></td>
-  <tr><td></td><td>FROM "5[124]"<br>SELECT $.state</td><td>11 -1 -1</td><td></td>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.state</td><td>11 10 -1</td><td></td>
   <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $</td><td>a 2a -1.2</td><td></td>
   <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $.int10</td><td>0 2 -1</td><td></td>
   <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $.int36</td><td>10 82 -1</td><td></td>
@@ -150,9 +150,9 @@
   <tr><td></td><td>FROM "3"<br>WHERE "1" OR 0</td><td>3</td><td></td>
   <tr><td></td><td>FROM "3"<br>WHERE $ OR " "</td><td>3</td><td></td>
   <tr><td></td><td>FROM "#{4}"<br>WHERE $.standard IN("71", "62", "53")</td><td>7171 6262 5353 3535 2626 1717</td><td></td>
-  <tr><td></td><td>FROM "[12][34]"<br>SELECT $ "(" $.balls ")"</td><td>13(2) 23(-1) 14(-1) 24(3)</td><td></td>
+  <tr><td></td><td>FROM "[12][34]"<br>SELECT $ "(" $.balls ")"</td><td>13(2) 23(2) 14(1) 24(3)</td><td></td>
   <tr><td></td><td>FROM "3"<br>SELECT $.int10 "+1=" $.int10 + 1</td><td>3+1=4</td><td></td>
-  <tr><td></td><td>FROM "[12][34]"<br>SELECT DISTINCT $.state</td><td>5 -1 11</td><td></td>
+  <tr><td></td><td>FROM "[12][34]"<br>SELECT DISTINCT $.state</td><td>5 8 11</td><td></td>
   <tr><td></td><td>FROM "3|441|531"<br>ORDER BY $.period DESC, $</td><td>441 531 3</td><td></td>
   <tr><td></td><td>FROM "51|42|60|3|531|441"</td><td>51 42 60 3 531 441</td><td></td>
   <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period</td><td>3 51 42 60 531 441</td><td></td>
@@ -171,8 +171,8 @@
   <tr><td></td><td>FROM "[123][456][789]"<br>WHERE $.reverse.valid</td><td>147 357 258 168 249 369</td><td></td>
   <tr><td></td><td>FROM "[123][456][789]"<br>WHERE ($ & $.reverse).valid</td><td>147 258 369</td><td></td>
   <tr><td></td><td>FROM "#{3}"<br>WHERE $.period == $.length AND $.reverse == $<br>LIMIT 5</td><td>030 060 090 141 171</td><td></td>
-  <tr><td></td><td>FROM "(#+)x(#+)"<br>WHERE $.balls == $1 * $2<br>SELECT $ "=" $.balls</td><td>2x7=14 05x2=10</td><td></td>
-  <tr><td></td><td>FROM "(#+)x(#+)x(#+)"<br>WHERE $.balls == $1 * $2 * $3</td><td>3x5x1 5x1x3</td><td></td>
+  <tr><td></td><td>FROM "(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2<br>SELECT $ "=" $.balls</td><td>2x7=14 05x2=10</td><td></td>
+  <tr><td></td><td>FROM "(#+)x(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2 * $3</td><td>3x5x1 5x1x3</td><td></td>
 </table>
 <input type="button" id="professional" value="Execute">
 </section>
