@@ -352,7 +352,7 @@ SyntaxFactor.prototype = {
 const SyntaxValue = function(element) {
     // properties
     this.element = element;
-    this.properties = [];
+    this.follows = [];
 }
 
 // Operator value prototype
@@ -362,11 +362,101 @@ SyntaxValue.prototype = {
     "getText": function(patterns) {
         // convert to pattern value
         let text = this.element.getText(patterns);
-        for (let i = 0; i < this.properties.length; i++) {
-            const value = new PatternValue(text);
-            text = value.getProperty(this.properties[i]);
+        for (let i = 0; i < this.follows.length; i++) {
+            this.follows[i].setValue(text);
+            text = this.follows[i].getText(patterns);
         }
         return text;
+    },
+
+}
+
+// Property class
+const SyntaxProperty = function(name) {
+    // properties
+    this.name = name;
+    this.value = null;
+}
+
+// Property prototype
+SyntaxProperty.prototype = {
+
+    // set pattern value
+    "setValue": function(pattern) {
+        this.value = new PatternValue(pattern);
+    },
+
+    // get result text
+    "getText": function(patterns) {
+        return this.value.getProperty(this.name);
+    },
+
+}
+
+// Method class
+const SyntaxMethod = function(name) {
+    // properties
+    this.name = name;
+    this.sign = 1;
+    this.term = null;
+    this.value = null;
+}
+
+// Method prototype
+SyntaxMethod.prototype = {
+
+    // set pattern value
+    "setValue": function(pattern) {
+        this.value = pattern;
+    },
+
+    // get result text
+    "getText": function(patterns) {
+        // get the argument
+        const positive = PatternCommon.toInt(this.term.getText(patterns));
+        const number = positive.multiply(this.sign);
+        const length = this.value.length;
+
+        // execute the method
+        switch (this.name) {
+            case "at":
+                if (positive.greater(length) || number.equals(length)) {
+                    return "";
+                }
+                if (number.isNegative()) {
+                    return this.value[number.add(length)];
+                } else {
+                    return this.value[number];
+                }
+
+            case "rotate":
+                let rotate = number.mod(length);
+                if (rotate.isNegative()) {
+                    rotate = rotate.add(length);
+                }
+                return this.value.substring(rotate) + this.value.substring(0, rotate);
+
+            case "skip":
+                if (positive.greater(length) || number.equals(length)) {
+                    return "";
+                }
+                if (number.isNegative()) {
+                    return this.value.substring(0, number.add(length));
+                } else {
+                    return this.value.substring(number);
+                }
+
+            case "take":
+                if (positive.lesser(length)) {
+                    if (number.isNegative()) {
+                        return this.value.substring(number.add(length));
+                    } else {
+                        return this.value.substring(0, number);
+                    }
+                }
+                break;
+        }
+        return this.value;
     },
 
 }

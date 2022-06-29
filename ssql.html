@@ -35,7 +35,7 @@ LIMIT number
 
 <section>
 <h2>Acquisition condition</h2>
-<p>Specify the acquisition condition by combining variables, properties, and operators in the WHERE clause. For example:</p>
+<p>Specify the acquisition condition by combining variables, properties, methods, and operators in the WHERE clause. For example:</p>
 <pre>
 WHERE $0.balls==3
 </pre>
@@ -69,10 +69,19 @@ WHERE $0.balls==3
   <tr><td>int36</td><td>base 36 value</td><td>183315353</td></tr>
 </table>
 <p>The value of "jugglable" is 1 if it is jugglable and 0 otherwise. "valid" is similar. "balls" and "state" will be -1 if the pattern is not jugglable. "period" will be -1 if the pattern is not a siteswap, even if it is jugglable. "int10" is a numerical value from the beginning to the position where it can be regarded as a decimal integer. "int36" is similar. Property can be omitted. If omitted, it is assumed that "pattern" is specified.</p>
+<p>Methods are specified in the same way as properties, but with parentheses followed by arguments, such as $0.at(1). In the example in the following table, methods are applied to string "12345".</p>
+<table class="border">
+  <tr><th>method</th><th>explanation</th><th>n = 1</th><th>n = -2</th></tr>
+  <tr><td>at(n)</td><td>character at that index</td><td>2</td><td>4</td></tr>
+  <tr><td>rotate(n)</td><td>rotation for n characters</td><td>23451</td><td>45123</td></tr>
+  <tr><td>skip(n)</td><td>skip n characters</td><td>2345</td><td>123</td></tr>
+  <tr><td>take(n)</td><td>take n characters</td><td>1</td><td>45</td></tr>
+</table>
+<p>All methods count from the left if you specify 0 or a positive number as an argument, and from the right if you specify a negative number. The leftmost position is 0 and the rightmost position is -1.</p>
 <p>The following is a list of operators by priority.</p>
 <table class="border">
   <tr><th>priority</th><th>operator</th><th>meaning</th></tr>
-  <tr><td>1</td><td>.</td><td>the string on the right is a property</td></tr>
+  <tr><td>1</td><td>.</td><td>string on the right is a property or a method</td></tr>
   <tr><td rowspan="3">2</td><td>*</td><td>multiplication</td></tr>
   <tr><td>/</td><td>quotient of integer division</td></tr>
   <tr><td>%</td><td>remainder of integer division</td></tr>
@@ -158,12 +167,13 @@ Unit ::= 'NOT'? Expression ;
 Expression ::= Term (Compare Term | Clause)? ;
 Term ::= Factor (('+' | '-' | '&') Factor)* ;
 Factor ::= Value (('*' | '/' | '%') Value)* ;
-Value ::= Element ('.' Property)* ;
+Value ::= Element ('.' (Property | Method))* ;
 Element ::= Variable | Literal | '(' Condition ')' ;
 Variable ::= "\$[0-9]*" ;
 Literal ::= String | Integer ;
 Integer ::= "[0-9]+" ;
 Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
+Method ::= ('at' | 'rotate' | 'skip' | 'take') '(' '-'? Term ')' ;
 Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
 Clause ::= 'NOT'? 'IN' '(' List ')' ;
 List ::= Literal (',' Literal)* ;
