@@ -209,33 +209,59 @@ SyntaxExpression.prototype = {
             // compare
             if (PatternCommon.isInt(text)) {
                 // for BigInt
-                if (this.compare == "==") {
-                    result = text.equals(second);
-                } else if (this.compare == "!=" || this.compare == "<>") {
-                    result = text.notEquals(second);
-                } else if (this.compare == "<") {
-                    result = text.lesser(second);
-                } else if (this.compare == "<=") {
-                    result = text.lesserOrEquals(second);
-                } else if (this.compare == ">") {
-                    result = text.greater(second);
-                } else if (this.compare == ">=") {
-                    result = text.greaterOrEquals(second);
+                switch (this.compare) {
+                    case "==":
+                        result = text.equals(second);
+                        break;
+
+                    case "!=":
+                    case "<>":
+                        result = text.notEquals(second);
+                        break;
+
+                    case "<":
+                        result = text.lesser(second);
+                        break;
+
+                    case "<=":
+                        result = text.lesserOrEquals(second);
+                        break;
+
+                    case ">":
+                        result = text.greater(second);
+                        break;
+
+                    case ">=":
+                        result = text.greaterOrEquals(second);
+                        break;
                 }
             } else {
                 // otherwise
-                if (this.compare == "==") {
-                    result = (text == second);
-                } else if (this.compare == "!=" || this.compare == "<>") {
-                    result = (text != second);
-                } else if (this.compare == "<") {
-                    result = (text < second);
-                } else if (this.compare == "<=") {
-                    result = (text <= second);
-                } else if (this.compare == ">") {
-                    result = (text > second);
-                } else if (this.compare == ">=") {
-                    result = (text >= second);
+                switch (this.compare) {
+                    case "==":
+                        result = (text == second);
+                        break;
+
+                    case "!=":
+                    case "<>":
+                        result = (text != second);
+                        break;
+
+                    case "<":
+                        result = (text < second);
+                        break;
+
+                    case "<=":
+                        result = (text <= second);
+                        break;
+
+                    case ">":
+                        result = (text > second);
+                        break;
+
+                    case ">=":
+                        result = (text >= second);
+                        break;
                 }
             }
         } else {
@@ -289,14 +315,19 @@ SyntaxTerm.prototype = {
 
         // addition and subtraction
         for (let i = 0; i < this.operators.length; i++) {
-            const operator = this.operators[i];
             const follow = this.follows[i].getText(patterns);
-            if (operator == "+") {
-                text = PatternCommon.toInt(text).add(PatternCommon.toInt(follow));
-            } else if (operator == "-") {
-                text = PatternCommon.toInt(text).subtract(PatternCommon.toInt(follow));
-            } else {
-                text += "" + follow;
+            switch (this.operators[i]) {
+                case "+":
+                    text = PatternCommon.toInt(text).add(PatternCommon.toInt(follow));
+                    break;
+
+                case "-":
+                    text = PatternCommon.toInt(text).subtract(PatternCommon.toInt(follow));
+                    break;
+
+                default:
+                    text += "" + follow;
+                    break;
             }
         }
         return text;
@@ -333,14 +364,19 @@ SyntaxFactor.prototype = {
         // multiplication and division
         let value = PatternCommon.toInt(text);
         for (let i = 0; i < this.operators.length; i++) {
-            const operator = this.operators[i];
             const follow = PatternCommon.toInt(this.follows[i].getText(patterns));
-            if (operator == "*") {
-                value = value.multiply(follow);
-            } else if (operator == "/") {
-                value = value.divide(follow);
-            } else {
-                value = value.mod(follow);
+            switch (this.operators[i]) {
+                case "*":
+                    value = value.multiply(follow);
+                    break;
+
+                case "/":
+                    value = value.divide(follow);
+                    break;
+
+                default:
+                    value = value.mod(follow);
+                    break;
             }
         }
         return value;
