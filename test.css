@@ -5,6 +5,7 @@ nav span {
 }
 
 article {
+    line-height: 1.8;
     margin-bottom: 10ex;
 }
 
@@ -45,6 +46,10 @@ code {
 }
 
 @media (min-width: 768px) {
+
+    article {
+        line-height: 1.5;
+    }
 
     input[type="button"] {
         width: auto;

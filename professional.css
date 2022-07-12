@@ -5,6 +5,7 @@ nav span {
 }
 
 article {
+    line-height: 1.8;
     margin-bottom: 10ex;
 }
 
@@ -42,7 +43,6 @@ code {
 }
 
 pre {
-    line-height: 150%;
     white-space: pre-wrap;
 }
 
@@ -65,6 +65,10 @@ pre {
 }
 
 @media (min-width: 768px) {
+
+    article {
+        line-height: 1.5;
+    }
 
     textarea {
         width: 50ex;
