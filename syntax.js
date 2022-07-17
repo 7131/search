@@ -431,74 +431,183 @@ SyntaxProperty.prototype = {
 
 // Method class
 const SyntaxMethod = function(name) {
-    // properties
-    this.name = name;
-    this.sign = 1;
-    this.term = null;
-    this.value = null;
+    // fields
+    this._name = name;
+    this._sign = 1;
+    this._term = null;
+    this._value = null;
+    this._functions = {
+        "at": this._getAt.bind(this),
+        "rotate": this._getRotate.bind(this),
+        "skip": this._getSkip.bind(this),
+        "take": this._getTake.bind(this),
+    };
 }
 
 // Method prototype
 SyntaxMethod.prototype = {
 
+    // set the term
+    "setTerm": function(term, sign) {
+        this._term = term;
+        this._sign = sign;
+    },
+
     // set pattern value
     "setValue": function(pattern) {
-        this.value = pattern;
+        this._value = pattern;
     },
 
     // get result text
     "getText": function(patterns) {
-        // get the argument
-        const positive = PatternCommon.toInt(this.term.getText(patterns));
-        const number = positive.multiply(this.sign);
-        const length = this.value.length;
+        // get method
+        const method = this._functions[this._name];
+        if (method == null) {
+            return this._value;
+        }
 
         // execute the method
-        switch (this.name) {
-            case "at":
-                if (positive.greater(length) || number.equals(length)) {
-                    return "";
-                }
-                if (number.isNegative()) {
-                    return this.value[number.add(length)];
-                } else {
-                    return this.value[number];
-                }
+        const positive = PatternCommon.toInt(this._term.getText(patterns));
+        const number = positive.multiply(this._sign);
+        const length = this._value.length;
+        return method(positive, number, length);
+    },
 
-            case "rotate":
-                let rotate = number.mod(length);
-                if (rotate.isNegative()) {
-                    rotate = rotate.add(length);
-                }
-                return this.value.substring(rotate) + this.value.substring(0, rotate);
-
-            case "skip":
-                if (positive.greater(length) || number.equals(length)) {
-                    return "";
-                }
-                if (number.isNegative()) {
-                    return this.value.substring(0, number.add(length));
-                } else {
-                    return this.value.substring(number);
-                }
-
-            case "take":
-                if (positive.lesser(length)) {
-                    if (number.isNegative()) {
-                        return this.value.substring(number.add(length));
-                    } else {
-                        return this.value.substring(0, number);
-                    }
-                }
-                break;
+    // get the value at the specified position
+    "_getAt": function(positive, number, length) {
+        if (positive.greater(length) || number.equals(length)) {
+            return "";
         }
-        return this.value;
+        if (number.isNegative()) {
+            return this._value[number.add(length)];
+        } else {
+            return this._value[number];
+        }
+    },
+
+    // get the rotated value
+    "_getRotate": function(positive, number, length) {
+        let rotate = number.mod(length);
+        if (rotate.isNegative()) {
+            rotate = rotate.add(length);
+        }
+        return this._value.substring(rotate) + this._value.substring(0, rotate);
+    },
+
+    // get the skipped value
+    "_getSkip": function(positive, number, length) {
+        if (positive.greater(length) || number.equals(length)) {
+            return "";
+        }
+        if (number.isNegative()) {
+            return this._value.substring(0, number.add(length));
+        } else {
+            return this._value.substring(number);
+        }
+    },
+
+    // get the value from the beginning
+    "_getTake": function(positive, number, length) {
+        if (positive.greater(length) || number.equals(length)) {
+            return this._value;
+        }
+        if (number.isNegative()) {
+            return this._value.substring(number.add(length));
+        } else {
+            return this._value.substring(0, number);
+        }
     },
 
 }
 
-// Variable class
-const SyntaxVariable = function(number) {
+// Iterator class
+const SyntaxIterator = function(name, lambda) {
+    // fields
+    this._name = name;
+    this._lambda = lambda;
+    this._value = null;
+    this._functions = {
+        "every": this._testsEvery.bind(this),
+        "some": this._testsSome.bind(this),
+    };
+}
+
+// Iterator prototype
+SyntaxIterator.prototype = {
+
+    // set pattern value
+    "setValue": function(pattern) {
+        this._value = pattern;
+    },
+
+    // get result text
+    "getText": function(patterns) {
+        // set user-defined variables
+        if (this._lambda.whole != null) {
+            SymbolTable[this._lambda.whole] = this._value;
+        }
+
+        // execution of iterator
+        let result = "";
+        const method = this._functions[this._name];
+        if (method != null) {
+            result = method(patterns);
+        }
+
+        // delete user-defined variables
+        delete SymbolTable[this._lambda.index];
+        if (this._lambda.whole != null) {
+            delete SymbolTable[this._lambda.whole];
+        }
+        return result;
+    },
+
+    // test for all indexes
+    "_testsEvery": function(patterns) {
+        for (let i = 0; i < this._value.length; i++) {
+            SymbolTable[this._lambda.index] = i;
+            const text = this._lambda.getText(patterns);
+            if (!text || text === "0") {
+                return 0;
+            }
+        }
+        return 1;
+    },
+
+    // test for any index
+    "_testsSome": function(patterns) {
+        for (let i = 0; i < this._value.length; i++) {
+            SymbolTable[this._lambda.index] = i;
+            const text = this._lambda.getText(patterns);
+            if (text && text !== "0") {
+                return 1;
+            }
+        }
+        return 0;
+    },
+
+}
+
+// Lambda expression class
+const SyntaxLambda = function(index) {
+    // properties
+    this.index = index;
+    this.whole = null;
+    this.condition = null;
+}
+
+// Lambda expression prototype
+SyntaxLambda.prototype = {
+
+    // get result text
+    "getText": function(patterns) {
+        return this.condition.getText(patterns);
+    },
+
+}
+
+// Auto-defined variable class
+const SyntaxAuto = function(number) {
     // fields
     if (isNaN(number)) {
         this._number = 0;
@@ -507,8 +616,8 @@ const SyntaxVariable = function(number) {
     }
 }
 
-// Variable prototype
-SyntaxVariable.prototype = {
+// Auto-defined variable prototype
+SyntaxAuto.prototype = {
 
     // get result text
     "getText": function(patterns) {
@@ -517,6 +626,26 @@ SyntaxVariable.prototype = {
             return "";
         }
         return patterns[this._number];
+    },
+
+}
+
+// User-defined variable class
+const SyntaxUser = function(name) {
+    // fields
+    this._name = name;
+}
+
+// User-defined variable prototype
+SyntaxUser.prototype = {
+
+    // get result text
+    "getText": function(patterns) {
+        // check the fields
+        if (SymbolTable[this._name] == null) {
+            return "";
+        }
+        return SymbolTable[this._name];
     },
 
 }
@@ -536,4 +665,7 @@ SyntaxLiteral.prototype = {
     },
 
 }
+
+// Symbol Table object
+const SymbolTable = {};
 

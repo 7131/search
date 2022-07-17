@@ -40,7 +40,7 @@ LIMIT number
 WHERE $0.balls==3
 </pre>
 <p>If the condition is satisfied, the string is acquired, and if not, it is not acquired. If you omit the WHERE clause, you get all the generated strings.</p>
-<p>The variables available are $0, $1, $2, ... $0 represents the entire string, and $1, $2, etc. represent the first group, second group, etc. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the strings are assigned to the variables as follows.</p>
+<p>Variables include auto-defined variables and user-defined variables. Auto-defined variables are specified by $ + numbers such as $0, $1, $2, .... User-defined variables will be described later. $0 represents the entire string, and $1, $2, etc. represent the first group, second group, and so on. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the string are assigned to the variable as follows.</p>
 <table class="border">
   <tr><th>&nbsp;</th><th>$0</th><th>$1</th><th>$2</th></tr>
   <tr><td>1st</td><td>51</td><td>5</td><td>1</td></tr>
@@ -77,7 +77,30 @@ WHERE $0.balls==3
   <tr><td>skip(n)</td><td>skip n characters</td><td>2345</td><td>123</td></tr>
   <tr><td>take(n)</td><td>take n characters</td><td>1</td><td>45</td></tr>
 </table>
-<p>All methods count from the left if you specify 0 or a positive number as an argument, and from the right if you specify a negative number. The leftmost position is 0 and the rightmost position is -1.</p>
+<p>All of these methods count from the left if you specify 0 or a positive number as an argument, and from the right if you specify a negative number. The leftmost position is 0 and the rightmost position is -1.</p>
+<p>Some methods are iterative methods that take a lambda expression as an argument.</p>
+<table class="border">
+  <tr><th>iterator</th><th>explanation</th></tr>
+  <tr><td>every(lambda)</td><td>whether it holds for all indexes</td></tr>
+  <tr><td>some(lambda)</td><td>whether it holds for any one index</td></tr>
+</table>
+<p>Lambda expressions are specified in the following format:</p>
+<pre>
+index => condition
+</pre>
+<p>or</p>
+<pre>
+index, whole => condition
+</pre>
+<p>Here, both the index variable and the variable that represents the whole are user-defined variables. User-defined variables can be specified as $ + strings, such as $index, $x1, $_, and can be used in acquisition conditions. The following is a concrete example of the former format.</p>
+<pre>
+$0.every($index => $0.at($index) == 1)
+</pre>
+<p>If the length of $0 is n, 0 to n-1 are assigned to $index in order, and the right side of => is iterated. On the right side, it is determined whether the characters from the 0th digit to the n-1th digit are 1, so throughout this example, it is determined whether all the digits of $ 0 are 1.</p>
+<pre>
+$0.take(2).some($index, $whole => $whole.at($index) == 1)
+</pre>
+<p>This is a concrete example of the latter form, which determines if there is a 1 in the first two digits of $0. It is the same as writing $0.take(2) instead of $whole, but more concise.</p>
 <p>The following is a list of operators by priority.</p>
 <table class="border">
   <tr><th>priority</th><th>operator</th><th>meaning</th></tr>
@@ -167,13 +190,16 @@ Unit ::= 'NOT'? Expression ;
 Expression ::= Term (Compare Term | Clause)? ;
 Term ::= Factor (('+' | '-' | '&') Factor)* ;
 Factor ::= Value (('*' | '/' | '%') Value)* ;
-Value ::= Element ('.' (Property | Method))* ;
-Element ::= Variable | Literal | '(' Condition ')' ;
-Variable ::= "\$[0-9]*" ;
+Value ::= Element ('.' (Property | Method | Iterator))* ;
+Element ::= Auto | User | Literal | '(' Condition ')' ;
+Auto ::= "\$[0-9]*" ;
+User ::= "\$[a-zA-Z_][a-zA-Z_0-9]*" ;
 Literal ::= String | Integer ;
 Integer ::= "[0-9]+" ;
 Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
 Method ::= ('at' | 'rotate' | 'skip' | 'take') '(' '-'? Term ')' ;
+Iterator ::=  ('every' | 'some') '(' Lambda ')' ;
+Lambda ::= User (',' User)? '=>' Condition ;
 Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
 Clause ::= 'NOT'? 'IN' '(' List ')' ;
 List ::= Literal (',' Literal)* ;
