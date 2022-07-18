@@ -430,11 +430,10 @@ SyntaxProperty.prototype = {
 }
 
 // Method class
-const SyntaxMethod = function(name) {
+const SyntaxMethod = function(name, param) {
     // fields
     this._name = name;
-    this._sign = 1;
-    this._term = null;
+    this._param = param;
     this._value = null;
     this._functions = {
         "at": this._getAt.bind(this),
@@ -446,12 +445,6 @@ const SyntaxMethod = function(name) {
 
 // Method prototype
 SyntaxMethod.prototype = {
-
-    // set the term
-    "setTerm": function(term, sign) {
-        this._term = term;
-        this._sign = sign;
-    },
 
     // set pattern value
     "setValue": function(pattern) {
@@ -467,15 +460,13 @@ SyntaxMethod.prototype = {
         }
 
         // execute the method
-        const positive = PatternCommon.toInt(this._term.getText(patterns));
-        const number = positive.multiply(this._sign);
-        const length = this._value.length;
-        return method(positive, number, length);
+        const number = PatternCommon.toInt(this._param.getText(patterns));
+        return method(number, this._value.length);
     },
 
     // get the value at the specified position
-    "_getAt": function(positive, number, length) {
-        if (positive.greater(length) || number.equals(length)) {
+    "_getAt": function(number, length) {
+        if (number.abs().greater(length) || number.equals(length)) {
             return "";
         }
         if (number.isNegative()) {
@@ -486,7 +477,7 @@ SyntaxMethod.prototype = {
     },
 
     // get the rotated value
-    "_getRotate": function(positive, number, length) {
+    "_getRotate": function(number, length) {
         let rotate = number.mod(length);
         if (rotate.isNegative()) {
             rotate = rotate.add(length);
@@ -495,8 +486,8 @@ SyntaxMethod.prototype = {
     },
 
     // get the skipped value
-    "_getSkip": function(positive, number, length) {
-        if (positive.greater(length) || number.equals(length)) {
+    "_getSkip": function(number, length) {
+        if (number.abs().greater(length) || number.equals(length)) {
             return "";
         }
         if (number.isNegative()) {
@@ -507,8 +498,8 @@ SyntaxMethod.prototype = {
     },
 
     // get the value from the beginning
-    "_getTake": function(positive, number, length) {
-        if (positive.greater(length) || number.equals(length)) {
+    "_getTake": function(number, length) {
+        if (number.abs().greater(length) || number.equals(length)) {
             return this._value;
         }
         if (number.isNegative()) {
@@ -516,6 +507,29 @@ SyntaxMethod.prototype = {
         } else {
             return this._value.substring(0, number);
         }
+    },
+
+}
+
+// Method parameter class
+const SyntaxParameter = function() {
+    // properties
+    this.term = null;
+    this.value = null;
+}
+
+// Method parameter prototype
+SyntaxParameter.prototype = {
+
+    // get result text
+    "getText": function(patterns) {
+        if (this.term != null) {
+            return this.term.getText(patterns);
+        }
+        if (this.value != null) {
+            return "-" + this.value.getText(patterns);
+        }
+        return "";
     },
 
 }
