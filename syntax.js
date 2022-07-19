@@ -8,14 +8,14 @@ const SyntaxWhere = function() {
 SyntaxWhere.prototype = {
 
     // whether the conditions are met
-    "isValid": function(patterns) {
+    "isValid": function(symbols) {
         // check the properties
         if (this.condition == null) {
             return true;
         }
 
         // judgment
-        if (this.condition.getText(patterns)) {
+        if (this.condition.getText(symbols)) {
             return true;
         } else {
             return false;
@@ -35,16 +35,16 @@ const SyntaxSelect = function() {
 SyntaxSelect.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // check the properties
         if (this.list.length == 0) {
-            return patterns[0];
+            return symbols.getText(0);
         }
 
         // get value
         let text = "";
         for (let i = 0; i < this.list.length; i++) {
-            text += this.list[i].getText(patterns);
+            text += this.list[i].getText(symbols);
         }
         return text;
     },
@@ -65,8 +65,8 @@ SyntaxOrder.prototype = {
         for (let i = 0; i < this.list.length; i++) {
             // compare in order
             const single = this.list[i];
-            const x = single.value.getText(a.patterns);
-            const y = single.value.getText(b.patterns);
+            const x = single.value.getText(a.symbols);
+            const y = single.value.getText(b.symbols);
             if (x != y) {
                 let result = 1;
                 if (x < y) {
@@ -94,9 +94,9 @@ const SyntaxCondition = function() {
 SyntaxCondition.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // first text
-        let text = this.list[0].getText(patterns);
+        let text = this.list[0].getText(symbols);
         if (this.list.length == 1) {
             return text;
         }
@@ -106,7 +106,7 @@ SyntaxCondition.prototype = {
 
         // second and subsequent text
         for (let i = 1; i < this.list.length; i++) {
-            text = this.list[i].getText(patterns);
+            text = this.list[i].getText(symbols);
             if (text && text !== "0") {
                 return 1;
             }
@@ -126,9 +126,9 @@ const SyntaxPart = function() {
 SyntaxPart.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // first text
-        let text = this.list[0].getText(patterns);
+        let text = this.list[0].getText(symbols);
         if (this.list.length == 1) {
             return text;
         }
@@ -138,7 +138,7 @@ SyntaxPart.prototype = {
 
         // second and subsequent text
         for (let i = 1; i < this.list.length; i++) {
-            text = this.list[i].getText(patterns);
+            text = this.list[i].getText(symbols);
             if (!text || text === "0") {
                 return 0;
             }
@@ -159,9 +159,9 @@ const SyntaxUnit = function() {
 SyntaxUnit.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // text
-        const text = this.expression.getText(patterns);
+        const text = this.expression.getText(symbols);
         if (!this.not) {
             return text;
         }
@@ -188,9 +188,9 @@ const SyntaxExpression = function(first) {
 SyntaxExpression.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         let result = false;
-        let text = this.first.getText(patterns);
+        let text = this.first.getText(symbols);
         if (this.clause == null) {
             // no comparison target
             if (!this.compare) {
@@ -198,7 +198,7 @@ SyntaxExpression.prototype = {
             }
 
             // get the comparison target
-            let second = this.second.getText(patterns);
+            let second = this.second.getText(symbols);
             if (PatternCommon.isInt(text) && !PatternCommon.isInt(second)) {
                 second = PatternCommon.toInt(second);
             }
@@ -306,16 +306,16 @@ SyntaxTerm.prototype = {
     },
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // check the properties
-        let text = this.first.getText(patterns);
+        let text = this.first.getText(symbols);
         if (this.operators.length == 0) {
             return text;
         }
 
         // addition and subtraction
         for (let i = 0; i < this.operators.length; i++) {
-            const follow = this.follows[i].getText(patterns);
+            const follow = this.follows[i].getText(symbols);
             switch (this.operators[i]) {
                 case "+":
                     text = PatternCommon.toInt(text).add(PatternCommon.toInt(follow));
@@ -354,9 +354,9 @@ SyntaxFactor.prototype = {
     },
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // check the properties
-        const text = this.first.getText(patterns);
+        const text = this.first.getText(symbols);
         if (this.operators.length == 0) {
             return text;
         }
@@ -364,7 +364,7 @@ SyntaxFactor.prototype = {
         // multiplication and division
         let value = PatternCommon.toInt(text);
         for (let i = 0; i < this.operators.length; i++) {
-            const follow = PatternCommon.toInt(this.follows[i].getText(patterns));
+            const follow = PatternCommon.toInt(this.follows[i].getText(symbols));
             switch (this.operators[i]) {
                 case "*":
                     value = value.multiply(follow);
@@ -395,12 +395,12 @@ const SyntaxValue = function(element) {
 SyntaxValue.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // convert to pattern value
-        let text = this.element.getText(patterns);
+        let text = this.element.getText(symbols);
         for (let i = 0; i < this.follows.length; i++) {
             this.follows[i].setValue(text);
-            text = this.follows[i].getText(patterns);
+            text = this.follows[i].getText(symbols);
         }
         return text;
     },
@@ -423,7 +423,7 @@ SyntaxProperty.prototype = {
     },
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         return this.value.getProperty(this.name);
     },
 
@@ -452,7 +452,7 @@ SyntaxMethod.prototype = {
     },
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // get method
         const method = this._functions[this._name];
         if (method == null) {
@@ -460,7 +460,7 @@ SyntaxMethod.prototype = {
         }
 
         // execute the method
-        const number = PatternCommon.toInt(this._param.getText(patterns));
+        const number = PatternCommon.toInt(this._param.getText(symbols));
         return method(number, this._value.length);
     },
 
@@ -522,12 +522,12 @@ const SyntaxParameter = function() {
 SyntaxParameter.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         if (this.term != null) {
-            return this.term.getText(patterns);
+            return this.term.getText(symbols);
         }
         if (this.value != null) {
-            return "-" + this.value.getText(patterns);
+            return "-" + this.value.getText(symbols);
         }
         return "";
     },
@@ -555,32 +555,32 @@ SyntaxIterator.prototype = {
     },
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         // set user-defined variables
         if (this._lambda.whole != null) {
-            SymbolTable[this._lambda.whole] = this._value;
+            symbols.setText(this._lambda.whole, this._value);
         }
 
         // execution of iterator
         let result = "";
         const method = this._functions[this._name];
         if (method != null) {
-            result = method(patterns);
+            result = method(symbols);
         }
 
         // delete user-defined variables
-        delete SymbolTable[this._lambda.index];
+        symbols.setText(this._lambda.index, null);
         if (this._lambda.whole != null) {
-            delete SymbolTable[this._lambda.whole];
+            symbols.setText(this._lambda.whole, null);
         }
         return result;
     },
 
     // test for all indexes
-    "_testsEvery": function(patterns) {
+    "_testsEvery": function(symbols) {
         for (let i = 0; i < this._value.length; i++) {
-            SymbolTable[this._lambda.index] = i;
-            const text = this._lambda.getText(patterns);
+            symbols.setText(this._lambda.index, i);
+            const text = this._lambda.getText(symbols);
             if (!text || text === "0") {
                 return 0;
             }
@@ -589,10 +589,10 @@ SyntaxIterator.prototype = {
     },
 
     // test for any index
-    "_testsSome": function(patterns) {
+    "_testsSome": function(symbols) {
         for (let i = 0; i < this._value.length; i++) {
-            SymbolTable[this._lambda.index] = i;
-            const text = this._lambda.getText(patterns);
+            symbols.setText(this._lambda.index, i);
+            const text = this._lambda.getText(symbols);
             if (text && text !== "0") {
                 return 1;
             }
@@ -614,8 +614,8 @@ const SyntaxLambda = function(index) {
 SyntaxLambda.prototype = {
 
     // get result text
-    "getText": function(patterns) {
-        return this.condition.getText(patterns);
+    "getText": function(symbols) {
+        return this.condition.getText(symbols);
     },
 
 }
@@ -634,12 +634,8 @@ const SyntaxAuto = function(number) {
 SyntaxAuto.prototype = {
 
     // get result text
-    "getText": function(patterns) {
-        // check the fields
-        if (this._number < 0 || patterns.length <= this._number) {
-            return "";
-        }
-        return patterns[this._number];
+    "getText": function(symbols) {
+        return symbols.getText(this._number);
     },
 
 }
@@ -654,12 +650,8 @@ const SyntaxUser = function(name) {
 SyntaxUser.prototype = {
 
     // get result text
-    "getText": function(patterns) {
-        // check the fields
-        if (SymbolTable[this._name] == null) {
-            return "";
-        }
-        return SymbolTable[this._name];
+    "getText": function(symbols) {
+        return symbols.getText(this._name);
     },
 
 }
@@ -674,12 +666,50 @@ const SyntaxLiteral = function(text) {
 SyntaxLiteral.prototype = {
 
     // get result text
-    "getText": function(patterns) {
+    "getText": function(symbols) {
         return this._text;
     },
 
 }
 
-// Symbol Table object
-const SymbolTable = {};
+// Symbol table class
+const SymbolTable = function(patterns) {
+    // fields
+    this._auto = patterns;
+    this._user = {};
+}
+
+// Symbol table prototype
+SymbolTable.prototype = {
+
+    // set the text of a variable
+    "setText": function(name, text) {
+        if (!isNaN(name)) {
+            return;
+        }
+        if (text == null) {
+            delete this._user[name];
+        } else {
+            this._user[name] = text;
+        }
+    },
+
+    // get the text of a variable
+    "getText": function(name) {
+        if (isNaN(name)) {
+            // user-defined variable
+            if (name == null) {
+                return "";
+            }
+            return this._user[name];
+        }
+
+        // auto-defined variable
+        if (name < 0 || this._auto.length <= name) {
+            return "";
+        }
+        return this._auto[name];
+    },
+
+}
 

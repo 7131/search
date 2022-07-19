@@ -232,13 +232,14 @@ Controller.prototype = {
     "_acceptProfessional": function(patterns) {
         try {
             // acquisition condition
-            if (!this._syntax.where.isValid(patterns)) {
+            const symbols = new SymbolTable(patterns);
+            if (!this._syntax.where.isValid(symbols)) {
                 return;
             }
 
             // display items
-            const text = this._syntax.select.getText(patterns);
-            const value = { "text": text, "patterns": patterns };
+            const text = this._syntax.select.getText(symbols);
+            const value = { "text": text, "symbols": symbols };
             if (this._syntax.select.distinct) {
                 // excluding duplication
                 const find = function(element) { return element.text == text; };
