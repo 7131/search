@@ -23,12 +23,13 @@
 <p>By using the Siteswap Query Language (SsQL), you can specify the search method and the display method of results in detail. The complete syntax is:</p>
 <pre>
 FROM "pattern"
+LET variable-definition
 WHERE acquisition-condition
 SELECT display-items
 ORDER BY sort-condition
 LIMIT number
 </pre>
-<p>However, you can omit everything except the FROM clause. Specify the clauses that are not omitted in this order.</p>
+<p>However, you can omit everything except the FROM clause. Specify the clauses that are not omitted in this order. The LET clause can be specified multiple times.</p>
 <p>In the FROM clause, describe the search <a href="./notation.html">pattern</a> with double quotation marks. If you want to use double quotation marks in your pattern, you must escape them with \.</p>
 <p>Only the maximum number can be specified in the LIMIT clause. The time limit can not be specified, so if you want to stop the search halfway, press the stop button. If you omit the LIMIT clause, the search continues indefinitely.</p>
 </div>
@@ -37,7 +38,7 @@ LIMIT number
 <h2>Acquisition condition</h2>
 <p>Specify the acquisition condition by combining variables, properties, methods, and operators in the WHERE clause. For example:</p>
 <pre>
-WHERE $0.balls==3
+WHERE $0.balls == 3
 </pre>
 <p>If the condition is satisfied, the string is acquired, and if not, it is not acquired. If you omit the WHERE clause, you get all the generated strings.</p>
 <p>Variables include auto-defined variables and user-defined variables. Auto-defined variables are specified by $ + numbers such as $0, $1, $2, .... User-defined variables will be described later. $0 represents the entire string, and $1, $2, etc. represent the first group, second group, and so on. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the string are assigned to the variable as follows.</p>
@@ -96,7 +97,7 @@ index, whole => condition
 <pre>
 $0.every($index => $0.at($index) == 1)
 </pre>
-<p>If the length of $0 is n, 0 to n-1 are assigned to $index in order, and the right side of => is iterated. On the right side, it is determined whether the characters from the 0th digit to the n-1th digit are 1, so throughout this example, it is determined whether all the digits of $ 0 are 1.</p>
+<p>If the length of $0 is n, 0 to n-1 are assigned to $index in order, and the right side of => is iterated. On the right side, it is determined whether the characters from the 0th digit to the n-1th digit are 1, so throughout this example, it is determined whether all the digits of $0 are 1.</p>
 <pre>
 $0.take(2).some($index, $whole => $whole.at($index) == 1)
 </pre>
@@ -163,6 +164,25 @@ ORDER BY $0.period DESC, $0
 </section>
 
 <section>
+<h2>Variable definition</h2>
+<p>The LET clause defines a variable that can be used throughout the statement.</p>
+<pre>
+LET $const = "123"
+</pre>
+<p>The left side of equal is the variable name, and the right side is the definition. Like user-defined variables that appear in lambda expressions, variable names are specified with the $ + string. The first character of the variable name can be an alphabet or an underscore, and numbers can be used in addition to that after the second character. Case is ignored and $name and $Name and $NAME are treated as the same name. You can not define multiple variables with the same name.</p>
+<p>Any number of LET clauses can be written for one SsQL statement. You can use variables as well as constants in definitions.</p>
+<pre>
+LET $var1 = $1
+LET $var2 = $var1 + 3
+LET $var3 = $0.at($index)
+</pre>
+<p>Using an undefined variable will result in an error, but the order of definition does not matter, so there is no problem if you use $var3 as follows.</p>
+<pre>
+WHERE $0.every($index => $var3 < 3)
+</pre>
+</section>
+
+<section>
 <h2>Comments and other</h2>
 <p>You can also write a comment in SsQL.</p>
 <pre>
@@ -180,9 +200,10 @@ comment */
 <h2>Language specifications</h2>
 <p>For reference, I describe the specifications of the accepted SsQL in <a href="../haba/notation.html">HABA format</a>.</p>
 <pre>
-Query ::= From Where? Select? Order? Limit? ;
+Query ::= From Let* Where? Select? Order? Limit? ;
 From ::= 'FROM' String ;
 String ::= """(\\""|[^""])*""" ;
+Let ::= 'LET' User '=' Term ;
 Where ::= 'WHERE' Condition ;
 Condition ::= Part ('OR' Part)* ;
 Part ::= Unit ('AND' Unit)* ;
@@ -193,7 +214,7 @@ Factor ::= Value (('*' | '/' | '%') Value)* ;
 Value ::= Element ('.' (Property | Method | Iterator))* ;
 Element ::= Auto | User | Literal | '(' Condition ')' ;
 Auto ::= "\$[0-9]*" ;
-User ::= "\$[a-zA-Z_][a-zA-Z_0-9]*" ;
+User ::= "\$[a-z_][a-z_0-9]*" ;
 Literal ::= String | Integer ;
 Integer ::= "[0-9]+" ;
 Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;

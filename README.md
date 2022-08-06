@@ -32,6 +32,8 @@ In addition, by using the Siteswap Query Language (SsQL), you can specify the se
     <dd>The grammar object and the syntax converter of SsQL.</dd>
   <dt>syntax.js</dt>
     <dd>Classes for various objects that make up the syntax.</dd>
+  <dt>semantic.js</dt>
+    <dd>A class for semantic analysis.</dd>
   <dt>ssql.html</dt>
     <dd>This page explains how to write SsQL.</dd>
   <dt>test.html</dt>

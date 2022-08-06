@@ -85,12 +85,12 @@ Controller.prototype = {
         // pattern analysis
         const lex = this._parser.tokenize(PatternCommon.toSmall(pattern));
         if (lex.tokens == null) {
-            this._setError(lex.valid, lex.invalid);
+            this._setError(lex.invalid);
             return;
         }
         const syntax = this._parser.parse(lex.tokens);
         if (syntax.tree == null) {
-            this._setError(syntax.valid, syntax.invalid);
+            this._setError(syntax.invalid);
             return;
         }
 
@@ -116,12 +116,20 @@ Controller.prototype = {
         // query analysis
         const ssql = this._ssql.tokenize(PatternCommon.toSmall(query));
         if (ssql.tokens == null) {
-            this._setError(ssql.valid, ssql.invalid);
+            this._setError(ssql.invalid);
             return;
         }
         const pattern = this._ssql.parse(ssql.tokens);
         if (pattern.tree == null) {
-            this._setError(pattern.valid, pattern.invalid);
+            this._setError(pattern.invalid);
+            return;
+        }
+
+        // semantic analysis
+        const semantic = new SemanticAnalyzer();
+        const result = semantic.validate(pattern.tree);
+        if (result.message != "") {
+            this._setError(result.message);
             return;
         }
         this._syntax = pattern.tree.value;
@@ -129,12 +137,12 @@ Controller.prototype = {
         // pattern analysis
         const lex = this._parser.tokenize(this._syntax.from);
         if (lex.tokens == null) {
-            this._setError(lex.valid, lex.invalid);
+            this._setError(lex.invalid);
             return;
         }
         const syntax = this._parser.parse(lex.tokens);
         if (syntax.tree == null) {
-            this._setError(syntax.valid, syntax.invalid);
+            this._setError(syntax.invalid);
             return;
         }
 
@@ -231,8 +239,13 @@ Controller.prototype = {
     // acceptance process in professional version
     "_acceptProfessional": function(patterns) {
         try {
-            // acquisition condition
+            // symbol table
             const symbols = new SymbolTable(patterns);
+            for (let i = 0; i < this._syntax.lets.length; i++) {
+                symbols.setTerm(this._syntax.lets[i]);
+            }
+
+            // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {
                 return;
             }
@@ -250,15 +263,15 @@ Controller.prototype = {
             this._actual.push(value);
         } catch (e) {
             // error handling
-            this._setError("", e.message);
+            this._setError(e.message);
         }
     },
 
     // set an error
-    "_setError": function(valid, invalid) {
+    "_setError": function(message) {
         const rows = this._rows.get(this._button);
         const result = rows[this._index].cells[ColNum.RESULT];
-        result.innerText = "parsing failure: " + invalid;
+        result.innerText = "parsing failure: " + message;
         result.className = "error";
     },
 

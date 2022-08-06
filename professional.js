@@ -50,6 +50,14 @@ Controller.prototype = {
             this._setError(pattern.valid, pattern.invalid, "SsQL error");
             return;
         }
+
+        // semantic analysis
+        const semantic = new SemanticAnalyzer();
+        const result = semantic.validate(pattern.tree);
+        if (result.message != "") {
+            this._setError(result.valid, result.invalid, result.message);
+            return;
+        }
         this._syntax = pattern.tree.value;
 
         // pattern analysis
@@ -130,8 +138,13 @@ Controller.prototype = {
     // accept pattern
     "_accept": function(patterns) {
         try {
-            // acquisition condition
+            // symbol table
             const symbols = new SymbolTable(patterns);
+            for (let i = 0; i < this._syntax.lets.length; i++) {
+                symbols.setTerm(this._syntax.lets[i]);
+            }
+
+            // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {
                 return;
             }

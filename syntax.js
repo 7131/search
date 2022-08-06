@@ -448,7 +448,7 @@ SyntaxMethod.prototype = {
 
     // set pattern value
     "setValue": function(pattern) {
-        this._value = pattern;
+        this._value = "" + pattern;
     },
 
     // get result text
@@ -551,7 +551,7 @@ SyntaxIterator.prototype = {
 
     // set pattern value
     "setValue": function(pattern) {
-        this._value = pattern;
+        this._value = "" + pattern;
     },
 
     // get result text
@@ -677,6 +677,7 @@ const SymbolTable = function(patterns) {
     // fields
     this._auto = patterns;
     this._user = {};
+    this._term = {};
 }
 
 // Symbol table prototype
@@ -694,6 +695,11 @@ SymbolTable.prototype = {
         }
     },
 
+    // set the operator term
+    "setTerm": function(pair) {
+        this._term[pair.name] = pair.term;
+    },
+
     // get the text of a variable
     "getText": function(name) {
         if (isNaN(name)) {
@@ -701,7 +707,11 @@ SymbolTable.prototype = {
             if (name == null) {
                 return "";
             }
-            return this._user[name];
+            if (this._term[name] == null) {
+                return this._user[name];
+            } else {
+                return this._term[name].getText(this);
+            }
         }
 
         // auto-defined variable
