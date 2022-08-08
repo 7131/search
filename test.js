@@ -42,12 +42,13 @@ Controller.prototype = {
     "_start": function(e) {
         // initialize fields
         this._button = e.currentTarget;
-        this._button.disabled = true;
+        this._function.forEach(function(value, key) { key.disabled = true; });
         const search = this._function.get(this._button);
         const rows = this._rows.get(this._button);
 
         // execute the first test
         this._resetTable(rows);
+        this._errors = [];
         this._index = 1;
         search(rows[this._index]);
     },
@@ -59,6 +60,16 @@ Controller.prototype = {
             number.innerText = i;
             number.className = "symbol";
         }
+
+        // get the last row
+        let last = rows[rows.length - 1];
+        if (last.cells[ColNum.TARGET].innerText != "") {
+            last = last.parentNode.appendChild(last.cloneNode(true));
+        }
+        last.cells[ColNum.NUMBER].innerText = "total";
+        last.cells[ColNum.TARGET].innerText = "";
+        last.cells[ColNum.EXPECT].innerText = "";
+        last.cells[ColNum.RESULT].innerText = "";
     },
 
     // reset table rows
@@ -74,7 +85,7 @@ Controller.prototype = {
     "_searchStandard": function(row) {
         // preparation
         const pattern = row.cells[ColNum.TARGET].innerText;
-        if (!row.cells[ColNum.EXPECT].innerText) {
+        if (row.cells[ColNum.EXPECT].innerText == "") {
             this._count = 0;
         } else {
             const expect = row.cells[ColNum.EXPECT].innerText.split(" ");
@@ -167,7 +178,11 @@ Controller.prototype = {
 
     // show the result of standard version
     "_showStandard": function(completed) {
-        this._showResult(this._actual.slice(0, this._count).join(" "));
+        let actual = this._actual;
+        if (this._endless) {
+            actual = actual.slice(0, this._count);
+        }
+        this._showResult(actual.join(" "));
     },
 
     // show the result of professional version
@@ -191,19 +206,28 @@ Controller.prototype = {
         } else {
             row.cells[ColNum.RESULT].innerText = text;
             row.cells[ColNum.RESULT].className = "error";
+            this._errors.push(this._index);
         }
 
         // execute the next test
         do {
             this._index++;
-        } while (this._index < rows.length && !rows[this._index].cells[ColNum.TARGET].innerText);
-        if (rows.length <= this._index) {
-            // finished
-            this._button.disabled = false;
+        } while (this._index < rows.length && rows[this._index].cells[ColNum.TARGET].innerText == "");
+        if (this._index < rows.length) {
+            const search = this._function.get(this._button);
+            search(rows[this._index]);
             return;
         }
-        const search = this._function.get(this._button);
-        search(rows[this._index]);
+
+        // finished
+        let last = rows[rows.length - 1];
+        if (this._errors.length == 0) {
+            last.cells[ColNum.RESULT].innerText = "All OK";
+        } else {
+            last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
+            last.cells[ColNum.RESULT].className = "error";
+        }
+        this._function.forEach(function(value, key) { key.disabled = false; });
     },
 
     // cancellation process in standard version
@@ -273,6 +297,12 @@ Controller.prototype = {
         const result = rows[this._index].cells[ColNum.RESULT];
         result.innerText = "parsing failure: " + message;
         result.className = "error";
+        this._errors.push(this._index);
+
+        // finished
+        let last = rows[rows.length - 1];
+        last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
+        last.cells[ColNum.RESULT].className = "error";
     },
 
 }
