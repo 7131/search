@@ -530,9 +530,8 @@ const PatternCreator = function(iterator) {
 
     // events
     this.progressEvent = function(number, second) { };
-    this.completeEvent = function(values, completed) { };
-    this.cancelEvent = function() { return false; };
-    this.acceptEvent = function(patterns) { };
+    this.completeEvent = function(completed) { };
+    this.acceptEvent = function(patterns) { return true; };
 }
 
 // Pattern creator prototype
@@ -546,7 +545,11 @@ PatternCreator.prototype = {
         this._number = 0;
         this._cycle = 0;
         this._iterator.reset(this._cycle);
-        this.acceptEvent(this._iterator.getPatterns());
+        if (!this.acceptEvent(this._iterator.getPatterns())) {
+            this.progressEvent(1, 0);
+            this.completeEvent(!this._iterator.endless && this._iterator.finished());
+            return;
+        }
 
         // search
         setTimeout(this._execute.bind(this), this._interval);
@@ -577,8 +580,7 @@ PatternCreator.prototype = {
             }
 
             // next time
-            this.acceptEvent(this._iterator.getPatterns());
-            if (this.cancelEvent()) {
+            if (!this.acceptEvent(this._iterator.getPatterns())) {
                 num++;
                 stopped = true;
                 break;

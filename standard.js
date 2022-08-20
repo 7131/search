@@ -101,7 +101,6 @@ Controller.prototype = {
         const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showResult.bind(this);
-        creator.cancelEvent = this._canceled.bind(this);
         creator.acceptEvent = this._accept.bind(this);
 
         // get the stop conditions
@@ -261,19 +260,13 @@ Controller.prototype = {
         this._searchButton.disabled = false;
     },
 
-    // whether it was canceled
-    "_canceled": function() {
-        if (this._stopCount <= this._values.length) {
-            return true;
-        }
-        if (this._stopTime <= Date.now()) {
-            return true;
-        }
-        return false;
-    },
-
     // accept pattern
     "_accept": function(patterns) {
+        // check time limit
+        if (this._stopTime <= Date.now()) {
+            return false;
+        }
+
         // create pattern value
         let value = new PatternValue(patterns[0]);
         if (this._settingIteration.checked) {
@@ -283,13 +276,13 @@ Controller.prototype = {
         // display settings
         if (!this._settingAll.checked) {
             if (!value.getProperty("valid")) {
-                return;
+                return true;
             }
 
             // number of balls
             if (this._settingNumbers.checked) {
                 if (value.getProperty("balls") != this._acceptNumbers) {
-                    return;
+                    return true;
                 }
             }
 
@@ -303,11 +296,12 @@ Controller.prototype = {
                 const text = value.getProperty(name);
                 const find = function(element) { return element.getProperty(name) == text; };
                 if (0 < this._values.filter(find).length) {
-                    return;
+                    return true;
                 }
             }
         }
         this._values.push(value);
+        return this._values.length < this._stopCount;
     },
 
     // set an error

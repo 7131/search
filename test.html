@@ -89,6 +89,7 @@
   <tr><td></td><td>FROM "3+"<br>LIMIT 5</td><td>3 33 333 3333 33333</td><td></td>
   <tr><td></td><td>FROM "3+" LIMIT 5</td><td>3 33 333 3333 33333</td><td></td>
   <tr><td></td><td>FROM"3+"LIMIT5</td><td>3 33 333 3333 33333</td><td></td>
+  <tr><td></td><td>FROM "3+"<br>LET $max = 3 + 3<br>LIMIT $max - 1</td><td>3 33 333 3333 33333</td><td></td>
   <tr><td></td><td>FROM "#"<br>WHERE $0.balls==3</td><td>3</td><td></td>
   <tr><td></td><td>FROM "(5+)([13])"<br>SELECT $0 "," $1 "," $2<br>LIMIT 5</td><td>51,5,1 53,5,3 551,55,1 553,55,3 5551,555,1</td><td></td>
   <tr><td></td><td>FROM "315315"<br>SELECT $.pattern</td><td>315315</td><td></td>

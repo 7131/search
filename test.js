@@ -109,7 +109,6 @@ Controller.prototype = {
         const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showStandard.bind(this);
-        creator.cancelEvent = this._cancelStandard.bind(this);
         creator.acceptEvent = this._acceptStandard.bind(this);
 
         // execution
@@ -161,7 +160,6 @@ Controller.prototype = {
         const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showProfessional.bind(this);
-        creator.cancelEvent = this._cancelProfessional.bind(this);
         creator.acceptEvent = this._acceptProfessional.bind(this);
 
         // execution
@@ -230,38 +228,27 @@ Controller.prototype = {
         this._function.forEach(function(value, key) { key.disabled = false; });
     },
 
-    // cancellation process in standard version
-    "_cancelStandard": function() {
-        if (this._endless && 100 <= this._actual.length) {
-            return true;
-        }
-        if (this._stopTime <= Date.now()) {
-            return true;
-        }
-        return false;
-    },
-
-    // cancellation process in professional version
-    "_cancelProfessional": function() {
-        if (0 < this._syntax.limit && this._syntax.limit <= this._actual.length) {
-            return true;
-        }
-        if (this._stopTime <= Date.now()) {
-            return true;
-        }
-        return false;
-    },
-
     // acceptance process in standard version
     "_acceptStandard": function(patterns) {
+        // check time limit
+        if (this._stopTime <= Date.now()) {
+            return false;
+        }
+
+        // create pattern value
         const value = new PatternValue(patterns[0]);
         if (value.getProperty("valid")) {
             this._actual.push(value.getProperty("pattern"));
         }
+        return !this._endless || this._actual.length < 100;
     },
 
     // acceptance process in professional version
     "_acceptProfessional": function(patterns) {
+        // check time limit
+        if (this._stopTime <= Date.now()) {
+            return false;
+        }
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
@@ -271,7 +258,7 @@ Controller.prototype = {
 
             // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {
-                return;
+                return true;
             }
 
             // display items
@@ -281,13 +268,16 @@ Controller.prototype = {
                 // excluding duplication
                 const find = function(element) { return element.text == text; };
                 if (0 < this._actual.filter(find).length) {
-                    return;
+                    return true;
                 }
             }
             this._actual.push(value);
+            const limit = parseInt(this._syntax.limit.getText(symbols), 10);
+            return limit <= 0 || this._actual.length < limit;
         } catch (e) {
             // error handling
             this._setError(e.message);
+            return false;
         }
     },
 

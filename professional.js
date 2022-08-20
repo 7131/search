@@ -76,7 +76,6 @@ Controller.prototype = {
         const creator = new PatternCreator(syntax.tree.iterator);
         creator.progressEvent = this._showProgress.bind(this);
         creator.completeEvent = this._showResult.bind(this);
-        creator.cancelEvent = this._canceled.bind(this);
         creator.acceptEvent = this._accept.bind(this);
 
         // execution
@@ -124,19 +123,12 @@ Controller.prototype = {
         this._stopButton.disabled = true;
     },
 
-    // whether it was canceled
-    "_canceled": function() {
-        if (this._stopButton.disabled) {
-            return true;
-        }
-        if (0 < this._syntax.limit && this._syntax.limit <= this._values.length) {
-            return true;
-        }
-        return false;
-    },
-
     // accept pattern
     "_accept": function(patterns) {
+        // whether it was canceled
+        if (this._stopButton.disabled) {
+            return false;
+        }
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
@@ -146,7 +138,7 @@ Controller.prototype = {
 
             // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {
-                return;
+                return true;
             }
 
             // display items
@@ -156,14 +148,17 @@ Controller.prototype = {
                 // excluding duplication
                 const find = function(element) { return element.text == text; };
                 if (0 < this._values.filter(find).length) {
-                    return;
+                    return true;
                 }
             }
             this._values.push(value);
+            const limit = parseInt(this._syntax.limit.getText(symbols), 10);
+            return limit <= 0 || this._values.length < limit;
         } catch (e) {
             // error handling
             this._setError("", e.message, "execution error");
             this._stopButton.disabled = true;
+            return false;
         }
     },
 
