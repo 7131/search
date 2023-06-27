@@ -13,12 +13,13 @@ input {
     width: 90%;
 }
 
-input[type="button"] {
-    margin-top: 2ex;
-}
-
 input[type="checkbox"], input[type="radio"] {
     width: auto;
+}
+
+button {
+    margin-top: 2ex;
+    width: 90%;
 }
 
 table.border {
@@ -86,7 +87,7 @@ pre {
         width: 50ex;
     }
 
-    input[type="button"] {
+    button {
         margin-top: 0ex;
         width: auto;
     }
