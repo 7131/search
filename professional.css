@@ -10,17 +10,17 @@ article {
 }
 
 textarea {
-    width: 90%;
+    width: 90vw;
     height: 20ex;
 }
 
 input {
-    width: 90%;
+    width: 90vw;
 }
 
 button {
     margin-top: 2ex;
-    width: 90%;
+    width: 90vw;
 }
 
 table.border {

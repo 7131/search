@@ -10,7 +10,7 @@ article {
 }
 
 input {
-    width: 90%;
+    width: 90vw;
 }
 
 input[type="checkbox"], input[type="radio"] {
@@ -19,7 +19,7 @@ input[type="checkbox"], input[type="radio"] {
 
 button {
     margin-top: 2ex;
-    width: 90%;
+    width: 90vw;
 }
 
 table.border {

@@ -9,13 +9,9 @@ article {
     margin-bottom: 10ex;
 }
 
-input {
-    width: 90%;
-}
-
 button {
     margin-top: 2ex;
-    width: 90%;
+    width: 90vw;
 }
 
 table.border {
