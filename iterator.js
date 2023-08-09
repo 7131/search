@@ -761,12 +761,10 @@ PatternValue.prototype = {
         const numbers = this._getNumbers();
         if (this.getProperty("valid")) {
             // siteswap
-            const sum = function(acc, cur) { return acc + cur; };
-            return numbers.reduce(sum, 0) / numbers.length;
+            return numbers.reduce((acc, cur) => acc + cur, 0) / numbers.length;
         } else {
             // not siteswap
-            const find = function(element, index) { return numbers.length <= element + index; };
-            return numbers.filter(find).length;
+            return numbers.filter((value, key) => numbers.length <= value + key).length;
         }
     },
 

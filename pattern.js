@@ -234,8 +234,7 @@ const PatternConverter = {
                 if (negative) {
                     // negative character class
                     const removes = texts;
-                    const find = function(element) { return removes.indexOf(element) < 0; };
-                    texts = (this._numbers + this._alphabets).split("").filter(find);
+                    texts = (this._numbers + this._alphabets).split("").filter(elem => removes.indexOf(elem) < 0);
                 }
                 break;
         }

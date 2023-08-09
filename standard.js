@@ -222,25 +222,13 @@ Controller.prototype = {
 
         // sort
         if (this._settingSort.checked) {
-            let compare = null;
             if (this._groupSort[0].checked) {
-                compare = function(a, b) { return a.getProperty("length") - b.getProperty("length"); };
+                this._values.sort((a, b) => a.getProperty("length") - b.getProperty("length"));
             } else if (this._groupSort[1].checked) {
-                compare = function(a, b) { return a.getProperty("balls") - b.getProperty("balls"); };
+                this._values.sort((a, b) => a.getProperty("balls") - b.getProperty("balls"));
             } else {
-                compare = function(a, b) {
-                    const x = a.getProperty("pattern");
-                    const y = b.getProperty("pattern");
-                    if (x < y) {
-                        return -1;
-                    }
-                    if (x < y) {
-                        return 1;
-                    }
-                    return 0;
-                };
+                this._values.sort(this._comparePatterns);
             }
-            this._values.sort(compare);
         }
 
         // list
@@ -294,8 +282,7 @@ Controller.prototype = {
                     name = "standard";
                 }
                 const text = value.getProperty(name);
-                const find = function(element) { return element.getProperty(name) == text; };
-                if (0 < this._values.filter(find).length) {
+                if (0 < this._values.filter(elem => elem.getProperty(name) == text).length) {
                     return true;
                 }
             }
@@ -325,6 +312,19 @@ Controller.prototype = {
         this._messageArea.appendChild(head);
         this._messageArea.appendChild(ok);
         this._messageArea.appendChild(ng);
+    },
+
+    // compare patterns
+    "_comparePatterns": function(a, b) {
+        const x = a.getProperty("pattern");
+        const y = b.getProperty("pattern");
+        if (x < y) {
+            return -1;
+        }
+        if (x > y) {
+            return 1;
+        }
+        return 0;
     },
 
 }

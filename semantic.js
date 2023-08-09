@@ -30,14 +30,12 @@ SemanticAnalyzer.prototype = {
             }
         }
         const empties = this._getEmpties(definitions);
-        const find = function(element) { return !empties.has(element.name); };
-        const parts = definitions.filter(find);
+        const parts = definitions.filter(elem => !empties.has(elem.name));
 
         // circular reference
         const circular = this._getCircular(parts);
         if (0 < circular.size) {
-            const selector = function(element) { return element.name; };
-            return this._getError("circular reference of variables", parts.map(selector), circular);
+            return this._getError("circular reference of variables", parts.map(elem => elem.name), circular);
         }
 
         // using variables
@@ -110,7 +108,7 @@ SemanticAnalyzer.prototype = {
                 for (let values of rest.values()) {
                     if (values.has(name)) {
                         const before = values.size;
-                        reference.forEach(function(value, key) { values.add(key); });
+                        reference.forEach((value, key) => values.add(key));
                         dealt ||= before < values.size;
                     }
                 }
@@ -206,8 +204,7 @@ SemanticAnalyzer.prototype = {
 
     // get the error
     "_getError": function(message, symbols, errors) {
-        const find = function(element) { return !errors.has(element); };
-        const valid = Array.from(symbols).filter(find).join();
+        const valid = Array.from(symbols).filter(elem => !errors.has(elem)).join();
         const invalid = Array.from(errors).join();
         return { "message": message, "valid": valid, "invalid": invalid };
     },

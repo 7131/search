@@ -146,8 +146,7 @@ Controller.prototype = {
             const value = { "text": text, "symbols": symbols };
             if (this._syntax.select.distinct) {
                 // excluding duplication
-                const find = function(element) { return element.text == text; };
-                if (0 < this._values.filter(find).length) {
+                if (0 < this._values.filter(elem => elem.text == text).length) {
                     return true;
                 }
             }

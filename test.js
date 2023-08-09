@@ -27,7 +27,7 @@ Controller.prototype = {
         this._function = new Map();
         this._function.set(standard, this._searchStandard.bind(this));
         this._function.set(professional, this._searchProfessional.bind(this));
-        this._function.forEach(function(value, key) { key.addEventListener("click", this._start.bind(this), false); }, this);
+        this._function.forEach((value, key) => key.addEventListener("click", this._start.bind(this), false));
 
         // associate buttons with table rows
         const patterns = document.getElementById("patterns");
@@ -42,7 +42,7 @@ Controller.prototype = {
     "_start": function(e) {
         // initialize fields
         this._button = e.currentTarget;
-        this._function.forEach(function(value, key) { key.disabled = true; });
+        this._function.forEach((value, key) => key.disabled = true);
         const search = this._function.get(this._button);
         const rows = this._rows.get(this._button);
 
@@ -189,8 +189,7 @@ Controller.prototype = {
         this._actual.sort(this._syntax.order.compare.bind(this._syntax.order));
 
         // display
-        const method = function(acc, cur) { return acc + " " + cur.text; };
-        const text = this._actual.reduce(method, "").substring(1);
+        const text = this._actual.reduce((acc, cur) => acc + " " + cur.text, "").substring(1);
         this._showResult(text);
     },
 
@@ -225,7 +224,7 @@ Controller.prototype = {
             last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
             last.cells[ColNum.RESULT].className = "error";
         }
-        this._function.forEach(function(value, key) { key.disabled = false; });
+        this._function.forEach((value, key) => key.disabled = false);
     },
 
     // acceptance process in standard version
@@ -266,8 +265,7 @@ Controller.prototype = {
             const value = { "text": text, "symbols": symbols };
             if (this._syntax.select.distinct) {
                 // excluding duplication
-                const find = function(element) { return element.text == text; };
-                if (0 < this._actual.filter(find).length) {
+                if (0 < this._actual.filter(elem => elem.text == text).length) {
                     return true;
                 }
             }
