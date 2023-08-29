@@ -71,11 +71,9 @@ SemanticAnalyzer.prototype = {
         let before = definitions.length;
         while (rest.size < before) {
             before = rest.size;
-            for (let name of rest.keys()) {
+            for (const name of rest.keys()) {
                 const reference = rest.get(name);
-                for (let empty of empties) {
-                    reference.delete(empty);
-                }
+                empties.forEach(reference.delete, reference);
                 if (reference.size == 0) {
                     rest.delete(name);
                     empties.add(name);
@@ -103,9 +101,9 @@ SemanticAnalyzer.prototype = {
         let dealt = true;
         while (dealt) {
             dealt = false;
-            for (let name of rest.keys()) {
+            for (const name of rest.keys()) {
                 const reference = rest.get(name);
-                for (let values of rest.values()) {
+                for (const values of rest.values()) {
                     if (values.has(name)) {
                         const before = values.size;
                         reference.forEach((value, key) => values.add(key));
@@ -113,7 +111,7 @@ SemanticAnalyzer.prototype = {
                     }
                 }
             }
-            for (let name of rest.keys()) {
+            for (const name of rest.keys()) {
                 if (rest.get(name).has(name)) {
                     circular.add(name);
                 }
@@ -135,9 +133,7 @@ SemanticAnalyzer.prototype = {
             // other
             for (let i = 0; i < tree.children.length; i++) {
                 const sub = this._getReference(tree.children[i]);
-                for (let name of sub) {
-                    reference.add(name);
-                }
+                sub.forEach(reference.add, reference);
             }
         }
         return reference;
