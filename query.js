@@ -631,8 +631,8 @@ const QueryConverter = {
     // View ::= Term+ ;
     "View": function(tree) {
         tree.list = [];
-        for (let i = 0; i < tree.children.length; i++) {
-            tree.list.push(tree.children[i].value);
+        for (const child of tree.children) {
+            tree.list.push(child.value);
         }
     },
 

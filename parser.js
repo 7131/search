@@ -89,8 +89,8 @@ const Parser = function(grammar, converter) {
 
     // lexical analysis elements
     this._elements = [];
-    for (let i = 0; i < terms.length; i++) {
-        this._elements.push(new RegExp("^(" + terms[i] + ")", grammar.flag));
+    for (const term of terms) {
+        this._elements.push(new RegExp("^(" + term + ")", grammar.flag));
     }
 
     // production rules
@@ -110,14 +110,14 @@ const Parser = function(grammar, converter) {
 
     // parsing table
     this._table = [];
-    for (let i = 0; i < grammar.table.length; i++) {
+    for (const line of grammar.table) {
         const row = {};
-        for (let j = 0; j < symbols.length; j++) {
-            const match = grammar.table[i][j].match(/^(s|r|g)([0-9]+)$/);
+        for (let i = 0; i < symbols.length; i++) {
+            const match = line[i].match(/^(s|r|g)([0-9]+)$/);
             if (match) {
                 const symbol = match[1];
                 const number = parseInt(match[2], 10);
-                row[symbols[j]] = { "symbol": symbol, "number": number };
+                row[symbols[i]] = { "symbol": symbol, "number": number };
             }
         }
         this._table.push(row);
@@ -244,8 +244,8 @@ Parser.prototype = {
 
         // join all child elements
         let text = "";
-        for (let i = 0; i < tree.children.length; i++) {
-            text += " " + this._joinTree(tree.children[i]);
+        for (const child of tree.children) {
+            text += " " + this._joinTree(child);
         }
         return text;
     },

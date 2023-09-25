@@ -43,8 +43,8 @@ SyntaxSelect.prototype = {
 
         // get value
         let text = "";
-        for (let i = 0; i < this.list.length; i++) {
-            text += this.list[i].getText(symbols);
+        for (const term of this.list) {
+            text += term.getText(symbols);
         }
         return text;
     },
@@ -62,9 +62,8 @@ SyntaxOrder.prototype = {
 
     // compare the magnitude of two values
     "compare": function(a, b) {
-        for (let i = 0; i < this.list.length; i++) {
+        for (const single of this.list) {
             // compare in order
-            const single = this.list[i];
             const x = single.value.getText(a.symbols);
             const y = single.value.getText(b.symbols);
             if (x != y) {
@@ -398,9 +397,9 @@ SyntaxValue.prototype = {
     "getText": function(symbols) {
         // convert to pattern value
         let text = this.element.getText(symbols);
-        for (let i = 0; i < this.follows.length; i++) {
-            this.follows[i].setValue(text);
-            text = this.follows[i].getText(symbols);
+        for (const follow of this.follows) {
+            follow.setValue(text);
+            text = follow.getText(symbols);
         }
         return text;
     },

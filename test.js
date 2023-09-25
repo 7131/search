@@ -251,8 +251,8 @@ Controller.prototype = {
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
-            for (let i = 0; i < this._syntax.lets.length; i++) {
-                symbols.setTerm(this._syntax.lets[i]);
+            for (const term of this._syntax.lets) {
+                symbols.setTerm(term);
             }
 
             // acquisition condition

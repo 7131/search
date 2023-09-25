@@ -46,9 +46,9 @@ const SelectionIterator = function(iterators) {
     // fields
     this._originals = iterators;
     this._infinites = [];
-    for (let i = 0; i < iterators.length; i++) {
-        if (iterators[i].endless) {
-            this._infinites.push(iterators[i]);
+    for (const iterator of iterators) {
+        if (iterator.endless) {
+            this._infinites.push(iterator);
         }
     }
     this._iterators = this._originals;
@@ -71,8 +71,8 @@ SelectionIterator.prototype = {
         this._position = 0;
 
         // initialization for each iterator
-        for (let i = 0; i < this._iterators.length; i++) {
-            this._iterators[i].reset(cycle);
+        for (const iterator of this._iterators) {
+            iterator.reset(cycle);
         }
     },
 
@@ -134,8 +134,8 @@ SelectionIterator.prototype = {
     "copy": function() {
         // copy the original iterators
         const iterators = [];
-        for (let i = 0; i < this._originals.length; i++) {
-            iterators.push(this._originals[i].copy());
+        for (const iterator of this._originals) {
+            iterators.push(iterator.copy());
         }
 
         // create a new instance
@@ -150,11 +150,11 @@ const SequenceIterator = function(iterators) {
     this._originals = iterators;
     this._infinites = [];
     this._finites = [];
-    for (let i = 0; i < iterators.length; i++) {
-        if (iterators[i].endless) {
-            this._infinites.push(iterators[i]);
+    for (const iterator of iterators) {
+        if (iterator.endless) {
+            this._infinites.push(iterator);
         } else {
-            this._finites.push(iterators[i]);
+            this._finites.push(iterator);
         }
     }
     this._divisors = [];
@@ -170,8 +170,8 @@ SequenceIterator.prototype = {
     // reset fields
     "reset": function(cycle) {
         // finite pattern
-        for (let i = 0; i < this._finites.length; i++) {
-            this._finites[i].reset(0);
+        for (const iterator of this._finites) {
+            iterator.reset(0);
         }
 
         // infinite pattern
@@ -200,8 +200,8 @@ SequenceIterator.prototype = {
     // get current pattern
     "getCurrent": function() {
         let current = "";
-        for (let i = 0; i < this._originals.length; i++) {
-            current += this._originals[i].getCurrent();
+        for (const iterator of this._originals) {
+            current += iterator.getCurrent();
         }
         return current;
     },
@@ -209,8 +209,8 @@ SequenceIterator.prototype = {
     // get current pattern list
     "getPatterns": function() {
         const patterns = [];
-        for (let i = 0; i < this._originals.length; i++) {
-            Array.prototype.push.apply(patterns, this._originals[i].getPatterns());
+        for (const iterator of this._originals) {
+            Array.prototype.push.apply(patterns, iterator.getPatterns());
         }
         return patterns;
     },
@@ -237,8 +237,8 @@ SequenceIterator.prototype = {
     "copy": function() {
         // copy the original iterators
         const iterators = [];
-        for (let i = 0; i < this._originals.length; i++) {
-            iterators.push(this._originals[i].copy());
+        for (const iterator of this._originals) {
+            iterators.push(iterator.copy());
         }
 
         // create a new instance
@@ -261,10 +261,9 @@ SequenceIterator.prototype = {
 
         // number of divisions is 2 or more
         for (let i = total; 0 <= i; i--) {
-            const parts = this._getDivisors(division - 1, total - i);
-            for (let j = 0; j < parts.length; j++) {
-                parts[j].unshift(i);
-                divisors.push(parts[j]);
+            for (const part of this._getDivisors(division - 1, total - i)) {
+                part.unshift(i);
+                divisors.push(part);
             }
         }
         return divisors;
@@ -321,8 +320,8 @@ SequenceIterator.prototype = {
         }
 
         // initialize the finite patterns
-        for (let i = 0; i < this._finites.length; i++) {
-            this._finites[i].reset(0);
+        for (const iterator of this._finites) {
+            iterator.reset(0);
         }
         return true;
     },
@@ -891,9 +890,8 @@ PatternValue.prototype = {
 
         // create only when undefined
         this._numbers = [];
-        const target = this.getProperty("omission");
-        for (let i = 0; i < target.length; i++) {
-            const number = PatternCommon.ALPHABET.indexOf(target[i]);
+        for (const letter of this.getProperty("omission")) {
+            const number = PatternCommon.ALPHABET.indexOf(letter);
             if (0 <= number) {
                 this._numbers.push(number);
             }

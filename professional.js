@@ -113,9 +113,9 @@ Controller.prototype = {
 
         // list
         const ul = document.createElement("ul");
-        for (let i = 0; i < this._values.length; i++) {
+        for (const value of this._values) {
             const li = document.createElement("li");
-            li.innerText = this._values[i].text;
+            li.innerText = value.text;
             ul.appendChild(li);
         }
         this._resultArea.appendChild(ul);
@@ -132,8 +132,8 @@ Controller.prototype = {
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
-            for (let i = 0; i < this._syntax.lets.length; i++) {
-                symbols.setTerm(this._syntax.lets[i]);
+            for (const term of this._syntax.lets) {
+                symbols.setTerm(term);
             }
 
             // acquisition condition

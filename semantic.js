@@ -15,8 +15,7 @@ SemanticAnalyzer.prototype = {
         // classify
         const definitions = [];
         const expressions = [];
-        for (let i = 0; i < tree.children.length; i++) {
-            const clause = tree.children[i];
+        for (const clause of tree.children) {
             if (clause.label == "Let") {
                 const name = clause.children[1].children[0].text;
                 const reference = this._getReference(clause.children[3]);
@@ -40,8 +39,8 @@ SemanticAnalyzer.prototype = {
 
         // using variables
         const current = Array.from(empties);
-        for (let i = 0; i < expressions.length; i++) {
-            this._validateReference(current, expressions[i], parts);
+        for (const expression of expressions) {
+            this._validateReference(current, expression, parts);
         }
         if (0 < this._duplicate.size) {
             return this._getError("duplicate variables", this._symbols, this._duplicate);
@@ -57,9 +56,9 @@ SemanticAnalyzer.prototype = {
         // classify variables
         const empties = new Set();
         const rest = new Map();
-        for (let i = 0; i < definitions.length; i++) {
-            const name = definitions[i].name;
-            const reference = definitions[i].reference;
+        for (const definition of definitions) {
+            const name = definition.name;
+            const reference = definition.reference;
             if (reference.size == 0) {
                 empties.add(name);
             } else {
@@ -88,9 +87,9 @@ SemanticAnalyzer.prototype = {
         // classify variables
         const circular = new Set();
         const rest = new Map();
-        for (let i = 0; i < definitions.length; i++) {
-            const name = definitions[i].name;
-            const reference = definitions[i].reference;
+        for (const definition of definitions) {
+            const name = definition.name;
+            const reference = definition.reference;
             if (reference.has(name)) {
                 circular.add(name);
             }
@@ -131,8 +130,8 @@ SemanticAnalyzer.prototype = {
             }
         } else {
             // other
-            for (let i = 0; i < tree.children.length; i++) {
-                const sub = this._getReference(tree.children[i]);
+            for (const child of tree.children) {
+                const sub = this._getReference(child);
                 sub.forEach(reference.add, reference);
             }
         }
@@ -154,9 +153,9 @@ SemanticAnalyzer.prototype = {
                     break;
                 }
                 let count = 0;
-                for (let i = 0; i < definitions.length; i++) {
-                    if (definitions[i].name == name) {
-                        this._validateReference(current, definitions[i].tree, definitions);
+                for (const definition of definitions) {
+                    if (definition.name == name) {
+                        this._validateReference(current, definition.tree, definitions);
                         count++;
                     }
                 }
@@ -191,8 +190,8 @@ SemanticAnalyzer.prototype = {
 
             default:
                 // other
-                for (let i = 0; i < tree.children.length; i++) {
-                    this._validateReference(current, tree.children[i], definitions);
+                for (const child of tree.children) {
+                    this._validateReference(current, child, definitions);
                 }
                 break;
         }

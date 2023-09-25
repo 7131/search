@@ -144,8 +144,8 @@ const PatternConverter = {
     // Sequence ::= Factor+ ;
     "Sequence": function(tree) {
         const iterators = [];
-        for (let i = 0; i < tree.children.length; i++) {
-            iterators.push(tree.children[i].iterator);
+        for (const child of tree.children) {
+            iterators.push(child.iterator);
         }
         tree.iterator = new SequenceIterator(iterators);
     },
@@ -284,8 +284,8 @@ const PatternConverter = {
     // Integer ::= Digit+ ;
     "Integer": function(tree) {
         let text = "";
-        for (let i = 0; i < tree.children.length; i++) {
-            text += tree.children[i].text;
+        for (const child of tree.children) {
+            text += child.text;
         }
         tree.value = parseInt(text, 10);
     },

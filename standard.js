@@ -134,8 +134,8 @@ Controller.prototype = {
         if (this._settingAll.checked) {
             style = "hidden";
         }
-        for (let i = 0; i < this._groupAll.length; i++) {
-            this._groupAll[i].style.visibility = style;
+        for (const group of this._groupAll) {
+            group.style.visibility = style;
         }
     },
 
@@ -168,8 +168,8 @@ Controller.prototype = {
 
     // switch enable/disable of input item
     "_setEnabled": function(group, enabled) {
-        for (let i = 0; i < group.length; i++) {
-            group[i].disabled = !enabled;
+        for (const element of group) {
+            element.disabled = !enabled;
         }
     },
 
@@ -233,13 +233,13 @@ Controller.prototype = {
 
         // list
         const ul = document.createElement("ul");
-        for (let i = 0; i < this._values.length; i++) {
+        for (const value of this._values) {
             const li = document.createElement("li");
-            let text = this._values[i].getProperty("pattern");
+            let text = value.getProperty("pattern");
 
             // show the number of balls
             if (this._settingBalls.checked) {
-                text += "(" + this._values[i].getProperty("balls") + ")";
+                text += "(" + value.getProperty("balls") + ")";
             }
             li.innerText = text;
             ul.appendChild(li);
