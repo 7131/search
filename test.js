@@ -13,21 +13,21 @@ const Controller = function() {
     this._ssql = new Parser(QueryGrammar, QueryConverter);
 
     // events
-    window.addEventListener("load", this._initialize.bind(this), false);
+    window.addEventListener("load", this._initialize.bind(this));
 }
 
 // Controller prototype
 Controller.prototype = {
 
     // initialize the page
-    "_initialize": function() {
+    "_initialize": function(e) {
         // associate buttons with search functions
         const standard = document.getElementById("standard");
         const professional = document.getElementById("professional");
         this._function = new Map();
         this._function.set(standard, this._searchStandard.bind(this));
         this._function.set(professional, this._searchProfessional.bind(this));
-        this._function.forEach((value, key) => key.addEventListener("click", this._start.bind(this), false));
+        this._function.forEach((value, key) => key.addEventListener("click", this._start.bind(this)));
 
         // associate buttons with table rows
         const patterns = document.getElementById("patterns");

@@ -5,14 +5,14 @@ const Controller = function() {
     this._ssql = new Parser(QueryGrammar, QueryConverter);
 
     // events
-    window.addEventListener("load", this._initialize.bind(this), false);
+    window.addEventListener("load", this._initialize.bind(this));
 }
 
 // Controller prototype
 Controller.prototype = {
 
     // initialize the private fields
-    "_initialize": function() {
+    "_initialize": function(e) {
         // input elements
         this._query = document.getElementById("query");
         this._startButton = document.getElementById("start");
@@ -27,8 +27,8 @@ Controller.prototype = {
         this._resultArea = document.getElementById("result_area");
 
         // events
-        this._startButton.addEventListener("click", this._start.bind(this), false);
-        this._stopButton.addEventListener("click", this._stop.bind(this), false);
+        this._startButton.addEventListener("click", this._start.bind(this));
+        this._stopButton.addEventListener("click", this._stop.bind(this));
     },
 
     // "Start" button process

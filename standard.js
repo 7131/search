@@ -4,14 +4,14 @@ const Controller = function() {
     this._parser = new Parser(PatternGrammar, PatternConverter);
 
     // events
-    window.addEventListener("load", this._initialize.bind(this), false);
+    window.addEventListener("load", this._initialize.bind(this));
 }
 
 // Controller prototype
 Controller.prototype = {
 
     // initialize the private fields
-    "_initialize": function() {
+    "_initialize": function(e) {
         // input elements
         this._pattern = document.getElementById("pattern");
         this._searchButton = document.getElementById("search");
@@ -59,14 +59,14 @@ Controller.prototype = {
         this._maxNumbers = this._getInt(document.getElementById("max_numbers").innerText);
 
         // events
-        this._searchButton.addEventListener("click", this._start.bind(this), false);
-        this._limitCount.addEventListener("input", this._inputCount.bind(this), false);
-        this._limitTime.addEventListener("input", this._inputTime.bind(this), false);
-        this._settingSort.addEventListener("change", this._changeSort.bind(this), false);
-        this._settingAll.addEventListener("change", this._changeAll.bind(this), false);
-        this._settingNumbers.addEventListener("change", this._changeNumbers.bind(this), false);
-        this._valueNumbers.addEventListener("input", this._inputNumbers.bind(this), false);
-        this._settingSingle.addEventListener("change", this._changeSingle.bind(this), false);
+        this._searchButton.addEventListener("click", this._start.bind(this));
+        this._limitCount.addEventListener("input", this._inputCount.bind(this));
+        this._limitTime.addEventListener("input", this._inputTime.bind(this));
+        this._settingSort.addEventListener("change", this._changeSort.bind(this));
+        this._settingAll.addEventListener("change", this._changeAll.bind(this));
+        this._settingNumbers.addEventListener("change", this._changeNumbers.bind(this));
+        this._valueNumbers.addEventListener("input", this._inputNumbers.bind(this));
+        this._settingSingle.addEventListener("change", this._changeSingle.bind(this));
 
         // initialize the page
         this._changeSort(null);
