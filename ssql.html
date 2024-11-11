@@ -56,6 +56,7 @@ WHERE $0.balls == 3
   <tr><th>property</th><th>explanation</th><th>example</th></tr>
   <tr><td>pattern</td><td>the string itself</td><td>315315</td></tr>
   <tr><td>length</td><td>string length</td><td>6</td></tr>
+  <tr><td>sum</td><td>sum of heights</td><td>18</td></tr>
   <tr><td>reverse</td><td>reverse order</td><td>513513</td></tr>
   <tr><td>min</td><td>minimum pattern</td><td>153153</td></tr>
   <tr><td>max</td><td>maximum pattern</td><td>531531</td></tr>
@@ -217,7 +218,7 @@ Auto ::= "\$[0-9]*" ;
 User ::= "\$[a-z_][a-z_0-9]*" ;
 Literal ::= String | Integer ;
 Integer ::= "[0-9]+" ;
-Property ::= 'pattern' | 'length' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
+Property ::= 'pattern' | 'length' | 'sum' | 'reverse' | 'min' | 'max' | 'omission' | 'standard' | 'jugglable' | 'valid' | 'balls' | 'period' | 'state' | 'int10' | 'int36' ;
 Method ::= ('at' | 'rotate' | 'skip' | 'take') '(' Parameter ')' ;
 Parameter ::= Term | '-' Value ;
 Iterator ::=  ('every' | 'some') '(' Lambda ')' ;

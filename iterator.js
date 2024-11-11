@@ -611,6 +611,7 @@ const PatternValue = function(pattern) {
     this._properties = { "pattern": pattern };
     this._functions = {
         "length": this._getLength.bind(this),
+        "sum": this._getSum.bind(this),
         "reverse": this._getReverse.bind(this),
         "min": this._getMin.bind(this),
         "max": this._getMax.bind(this),
@@ -645,6 +646,12 @@ PatternValue.prototype = {
     // get pattern length
     "_getLength": function() {
         return this._pattern.length;
+    },
+
+    // get the sum of heights
+    "_getSum": function() {
+        const numbers = this._pattern.split("").map(elem => PatternCommon.ALPHABET.indexOf(elem));
+        return numbers.filter(elem => 0 <= elem).reduce((acc, cur) => acc + cur, 0);
     },
 
     // get reverse pattern
