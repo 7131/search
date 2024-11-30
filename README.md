@@ -1,46 +1,35 @@
 # Siteswap Search Service
 
-You can execute an infinite search of siteswaps with a regular expression style notation.
-In addition, by using the Siteswap Query Language (SsQL), you can specify the search method and the display method of results in detail.
+https://7131.github.io/search/
 
-# File list
+There are two versions of the siteswap search service: standard and professional.
+In both cases, only vanilla siteswaps are covered.
+The professional version is upward compatible with the standard version, so it can generate everything that the standard version can generate.
 
-<dl>
-  <dt>index.html</dt>
-    <dd>This is the service entrance page. Usually redirect to the standard version.</dd>
-  <dt>standard.html</dt>
-    <dd>This is the standard version page. Here you can describe the search pattern and set various conditions.</dd>
-  <dt>standard.css</dt>
-    <dd>The style sheet for the standard version.</dd>
-  <dt>standard.js</dt>
-    <dd>This is a controller that receives the input of the standard version and outputs the resulting patterns.</dd>
-  <dt>pattern.js</dt>
-    <dd>The grammar object and the syntax converter of the search pattern.</dd>
-  <dt>parser.js</dt>
-    <dd>Classes for parser, token, syntax tree, and state stack.</dd>
-  <dt>iterator.js</dt>
-    <dd>Classes for pattern creator, pattern value, and 4 types of iterators.</dd>
-  <dt>notation.html</dt>
-    <dd>This page explains how to write search patterns.</dd>
-  <dt>professional.html</dt>
-    <dd>This is the professional version page. Here you can use SsQL to search for siteswaps.</dd>
-  <dt>professional.css</dt>
-    <dd>The style sheet for the professional version.</dd>
-  <dt>professional.js</dt>
-    <dd>This is a controller that receives the input of the professional version and outputs the resulting patterns.</dd>
-  <dt>query.js</dt>
-    <dd>The grammar object and the syntax converter of SsQL.</dd>
-  <dt>syntax.js</dt>
-    <dd>Classes for various objects that make up the syntax.</dd>
-  <dt>semantic.js</dt>
-    <dd>A class for semantic analysis.</dd>
-  <dt>ssql.html</dt>
-    <dd>This page explains how to write SsQL.</dd>
-  <dt>test.html</dt>
-    <dd>This is a page for testing this service.</dd>
-  <dt>test.css</dt>
-    <dd>The style sheet for the test page.</dd>
-  <dt>test.js</dt>
-    <dd>This is a controller that receives the input of the test page and outputs the test result to the table.</dd>
-</dl>
+# Standard version
 
+The standard version is designed to easily generate siteswaps in regular expression style notation.
+For example, if you want to generate siteswaps with a height of 5 or less, simply specify the following and press the "Search" button.
+
+```
+[0-5]+
+```
+
+For ease of use, only juggleable patterns are searched by default, and the search terminates after 100 hits or 3 seconds.
+You can set conditions such as "only 3 balls" or "excluding the same siteswap".
+
+# Professional version
+
+In the Professional version, the Siteswap Query Language (SsQL) allows you to specify in detail how to search and display results.
+This version can generate an infinite number of patterns until physical constraints are reached.
+If the number of patterns generated is finite, a full search can be performed.
+
+Siteswaps with a height of 5 or less is expressed in SsQL as follows:
+
+```SQL
+FROM "[0-5]+"
+WHERE $0.valid AND $0.balls == 3
+SELECT DISTINCT $0.standard
+```
+
+If you do not write a LIMIT clause, it will continue to generate infinitely, so stop at the appropriate point.
