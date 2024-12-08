@@ -20,7 +20,7 @@ You can set conditions such as "only 3 balls" or "excluding the same siteswap".
 
 # Professional version
 
-In the Professional version, the Siteswap Query Language (SsQL) allows you to specify in detail how to search and display results.
+In the professional version, the Siteswap Query Language (SsQL) allows you to specify in detail how to search and display results.
 This version can generate an infinite number of patterns until physical constraints are reached.
 If the number of patterns generated is finite, a full search can be performed.
 
