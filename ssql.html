@@ -88,19 +88,19 @@ WHERE $0.balls == 3
 </table>
 <p>Lambda expressions are specified in the following format:</p>
 <pre>
-index => condition
+index =&gt; condition
 </pre>
 <p>or</p>
 <pre>
-index, whole => condition
+index, whole =&gt; condition
 </pre>
 <p>Here, both the index variable and the variable that represents the whole are user-defined variables. User-defined variables can be specified as $ + strings, such as $index, $x1, $_, and can be used in acquisition conditions. The following is a concrete example of the former format.</p>
 <pre>
-$0.every($index => $0.at($index) == 1)
+$0.every($index =&gt; $0.at($index) == 1)
 </pre>
-<p>If the length of $0 is n, 0 to n-1 are assigned to $index in order, and the right side of => is iterated. On the right side, it is determined whether the characters from the 0th digit to the n-1th digit are 1, so throughout this example, it is determined whether all the digits of $0 are 1.</p>
+<p>If the length of $0 is n, 0 to n-1 are assigned to $index in order, and the right side of =&gt; is iterated. On the right side, it is determined whether the characters from the 0th digit to the n-1th digit are 1, so throughout this example, it is determined whether all the digits of $0 are 1.</p>
 <pre>
-$0.take(2).some($index, $whole => $whole.at($index) == 1)
+$0.take(2).some($index, $whole =&gt; $whole.at($index) == 1)
 </pre>
 <p>This is a concrete example of the latter form, which determines if there is a 1 in the first two digits of $0. It is the same as writing $0.take(2) instead of $whole, but more concise.</p>
 <p>The following is a list of operators by priority.</p>
@@ -179,7 +179,7 @@ LET $var3 = $0.at($index)
 </pre>
 <p>Using an undefined variable will result in an error, but the order of definition does not matter, so there is no problem if you use $var3 as follows.</p>
 <pre>
-WHERE $0.every($index => $var3 < 3)
+WHERE $0.every($index =&gt; $var3 &lt; 3)
 </pre>
 </section>
 
@@ -222,8 +222,8 @@ Property ::= 'pattern' | 'length' | 'sum' | 'reverse' | 'min' | 'max' | 'omissio
 Method ::= ('at' | 'rotate' | 'skip' | 'take') '(' Parameter ')' ;
 Parameter ::= Term | '-' Value ;
 Iterator ::=  ('every' | 'some') '(' Lambda ')' ;
-Lambda ::= User (',' User)? '=>' Condition ;
-Compare ::= '==' | '!=' | '<>' | '<' | '<=' | '>' | '>=' ;
+Lambda ::= User (',' User)? '=&gt;' Condition ;
+Compare ::= '==' | '!=' | '&lt;&gt;' | '&lt;' | '&lt;=' | '&gt;' | '&gt;=' ;
 Clause ::= 'NOT'? 'IN' '(' List ')' ;
 List ::= Literal (',' Literal)* ;
 Select ::= 'SELECT' 'DISTINCT'? View ;

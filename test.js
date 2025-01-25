@@ -217,7 +217,7 @@ Controller.prototype = {
         }
 
         // finished
-        let last = rows[rows.length - 1];
+        const last = rows[rows.length - 1];
         if (this._errors.length == 0) {
             last.cells[ColNum.RESULT].innerText = "All OK";
         } else {
@@ -288,7 +288,7 @@ Controller.prototype = {
         this._errors.push(this._index);
 
         // finished
-        let last = rows[rows.length - 1];
+        const last = rows[rows.length - 1];
         last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
         last.cells[ColNum.RESULT].className = "error";
     },
