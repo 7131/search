@@ -198,70 +198,42 @@ SyntaxExpression.prototype = {
 
             // get the comparison target
             let second = this.second.getText(symbols);
-            if (PatternCommon.isInt(text) && !PatternCommon.isInt(second)) {
-                second = PatternCommon.toInt(second);
-            }
-            if (!PatternCommon.isInt(text) && PatternCommon.isInt(second)) {
-                text = PatternCommon.toInt(text);
+            if (typeof text == "bigint") {
+                if (typeof second != "bigint") {
+                    second = PatternCommon.toBigInt(second);
+                }
+            } else {
+                if (typeof second == "bigint") {
+                    text = PatternCommon.toBigInt(text);
+                }
             }
 
             // compare
-            if (PatternCommon.isInt(text)) {
-                // for BigInt
-                switch (this.compare) {
-                    case "==":
-                        result = text.equals(second);
-                        break;
+            switch (this.compare) {
+                case "==":
+                    result = (text == second);
+                    break;
 
-                    case "!=":
-                    case "<>":
-                        result = text.notEquals(second);
-                        break;
+                case "!=":
+                case "<>":
+                    result = (text != second);
+                    break;
 
-                    case "<":
-                        result = text.lesser(second);
-                        break;
+                case "<":
+                    result = (text < second);
+                    break;
 
-                    case "<=":
-                        result = text.lesserOrEquals(second);
-                        break;
+                case "<=":
+                    result = (text <= second);
+                    break;
 
-                    case ">":
-                        result = text.greater(second);
-                        break;
+                case ">":
+                    result = (text > second);
+                    break;
 
-                    case ">=":
-                        result = text.greaterOrEquals(second);
-                        break;
-                }
-            } else {
-                // otherwise
-                switch (this.compare) {
-                    case "==":
-                        result = (text == second);
-                        break;
-
-                    case "!=":
-                    case "<>":
-                        result = (text != second);
-                        break;
-
-                    case "<":
-                        result = (text < second);
-                        break;
-
-                    case "<=":
-                        result = (text <= second);
-                        break;
-
-                    case ">":
-                        result = (text > second);
-                        break;
-
-                    case ">=":
-                        result = (text >= second);
-                        break;
-                }
+                case ">=":
+                    result = (text >= second);
+                    break;
             }
         } else {
             // IN clause
@@ -317,11 +289,11 @@ SyntaxTerm.prototype = {
             const follow = this.follows[i].getText(symbols);
             switch (this.operators[i]) {
                 case "+":
-                    text = PatternCommon.toInt(text).add(PatternCommon.toInt(follow));
+                    text = PatternCommon.toBigInt(text) + PatternCommon.toBigInt(follow);
                     break;
 
                 case "-":
-                    text = PatternCommon.toInt(text).subtract(PatternCommon.toInt(follow));
+                    text = PatternCommon.toBigInt(text) - PatternCommon.toBigInt(follow);
                     break;
 
                 default:
@@ -361,20 +333,20 @@ SyntaxFactor.prototype = {
         }
 
         // multiplication and division
-        let value = PatternCommon.toInt(text);
+        let value = PatternCommon.toBigInt(text);
         for (let i = 0; i < this.operators.length; i++) {
-            const follow = PatternCommon.toInt(this.follows[i].getText(symbols));
+            const follow = PatternCommon.toBigInt(this.follows[i].getText(symbols));
             switch (this.operators[i]) {
                 case "*":
-                    value = value.multiply(follow);
+                    value *= follow;
                     break;
 
                 case "/":
-                    value = value.divide(follow);
+                    value /= follow;
                     break;
 
                 default:
-                    value = value.mod(follow);
+                    value %= follow;
                     break;
             }
         }
@@ -459,17 +431,17 @@ SyntaxMethod.prototype = {
         }
 
         // execute the method
-        const number = PatternCommon.toInt(this._param.getText(symbols));
+        const number = parseInt(this._param.getText(symbols), 10);
         return method(number, this._value.length);
     },
 
     // get the value at the specified position
     "_getAt": function(number, length) {
-        if (number.abs().greater(length) || number.equals(length)) {
+        if (length <= number || length < -number) {
             return "";
         }
-        if (number.isNegative()) {
-            return this._value[number.add(length)];
+        if (number < 0) {
+            return this._value[number + length];
         } else {
             return this._value[number];
         }
@@ -477,20 +449,20 @@ SyntaxMethod.prototype = {
 
     // get the rotated value
     "_getRotate": function(number, length) {
-        let rotate = number.mod(length);
-        if (rotate.isNegative()) {
-            rotate = rotate.add(length);
+        let rotate = number % length;
+        if (rotate < 0) {
+            rotate += length;
         }
         return this._value.substring(rotate) + this._value.substring(0, rotate);
     },
 
     // get the skipped value
     "_getSkip": function(number, length) {
-        if (number.abs().greater(length) || number.equals(length)) {
+        if (length <= number || length < -number) {
             return "";
         }
-        if (number.isNegative()) {
-            return this._value.substring(0, number.add(length));
+        if (number < 0) {
+            return this._value.substring(0, number + length);
         } else {
             return this._value.substring(number);
         }
@@ -498,11 +470,11 @@ SyntaxMethod.prototype = {
 
     // get the value from the beginning
     "_getTake": function(number, length) {
-        if (number.abs().greater(length) || number.equals(length)) {
+        if (length <= number || length < -number) {
             return this._value;
         }
-        if (number.isNegative()) {
-            return this._value.substring(number.add(length));
+        if (number < 0) {
+            return this._value.substring(number + length);
         } else {
             return this._value.substring(0, number);
         }

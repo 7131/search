@@ -4,26 +4,34 @@ const PatternCommon = {
     // siteswap alphabet
     "ALPHABET": "0123456789abcdefghijklmnopqrstuvwxyz",
 
-    // convert string to integer
-    "toInt": function(text, radix) {
+    // convert string to big integer
+    "toBigInt": function(text, radix) {
         // check the arguments
         if (isNaN(radix) || radix < 2 || PatternCommon.ALPHABET.length < radix) {
             radix = 10;
         }
 
         // get a valid part from the beginning
-        const exp = new RegExp("^(\\+|\\-)?[" + PatternCommon.ALPHABET.substring(0, radix) + "]+");
+        const exp = new RegExp("^(\\+|\\-)?([" + PatternCommon.ALPHABET.substring(0, radix) + "]+)");
         const match = exp.exec(text);
-        if (match) {
-            return new bigInt(match[0], radix);
-        } else {
-            return new bigInt();
+        if (!match) {
+            return 0n;
         }
-    },
 
-    // whether it is an integer
-    "isInt": function(text) {
-        return text instanceof bigInt;
+        // convert to integer
+        let value = 0n;
+        if (radix == 10) {
+            value = BigInt(match[2]);
+        } else {
+            const multi = BigInt(radix);
+            for (const char of match[2]) {
+                value = value * multi + BigInt(PatternCommon.ALPHABET.indexOf(char));
+            }
+        }
+        if (match[1] == "-") {
+            value = -value;
+        }
+        return value;
     },
 
     // convert to lowercase letters
@@ -835,20 +843,12 @@ PatternValue.prototype = {
 
     // get base 10 value
     "_getInt10": function() {
-        const value = PatternCommon.toInt(this._pattern, 10);
-        if (isNaN(value)) {
-            return 0;
-        }
-        return value;
+        return PatternCommon.toBigInt(this._pattern, 10);
     },
 
     // get base 36 value
     "_getInt36": function() {
-        const value = PatternCommon.toInt(this._pattern, 36);
-        if (isNaN(value)) {
-            return 0;
-        }
-        return value;
+        return PatternCommon.toBigInt(this._pattern, 36);
     },
 
     // get candidate string
