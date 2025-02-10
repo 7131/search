@@ -174,10 +174,10 @@ Controller.prototype = {
         const ok = document.createElement("div");
         const ng = document.createElement("div");
         head.innerHTML = title;
-        head.className = "error";
+        head.classList.add("error");
         ok.innerHTML = valid;
         ng.innerHTML = invalid;
-        ng.className = "error";
+        ng.classList.add("error");
         this._messageArea.innerHTML = "";
         this._messageArea.appendChild(head);
         this._messageArea.appendChild(ok);

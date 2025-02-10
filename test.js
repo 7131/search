@@ -58,7 +58,7 @@ Controller.prototype = {
         for (let i = 1; i < rows.length; i++) {
             const number = rows[i].cells[ColNum.NUMBER];
             number.innerText = i;
-            number.className = "symbol";
+            number.classList.add("symbol");
         }
 
         // get the last row
@@ -77,7 +77,7 @@ Controller.prototype = {
         for (let i = 1; i < rows.length; i++) {
             const result = rows[i].cells[ColNum.RESULT];
             result.innerText = "";
-            result.className = "";
+            result.classList.remove("error");
         }
     },
 
@@ -202,7 +202,7 @@ Controller.prototype = {
             row.cells[ColNum.RESULT].innerText = "OK";
         } else {
             row.cells[ColNum.RESULT].innerText = text;
-            row.cells[ColNum.RESULT].className = "error";
+            row.cells[ColNum.RESULT].classList.add("error");
             this._errors.push(this._index);
         }
 
@@ -222,7 +222,7 @@ Controller.prototype = {
             last.cells[ColNum.RESULT].innerText = "All OK";
         } else {
             last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
-            last.cells[ColNum.RESULT].className = "error";
+            last.cells[ColNum.RESULT].classList.add("error");
         }
         this._function.forEach((value, key) => key.disabled = false);
     },
@@ -284,13 +284,13 @@ Controller.prototype = {
         const rows = this._rows.get(this._button);
         const result = rows[this._index].cells[ColNum.RESULT];
         result.innerText = "parsing failure: " + message;
-        result.className = "error";
+        result.classList.add("error");
         this._errors.push(this._index);
 
         // finished
         const last = rows[rows.length - 1];
         last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
-        last.cells[ColNum.RESULT].className = "error";
+        last.cells[ColNum.RESULT].classList.add("error");
     },
 
 }

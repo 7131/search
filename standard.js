@@ -81,8 +81,8 @@ Controller.prototype = {
         this._values = [];
         this._messageArea.innerHTML = "";
         this._resultArea.innerHTML = "";
-        this._resultCount.className = "";
-        this._resultTime.className = "";
+        this._resultCount.classList.remove("error");
+        this._resultTime.classList.remove("error");
         this._showProgress(0, 0);
 
         // pattern analysis
@@ -159,10 +159,10 @@ Controller.prototype = {
         const number = parseInt(input.value, 10);
         if (isNaN(number) || number < min || max < number) {
             // invalid
-            input.className = "invalid";
+            input.classList.add("invalid");
         } else {
             // valid
-            input.className = "";
+            input.classList.remove("invalid");
         }
     },
 
@@ -204,10 +204,10 @@ Controller.prototype = {
         // check if it is completed
         if (!completed) {
             if (parseFloat(this._limitCount.value) <= parseFloat(this._resultCount.innerText)) {
-                this._resultCount.className = "error";
+                this._resultCount.classList.add("error");
             }
             if (parseFloat(this._limitTime.value) <= parseFloat(this._resultTime.innerText)) {
-                this._resultTime.className = "error";
+                this._resultTime.classList.add("error");
             }
         }
 
@@ -304,10 +304,10 @@ Controller.prototype = {
         const ok = document.createElement("div");
         const ng = document.createElement("div");
         head.innerHTML = "Error";
-        head.className = "error";
+        head.classList.add("error");
         ok.innerHTML = valid;
         ng.innerHTML = invalid;
-        ng.className = "error";
+        ng.classList.add("error");
         this._messageArea.innerHTML = "";
         this._messageArea.appendChild(head);
         this._messageArea.appendChild(ok);
