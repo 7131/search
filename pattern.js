@@ -192,15 +192,15 @@ const PatternConverter = {
         let texts = [];
         switch (tree.children[0].text) {
             case "#":
-                texts = this._numbers.split("");
+                texts = PatternConverter._numbers;
                 break;
 
             case "$":
-                texts = this._alphabets.split("");
+                texts = PatternConverter._alphabets;
                 break;
 
             case ".":
-                texts = (this._numbers + this._alphabets).split("");
+                texts = PatternConverter._numbers.concat(PatternConverter._alphabets);
                 break;
 
             default:
@@ -234,7 +234,7 @@ const PatternConverter = {
                 if (negative) {
                     // negative character class
                     const removes = texts;
-                    texts = (this._numbers + this._alphabets).split("").filter(elem => removes.indexOf(elem) < 0);
+                    texts = PatternConverter._numbers.concat(PatternConverter._alphabets).filter(elem => removes.indexOf(elem) < 0);
                 }
                 break;
         }
@@ -291,10 +291,10 @@ const PatternConverter = {
     },
 
     // list of numbers
-    "_numbers": "0123456789",
+    "_numbers": "0123456789".split(""),
 
     // list of alphabets
-    "_alphabets": "abcdefghijklmnopqrstuvwxyz",
+    "_alphabets": "abcdefghijklmnopqrstuvwxyz".split(""),
 
 }
 

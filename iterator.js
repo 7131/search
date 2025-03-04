@@ -1,19 +1,16 @@
 // Object common to patterns
 const PatternCommon = {
 
-    // siteswap alphabet
-    "ALPHABET": "0123456789abcdefghijklmnopqrstuvwxyz",
-
     // convert string to big integer
     "toBigInt": function(text, radix) {
         // check the arguments
-        if (isNaN(radix) || radix < 2 || PatternCommon.ALPHABET.length < radix) {
+        if (isNaN(radix) || radix < 2 || 36 < radix) {
             radix = 10;
         }
 
         // get a valid part from the beginning
-        const exp = new RegExp("^(\\+|\\-)?([" + PatternCommon.ALPHABET.substring(0, radix) + "]+)");
-        const match = exp.exec(text);
+        const numbers = "0123456789abcdefghijklmnopqrstuvwxyz".substring(0, radix);
+        const match = new RegExp("^(\\+|\\-)?([" + numbers + "]+)").exec(text);
         if (!match) {
             return 0n;
         }
@@ -25,7 +22,7 @@ const PatternCommon = {
         } else {
             const multi = BigInt(radix);
             for (const char of match[2]) {
-                value = value * multi + BigInt(PatternCommon.ALPHABET.indexOf(char));
+                value = value * multi + BigInt(parseInt(char, 36));
             }
         }
         if (match[1] == "-") {
@@ -658,8 +655,9 @@ PatternValue.prototype = {
 
     // get the sum of heights
     "_getSum": function() {
-        const numbers = this._pattern.split("").map(elem => PatternCommon.ALPHABET.indexOf(elem));
-        return numbers.filter(elem => 0 <= elem).reduce((acc, cur) => acc + cur, 0);
+        const letters = this._pattern.split("");
+        const numbers = letters.map(elem => parseInt(elem, 36)).filter(elem => !isNaN(elem));
+        return numbers.reduce((acc, cur) => acc + cur);
     },
 
     // get reverse pattern
@@ -896,13 +894,8 @@ PatternValue.prototype = {
         }
 
         // create only when undefined
-        this._numbers = [];
-        for (const letter of this.getProperty("omission")) {
-            const number = PatternCommon.ALPHABET.indexOf(letter);
-            if (0 <= number) {
-                this._numbers.push(number);
-            }
-        }
+        const letters = this.getProperty("omission").split("");
+        this._numbers = letters.map(elem => parseInt(elem, 36)).filter(elem => !isNaN(elem));
         return this._numbers;
     },
 
