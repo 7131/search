@@ -819,10 +819,7 @@ PatternValue.prototype = {
         }
 
         // calculate the drop points
-        const drops = new Array(max);
-        for (let i = 0; i < max; i++) {
-            drops[i] = 0;
-        }
+        const drops = new Array(max).fill(0);
         const length = expand.length;
         for (let i = 0; i < length; i++) {
             const index = expand[i] + i;
@@ -878,7 +875,7 @@ PatternValue.prototype = {
             // check from the first character to half the length
             if (length % pos == 0) {
                 const sub = text.substring(0, pos);
-                if ((new Array(length / pos + 1)).join(sub) == text) {
+                if (sub.repeat(length / pos) == text) {
                     return sub;
                 }
             }
