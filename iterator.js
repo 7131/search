@@ -773,7 +773,7 @@ PatternValue.prototype = {
         const numbers = this._getNumbers();
         if (this.getProperty("valid")) {
             // siteswap
-            return numbers.reduce((acc, cur) => acc + cur, 0) / numbers.length;
+            return numbers.reduce((acc, cur) => acc + cur) / numbers.length;
         } else {
             // not siteswap
             return numbers.filter((value, key) => numbers.length <= value + key).length;
