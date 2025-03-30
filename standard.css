@@ -59,6 +59,10 @@ pre {
     padding-left: 2ex;
 }
 
+.hidden {
+    visibility: hidden;
+}
+
 .error {
     color: red;
 }

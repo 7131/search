@@ -130,12 +130,10 @@ Controller.prototype = {
 
     // change whether to show all items
     "_changeAll": function(e) {
-        let style = "visible";
         if (this._settingAll.checked) {
-            style = "hidden";
-        }
-        for (const group of this._groupAll) {
-            group.style.visibility = style;
+            this._groupAll.forEach(elem => elem.classList.add("hidden"));
+        } else {
+            this._groupAll.forEach(elem => elem.classList.remove("hidden"));
         }
     },
 
