@@ -132,9 +132,7 @@ Controller.prototype = {
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
-            for (const term of this._syntax.lets) {
-                symbols.setTerm(term);
-            }
+            this._syntax.lets.forEach(symbols.setTerm, symbols);
 
             // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {

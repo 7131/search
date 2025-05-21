@@ -43,9 +43,7 @@ SyntaxSelect.prototype = {
 
         // get value
         let text = "";
-        for (const term of this.list) {
-            text += term.getText(symbols);
-        }
+        this.list.forEach(elem => text += elem.getText(symbols));
         return text;
     },
 

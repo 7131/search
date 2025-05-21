@@ -634,9 +634,7 @@ const QueryConverter = {
     // View ::= Term+ ;
     "View": function(tree) {
         tree.list = [];
-        for (const child of tree.children) {
-            tree.list.push(child.value);
-        }
+        tree.children.forEach(elem => tree.list.push(elem.value));
     },
 
     // Order ::= 'ORDER' 'BY' Multiple ;

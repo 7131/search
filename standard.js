@@ -166,9 +166,7 @@ Controller.prototype = {
 
     // switch enable/disable of input item
     "_setEnabled": function(group, enabled) {
-        for (const element of group) {
-            element.disabled = !enabled;
-        }
+        group.forEach(elem => elem.disabled = !enabled);
     },
 
     // get an integer value

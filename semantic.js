@@ -39,9 +39,7 @@ SemanticAnalyzer.prototype = {
 
         // using variables
         const current = Array.from(empties);
-        for (const expression of expressions) {
-            this._validateReference(current, expression, parts);
-        }
+        expressions.forEach(elem => this._validateReference(current, elem, parts));
         if (0 < this._duplicate.size) {
             return this._getError("duplicate variables", this._symbols, this._duplicate);
         }
@@ -102,19 +100,13 @@ SemanticAnalyzer.prototype = {
             dealt = false;
             for (const name of rest.keys()) {
                 const reference = rest.get(name);
-                for (const values of rest.values()) {
-                    if (values.has(name)) {
-                        const before = values.size;
-                        reference.forEach((value, key) => values.add(key));
-                        dealt ||= before < values.size;
-                    }
+                for (const values of rest.values().filter(elem => elem.has(name))) {
+                    const before = values.size;
+                    reference.forEach((val, key) => values.add(key));
+                    dealt ||= before < values.size;
                 }
             }
-            for (const name of rest.keys()) {
-                if (rest.get(name).has(name)) {
-                    circular.add(name);
-                }
-            }
+            rest.keys().filter(elem => rest.get(elem).has(elem)).forEach(elem => circular.add(elem));
         }
         return circular;
     },
@@ -130,10 +122,7 @@ SemanticAnalyzer.prototype = {
             }
         } else {
             // other
-            for (const child of tree.children) {
-                const sub = this._getReference(child);
-                sub.forEach(reference.add, reference);
-            }
+            tree.children.forEach(elem => this._getReference(elem).forEach(reference.add, reference));
         }
         return reference;
     },
@@ -152,14 +141,9 @@ SemanticAnalyzer.prototype = {
                 if (0 <= current.indexOf(name)) {
                     break;
                 }
-                let count = 0;
-                for (const definition of definitions) {
-                    if (definition.name == name) {
-                        this._validateReference(current, definition.tree, definitions);
-                        count++;
-                    }
-                }
-                if (count == 0) {
+                const selection = definitions.filter(elem => elem.name == name);
+                selection.forEach(elem => this._validateReference(current, elem.tree, definitions));
+                if (selection.length == 0) {
                     this._undefined.add(name);
                 }
                 break;
@@ -190,9 +174,7 @@ SemanticAnalyzer.prototype = {
 
             default:
                 // other
-                for (const child of tree.children) {
-                    this._validateReference(current, child, definitions);
-                }
+                tree.children.forEach(elem => this._validateReference(current, elem, definitions));
                 break;
         }
     },

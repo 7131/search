@@ -89,9 +89,7 @@ const Parser = function(grammar, converter) {
 
     // lexical analysis elements
     this._elements = [];
-    for (const term of terms) {
-        this._elements.push(new RegExp("^(" + term + ")", grammar.flag));
-    }
+    terms.forEach(elem => this._elements.push(new RegExp("^(" + elem + ")", grammar.flag)));
 
     // production rules
     this._rules = [];
@@ -244,9 +242,7 @@ Parser.prototype = {
 
         // join all child elements
         let text = "";
-        for (const child of tree.children) {
-            text += " " + this._joinTree(child);
-        }
+        tree.children.forEach(elem => text += " " + this._joinTree(elem));
         return text;
     },
 

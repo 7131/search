@@ -27,7 +27,7 @@ Controller.prototype = {
         this._function = new Map();
         this._function.set(standard, this._searchStandard.bind(this));
         this._function.set(professional, this._searchProfessional.bind(this));
-        this._function.forEach((value, key) => key.addEventListener("click", this._start.bind(this)));
+        this._function.forEach((val, key) => key.addEventListener("click", this._start.bind(this)));
 
         // associate buttons with table rows
         const patterns = document.getElementById("patterns");
@@ -35,14 +35,14 @@ Controller.prototype = {
         this._rows = new Map();
         this._rows.set(standard, patterns.rows);
         this._rows.set(professional, queries.rows);
-        this._rows.forEach(this._setRowNumbers);
+        this._rows.forEach(this._setRowNumbers, this);
     },
 
     // start the selected tests
     "_start": function(e) {
         // initialize fields
         this._button = e.currentTarget;
-        this._function.forEach((value, key) => key.disabled = true);
+        this._function.forEach((val, key) => key.disabled = true);
         const search = this._function.get(this._button);
         const rows = this._rows.get(this._button);
 
@@ -224,7 +224,7 @@ Controller.prototype = {
             last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
             last.cells[ColNum.RESULT].classList.add("error");
         }
-        this._function.forEach((value, key) => key.disabled = false);
+        this._function.forEach((val, key) => key.disabled = false);
     },
 
     // acceptance process in standard version
@@ -251,9 +251,7 @@ Controller.prototype = {
         try {
             // symbol table
             const symbols = new SymbolTable(patterns);
-            for (const term of this._syntax.lets) {
-                symbols.setTerm(term);
-            }
+            this._syntax.lets.forEach(symbols.setTerm, symbols);
 
             // acquisition condition
             if (!this._syntax.where.isValid(symbols)) {
