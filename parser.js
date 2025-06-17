@@ -194,7 +194,7 @@ Parser.prototype = {
 
                 // create a syntax tree
                 const node = new Tree(rule.symbol);
-                Array.prototype.push.apply(node.children, nodes);
+                node.children = nodes;
                 if (this._converter[node.label]) {
                     this._converter[node.label](node);
                 }

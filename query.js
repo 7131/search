@@ -601,10 +601,10 @@ const QueryConverter = {
         if (4 < tree.children.length) {
             // with NOT
             clause.not = true;
-            Array.prototype.push.apply(clause.list, tree.children[3].list);
+            clause.list = tree.children[3].list;
         } else {
             // without NOT
-            Array.prototype.push.apply(clause.list, tree.children[2].list);
+            clause.list = tree.children[2].list;
         }
         tree.value = clause;
     },
@@ -623,10 +623,10 @@ const QueryConverter = {
         if (2 < tree.children.length) {
             // with DISTINCT
             select.distinct = true;
-            Array.prototype.push.apply(select.list, tree.children[2].list);
+            select.list = tree.children[2].list;
         } else {
             // without DISTINCT
-            Array.prototype.push.apply(select.list, tree.children[1].list);
+            select.list = tree.children[1].list;
         }
         tree.value = select;
     },
@@ -640,7 +640,7 @@ const QueryConverter = {
     // Order ::= 'ORDER' 'BY' Multiple ;
     "Order": function(tree) {
         const order = new SyntaxOrder();
-        Array.prototype.push.apply(order.list, tree.children[2].list);
+        order.list = tree.children[2].list;
         tree.value = order;
     },
 

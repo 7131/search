@@ -105,12 +105,8 @@ SelectionIterator.prototype = {
         if (this._iterators.length <= this._position) {
             return [];
         }
-
-        // get patterns from all iterators
         const iterator = this._iterators[this._position];
-        const patterns = [ iterator.getCurrent() ];
-        Array.prototype.push.apply(patterns, iterator.getPatterns());
-        return patterns;
+        return [ iterator.getCurrent() ].concat(iterator.getPatterns());
     },
 
     // whether it is finished
@@ -194,9 +190,7 @@ SequenceIterator.prototype = {
 
     // get current pattern list
     "getPatterns": function() {
-        const patterns = [];
-        this._originals.forEach(elem => Array.prototype.push.apply(patterns, elem.getPatterns()));
-        return patterns;
+        return this._originals.reduce((acc, cur) => acc.concat(cur.getPatterns()), []);
     },
 
     // whether it is finished
@@ -784,13 +778,9 @@ PatternValue.prototype = {
         }
 
         // expand a numeric array
-        const expand = [].concat(numbers);
+        let expand = numbers;
         if (this.getProperty("valid")) {
-            // siteswap
-            const count = Math.ceil(max / numbers.length) - 1;
-            for (let i = 0; i < count; i++) {
-                Array.prototype.push.apply(expand, numbers);
-            }
+            expand = new Array(Math.ceil(max / numbers.length)).fill(numbers).flat();
         }
 
         // calculate the drop points
