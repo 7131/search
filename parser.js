@@ -86,10 +86,7 @@ const Parser = function(grammar, converter) {
     const terms = grammar.terminals.concat(grammar.dummies);
     this._terminals = terms.map(this._quoteSingle);
     this._dummies = grammar.dummies.map(this._quoteSingle);
-
-    // lexical analysis elements
-    this._elements = [];
-    terms.forEach(elem => this._elements.push(new RegExp("^(" + elem + ")", grammar.flag)));
+    this._elements = terms.map(elem => new RegExp(`^(${elem})`, grammar.flag));
 
     // production rules
     this._rules = [];
@@ -152,7 +149,7 @@ Parser.prototype = {
 
         // get the result
         if (0 < text.length) {
-            const valid = tokens.reduce(this._joinTokens, "");
+            const valid = tokens.reduce((acc, cur) => acc + " " + cur.text, "");
             return { "tokens": null, "valid": valid.trim(), "invalid": text };
         }
         return { "tokens": tokens };
@@ -216,10 +213,9 @@ Parser.prototype = {
         // the case of not to accept
         let valid = "";
         while (0 < stack.getCount()) {
-            const tree = stack.popTree();
-            valid = this._joinTree(tree) + " " + valid;
+            valid = this._joinTree(stack.popTree()) + " " + valid;
         }
-        const invalid = tokens.reduce(this._joinTokens, "");
+        const invalid = tokens.reduce((acc, cur) => acc + " " + cur.text, "");
         return { "tree": null, "valid": valid.trim(), "invalid": invalid.trim() };
     },
 
@@ -229,21 +225,12 @@ Parser.prototype = {
         return "'" + text + "'";
     },
 
-    // join the token strings
-    "_joinTokens": function(acc, cur) {
-        return acc + " " + cur.text;
-    },
-
     // join the tree strings
     "_joinTree": function(tree) {
         if (tree.text != "") {
             return tree.text;
         }
-
-        // join all child elements
-        let text = "";
-        tree.children.forEach(elem => text += " " + this._joinTree(elem));
-        return text;
+        return tree.children.map(this._joinTree, this).join(" ");
     },
 
 }

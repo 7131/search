@@ -36,15 +36,10 @@ SyntaxSelect.prototype = {
 
     // get result text
     "getText": function(symbols) {
-        // check the properties
         if (this.list.length == 0) {
             return symbols.getText(0);
         }
-
-        // get value
-        let text = "";
-        this.list.forEach(elem => text += elem.getText(symbols));
-        return text;
+        return this.list.map(elem => elem.getText(symbols)).join("");
     },
 
 }

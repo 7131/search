@@ -16,12 +16,12 @@ const PatternCommon = {
         }
 
         // convert to integer
-        let value = 0n;
+        let value;
         if (radix == 10) {
             value = BigInt(match[2]);
         } else {
             const multi = BigInt(radix);
-            match[2].split("").forEach(elem => value = value * multi + BigInt(parseInt(elem, radix)));
+            value = match[2].split("").reduce((acc, cur) => acc * multi + BigInt(parseInt(cur, radix)), 0n);
         }
         if (match[1] == "-") {
             value = -value;
@@ -48,8 +48,7 @@ const PatternCommon = {
 const SelectionIterator = function(iterators) {
     // fields
     this._originals = iterators;
-    this._infinites = [];
-    iterators.filter(elem => elem.endless).forEach(elem => this._infinites.push(elem));
+    this._infinites = iterators.filter(elem => elem.endless);
     this._iterators = this._originals;
     this._position = 0;
 
@@ -125,12 +124,7 @@ SelectionIterator.prototype = {
 
     // copy this instance
     "copy": function() {
-        // copy the original iterators
-        const iterators = [];
-        this._originals.forEach(elem => iterators.push(elem.copy()));
-
-        // create a new instance
-        return new SelectionIterator(iterators);
+        return new SelectionIterator(this._originals.map(elem => elem.copy()));
     },
 
 }
@@ -139,10 +133,8 @@ SelectionIterator.prototype = {
 const SequenceIterator = function(iterators) {
     // fields
     this._originals = iterators;
-    this._infinites = [];
-    this._finites = [];
-    iterators.filter(elem => elem.endless).forEach(elem => this._infinites.push(elem));
-    iterators.filter(elem => !elem.endless).forEach(elem => this._finites.push(elem));
+    this._infinites = iterators.filter(elem => elem.endless);
+    this._finites = iterators.filter(elem => !elem.endless);
     this._divisors = [];
     this._index = 0;
 
@@ -159,13 +151,10 @@ SequenceIterator.prototype = {
         this._finites.forEach(elem => elem.reset(0));
 
         // infinite pattern
-        const length = this._infinites.length;
-        this._divisors = this._getDivisors(length, cycle);
+        this._divisors = this._getDivisors(this._infinites.length, cycle);
         this._index = 0;
         const cycles = this._divisors[this._index];
-        for (let i = 0; i < length; i++) {
-            this._infinites[i].reset(cycles[i]);
-        }
+        this._infinites.forEach((val, idx) => val.reset(cycles[idx]));
     },
 
     // create next pattern
@@ -183,9 +172,7 @@ SequenceIterator.prototype = {
 
     // get current pattern
     "getCurrent": function() {
-        let current = "";
-        this._originals.forEach(elem => current += elem.getCurrent());
-        return current;
+        return this._originals.map(elem => elem.getCurrent()).join("");
     },
 
     // get current pattern list
@@ -213,12 +200,7 @@ SequenceIterator.prototype = {
 
     // copy this instance
     "copy": function() {
-        // copy the original iterators
-        const iterators = [];
-        this._originals.forEach(elem => iterators.push(elem.copy()));
-
-        // create a new instance
-        return new SequenceIterator(iterators);
+        return new SequenceIterator(this._originals.map(elem => elem.copy()));
     },
 
     // get divisor list
@@ -259,9 +241,7 @@ SequenceIterator.prototype = {
         }
 
         // found
-        for (let i = 0; i < pos; i++) {
-            this._finites[i].reset(0);
-        }
+        this._finites.slice(0, pos).forEach(elem => elem.reset(0));
         this._finites[pos].createNext();
         return true;
     },
@@ -283,15 +263,11 @@ SequenceIterator.prototype = {
 
             // next cycle
             const cycles = this._divisors[this._index];
-            for (let i = 0; i < length; i++) {
-                this._infinites[i].reset(cycles[i]);
-            }
+            this._infinites.forEach((val, idx) => val.reset(cycles[idx]));
         } else {
             // found
             const cycles = this._divisors[this._index];
-            for (let i = 0; i < pos; i++) {
-                this._infinites[i].reset(cycles[i]);
-            }
+            this._infinites.slice(0, pos).forEach((val, idx) => val.reset(cycles[idx]));
             this._infinites[pos].createNext();
         }
 
@@ -766,13 +742,7 @@ PatternValue.prototype = {
 
         // calculate maximum reach
         const numbers = this._getNumbers();
-        let max = 0;
-        for (let i = 0; i < numbers.length; i++) {
-            const index = numbers[i] + i;
-            if (max < index) {
-                max = index;
-            }
-        }
+        const max = numbers.reduce((acc, cur, idx) => Math.max(acc, cur + idx), 0);
         if (max == 0) {
             return 0;
         }
@@ -782,19 +752,11 @@ PatternValue.prototype = {
         if (this.getProperty("valid")) {
             expand = new Array(Math.ceil(max / numbers.length)).fill(numbers).flat();
         }
-
-        // calculate the drop points
-        const drops = new Array(max).fill(0);
-        const length = expand.length;
-        for (let i = 0; i < length; i++) {
-            const index = expand[i] + i;
-            if (length <= index) {
-                drops[index - length] = 1;
-            }
-        }
+        const drops = new Array(expand.length + max).fill(0);
+        expand.forEach((val, idx) => drops[val + idx] = 1);
 
         // get the state
-        const value = parseInt(drops.reverse().join(""), 2);
+        const value = parseInt(drops.slice(expand.length).reverse().join(""), 2);
         if (isNaN(value)) {
             return 0;
         }

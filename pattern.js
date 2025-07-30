@@ -143,9 +143,7 @@ const PatternConverter = {
 
     // Sequence ::= Factor+ ;
     "Sequence": function(tree) {
-        const iterators = [];
-        tree.children.forEach(elem => iterators.push(elem.iterator));
-        tree.iterator = new SequenceIterator(iterators);
+        tree.iterator = new SequenceIterator(tree.children.map(elem => elem.iterator));
     },
 
     // Factor ::= (Letter | Class | Group) Iteration? ;
@@ -281,9 +279,7 @@ const PatternConverter = {
 
     // Integer ::= Digit+ ;
     "Integer": function(tree) {
-        let text = "";
-        tree.children.forEach(elem => text += elem.text);
-        tree.value = parseInt(text, 10);
+        tree.value = parseInt(tree.children.map(elem => elem.text).join(""), 10);
     },
 
     // list of numbers
