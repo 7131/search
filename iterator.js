@@ -10,7 +10,7 @@ const PatternCommon = {
 
         // get a valid part from the beginning
         const numbers = "0123456789abcdefghijklmnopqrstuvwxyz".substring(0, radix);
-        const match = new RegExp("^(\\+|\\-)?([" + numbers + "]+)").exec(text);
+        const match = new RegExp(`^(\\+|\\-)?([${numbers}]+)`).exec(text);
         if (!match) {
             return 0n;
         }

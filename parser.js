@@ -149,7 +149,7 @@ Parser.prototype = {
 
         // get the result
         if (0 < text.length) {
-            const valid = tokens.reduce((acc, cur) => acc + " " + cur.text, "");
+            const valid = tokens.map(elem => elem.text).join(" ");
             return { "tokens": null, "valid": valid.trim(), "invalid": text };
         }
         return { "tokens": tokens };
@@ -213,16 +213,16 @@ Parser.prototype = {
         // the case of not to accept
         let valid = "";
         while (0 < stack.getCount()) {
-            valid = this._joinTree(stack.popTree()) + " " + valid;
+            valid = `${this._joinTree(stack.popTree())} ${valid}`;
         }
-        const invalid = tokens.reduce((acc, cur) => acc + " " + cur.text, "");
+        const invalid = tokens.map(elem => elem.text).join(" ");
         return { "tree": null, "valid": valid.trim(), "invalid": invalid.trim() };
     },
 
     // add the single quatations
     "_quoteSingle": function(cur) {
         const text = cur.replace(/\\(.)/g, "$1");
-        return "'" + text + "'";
+        return `'${text}'`;
     },
 
     // join the tree strings

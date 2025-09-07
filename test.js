@@ -189,7 +189,7 @@ Controller.prototype = {
         this._actual.sort(this._syntax.order.compare.bind(this._syntax.order));
 
         // display
-        const text = this._actual.reduce((acc, cur) => acc + " " + cur.text, "").substring(1);
+        const text = this._actual.map(elem => elem.text).join(" ");
         this._showResult(text);
     },
 
@@ -221,7 +221,7 @@ Controller.prototype = {
         if (this._errors.length == 0) {
             last.cells[ColNum.RESULT].innerText = "All OK";
         } else {
-            last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
+            last.cells[ColNum.RESULT].innerText = `NG: ${this._errors.join()}`;
             last.cells[ColNum.RESULT].classList.add("error");
         }
         this._function.forEach((val, key) => key.disabled = false);
@@ -281,13 +281,13 @@ Controller.prototype = {
     "_setError": function(message) {
         const rows = this._rows.get(this._button);
         const result = rows[this._index].cells[ColNum.RESULT];
-        result.innerText = "parsing failure: " + message;
+        result.innerText = `parsing failure: ${message}`;
         result.classList.add("error");
         this._errors.push(this._index);
 
         // finished
         const last = rows[rows.length - 1];
-        last.cells[ColNum.RESULT].innerText = "NG : " + this._errors.join();
+        last.cells[ColNum.RESULT].innerText = `NG: ${this._errors.join()}`;
         last.cells[ColNum.RESULT].classList.add("error");
     },
 

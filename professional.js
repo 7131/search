@@ -163,8 +163,8 @@ Controller.prototype = {
     "_setError": function(valid, invalid, title) {
         // check the arguments
         if (0 < valid.length && 0 < invalid.length) {
-            valid = "OK : " + valid;
-            invalid = "NG : " + invalid;
+            valid = `OK: ${valid}`;
+            invalid = `NG: ${invalid}`;
         }
 
         // display items

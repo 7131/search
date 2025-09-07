@@ -235,7 +235,7 @@ Controller.prototype = {
 
             // show the number of balls
             if (this._settingBalls.checked) {
-                text += "(" + value.getProperty("balls") + ")";
+                text += `(${value.getProperty("balls")})`;
             }
             li.innerText = text;
             ul.appendChild(li);
@@ -291,8 +291,8 @@ Controller.prototype = {
     "_setError": function(valid, invalid) {
         // check the arguments
         if (0 < valid.length && 0 < invalid.length) {
-            valid = "OK : " + valid;
-            invalid = "NG : " + invalid;
+            valid = `OK: ${valid}`;
+            invalid = `NG: ${invalid}`;
         }
 
         // display items

@@ -290,7 +290,7 @@ SyntaxTerm.prototype = {
                     break;
 
                 default:
-                    text += "" + follow;
+                    text += `${follow}`;
                     break;
             }
         }
@@ -412,7 +412,7 @@ SyntaxMethod.prototype = {
 
     // set pattern value
     "setValue": function(pattern) {
-        this._value = "" + pattern;
+        this._value = `${pattern}`;
     },
 
     // get result text
@@ -491,7 +491,7 @@ SyntaxParameter.prototype = {
             return this.term.getText(symbols);
         }
         if (this.value != null) {
-            return "-" + this.value.getText(symbols);
+            return `-${this.value.getText(symbols)}`;
         }
         return "";
     },
@@ -515,7 +515,7 @@ SyntaxIterator.prototype = {
 
     // set pattern value
     "setValue": function(pattern) {
-        this._value = "" + pattern;
+        this._value = `${pattern}`;
     },
 
     // get result text
