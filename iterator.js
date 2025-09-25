@@ -177,7 +177,7 @@ SequenceIterator.prototype = {
 
     // get current pattern list
     "getPatterns": function() {
-        return this._originals.reduce((acc, cur) => acc.concat(cur.getPatterns()), []);
+        return this._originals.map(elem => elem.getPatterns()).flat();
     },
 
     // whether it is finished
