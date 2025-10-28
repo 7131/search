@@ -4,7 +4,7 @@ nav span {
     margin-right: 1ex;
 }
 
-article {
+main {
     line-height: 1.8;
     margin-bottom: 10ex;
 }
@@ -83,7 +83,7 @@ pre {
 
 @media (min-width: 768px) {
 
-    article {
+    main {
         line-height: 1.5;
     }
 
