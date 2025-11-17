@@ -4,7 +4,7 @@ nav span {
     margin-right: 1ex;
 }
 
-main {
+body {
     line-height: 1.8;
     margin-bottom: 10ex;
 }
@@ -44,7 +44,7 @@ code {
 
 @media (min-width: 768px) {
 
-    main {
+    body {
         line-height: 1.5;
     }
 
