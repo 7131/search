@@ -77,10 +77,12 @@
 Selection ::= Sequence ('|' Sequence)* ;
 Sequence ::= Factor+ ;
 Factor ::= (Letter | Class | Group) Iteration? ;
-Letter ::= Digit | NonDigit ;
+Letter ::= Number | Other ;
+Number ::= Digit | Alphabet ;
 Digit ::= "[0-9]" ;
-NonDigit ::= "\\?." ;
-Class ::= '#' | '$' | '.' | '[' '^'? (Letter ('-' Letter)?)+ ']' ;
+Alphabet ::= "[a-z]" ;
+Other ::= "\\?." ;
+Class ::= '#' | '$' | '.' | '[' '^'? (Number ('-' Number)?)+ ']' ;
 Group ::= '(' Selection ')' ;
 Iteration ::= '*' | '+' | '?' | '{' Integer (',' Integer?)? '}' ;
 Integer ::= Digit+ ;
