@@ -1,6 +1,7 @@
 # Siteswap Search Service
 
-https://7131.github.io/search/
+English site: https://7131.github.io/search/<br>
+Japanese site: https://app.7131.jp/search/
 
 There are two versions of the siteswap search service: standard and professional.
 In both cases, only vanilla siteswaps are covered.
