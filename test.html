@@ -33,7 +33,7 @@
 <section>
 <h2>Standard version</h2>
 <p>All conditions are left at their defaults. That is, up to 100 valid siteswaps are generated in the order they are searched. However, in the infinite search, only the number indicated in the expected column is checked from the beginning. In the finite search, it is checked whether all the items match.</p>
-<table class="border" id="patterns">
+<table id="patterns">
   <tr><th>No.</th><th>pattern</th><th>expected</th><th>result</th></tr>
   <tr><td></td><td>[531]*</td><td>5 3 1 55 35 15 53 33 13 51 31 11</td><td></td></tr>
   <tr><td></td><td>3*</td><td>3 33 333 3333 33333</td><td></td></tr>
@@ -86,7 +86,7 @@
 <section>
 <h2>Professional version</h2>
 <p>Here, up to the number specified by LIMIT clause is generated and checked. If not specified, all generated items will be checked.</p>
-<table class="border" id="queries">
+<table id="queries">
   <tr><th>No.</th><th>SsQL</th><th>expected</th><th>result</th></tr>
   <tr><td></td><td>FROM "[531]*"<br>LET $std = $0.standard<br>WHERE $0.valid<br>SELECT DISTINCT $std<br>ORDER BY $0.balls<br>LIMIT 10</td><td>1 31 3 51 531 5511 5313 53 5551 5</td><td></td></tr>
   <tr><td></td><td>FROM &quot;<code>\</code>&quot;74?1<code>\</code>&quot;&quot;</td><td>"71" "741"</td><td></td></tr>

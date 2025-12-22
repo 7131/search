@@ -1,12 +1,12 @@
 @charset "utf-8";
 
-nav span {
-    margin-right: 1ex;
-}
-
 body {
     line-height: 1.8;
     margin-bottom: 10ex;
+}
+
+nav span {
+    margin-right: 1ex;
 }
 
 textarea {
@@ -14,27 +14,23 @@ textarea {
     height: 20ex;
 }
 
-input {
-    width: 90vw;
-}
-
 button {
     margin-top: 2ex;
     width: 90vw;
 }
 
-table.border {
+table {
     border: 1px outset gray;
     border-collapse: collapse;
     margin-bottom: 2ex;
 }
 
-table.border tr th {
+table tr th {
     border: 1px inset gray;
     padding: 0.5ex 1ex;
 }
 
-table.border tr td {
+table tr td {
     border: 1px inset gray;
     padding: 0.5ex 1ex;
 }
@@ -65,7 +61,7 @@ pre {
     margin-right: 1ex;
 }
 
-@media (min-width: 768px) {
+@media (orientation: landscape) {
 
     body {
         line-height: 1.5;

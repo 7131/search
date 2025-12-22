@@ -43,7 +43,7 @@ WHERE $0.balls == 3
 </pre>
 <p>If the condition is satisfied, the string is acquired, and if not, it is not acquired. If you omit the WHERE clause, you get all the generated strings.</p>
 <p>Variables include auto-defined variables and user-defined variables. Auto-defined variables are specified by $ + numbers such as $0, $1, $2, .... User-defined variables will be described later. $0 represents the entire string, and $1, $2, etc. represent the first group, second group, and so on. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the string are assigned to the variable as follows.</p>
-<table class="border">
+<table>
   <tr><th>&nbsp;</th><th>$0</th><th>$1</th><th>$2</th></tr>
   <tr><td>1st</td><td>51</td><td>5</td><td>1</td></tr>
   <tr><td>2nd</td><td>53</td><td>5</td><td>3</td></tr>
@@ -53,7 +53,7 @@ WHERE $0.balls == 3
   <tr><td>:</td><td>:</td><td>:</td><td>:</td></tr>
 </table>
 <p>Properties are specified after variable and dot.</p>
-<table class="border">
+<table>
   <tr><th>property</th><th>explanation</th><th>example</th></tr>
   <tr><td>pattern</td><td>the string itself</td><td>315315</td></tr>
   <tr><td>length</td><td>string length</td><td>6</td></tr>
@@ -73,7 +73,7 @@ WHERE $0.balls == 3
 </table>
 <p>The value of "jugglable" is 1 if it is jugglable and 0 otherwise. "valid" is similar. "balls" and "state" will be -1 if the pattern is not jugglable. "period" will be -1 if the pattern is not a siteswap, even if it is jugglable. "int10" is a numerical value from the beginning to the position where it can be regarded as a decimal integer. "int36" is similar. Property can be omitted. If omitted, it is assumed that "pattern" is specified.</p>
 <p>Methods are specified in the same way as properties, but with parentheses followed by arguments, such as $0.at(1). In the example in the following table, methods are applied to string "12345".</p>
-<table class="border">
+<table>
   <tr><th>method</th><th>explanation</th><th>n = 1</th><th>n = -2</th></tr>
   <tr><td>at(n)</td><td>character at that index</td><td>2</td><td>4</td></tr>
   <tr><td>rotate(n)</td><td>rotation for n characters</td><td>23451</td><td>45123</td></tr>
@@ -82,7 +82,7 @@ WHERE $0.balls == 3
 </table>
 <p>All of these methods count from the left if you specify 0 or a positive number as an argument, and from the right if you specify a negative number. The leftmost position is 0 and the rightmost position is -1.</p>
 <p>Some methods are iterative methods that take a lambda expression as an argument.</p>
-<table class="border">
+<table>
   <tr><th>iterator</th><th>explanation</th></tr>
   <tr><td>every(lambda)</td><td>whether it holds for all indexes</td></tr>
   <tr><td>some(lambda)</td><td>whether it holds for any one index</td></tr>
@@ -105,7 +105,7 @@ $0.take(2).some($index, $whole =&gt; $whole.at($index) == 1)
 </pre>
 <p>This is a concrete example of the latter form, which determines if there is a 1 in the first two digits of $0. It is the same as writing $0.take(2) instead of $whole, but more concise.</p>
 <p>The following is a list of operators by priority.</p>
-<table class="border">
+<table>
   <tr><th>priority</th><th>operator</th><th>meaning</th></tr>
   <tr><td>1</td><td>.</td><td>string on the right is a property or a method</td></tr>
   <tr><td rowspan="3">2</td><td>*</td><td>multiplication</td></tr>
