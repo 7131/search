@@ -9,12 +9,14 @@
 </head>
 
 <body>
-<nav id="top">
-<span><a href="./standard.html">Standard</a></span>
-<span><a href="./notation.html">notation</a></span>
-<span>|</span>
-<span><a href="./professional.html">Professional</a></span>
-<span>SsQL</span>
+<nav>
+<ul>
+  <li><a href="./standard.html">Standard</a></li>
+  <li><a href="./notation.html">notation</a></li>
+  <li>|</li>
+  <li><a href="./professional.html">Professional</a></li>
+  <li>SsQL</li>
+</ul>
 </nav>
 
 <header>
@@ -32,12 +34,20 @@ ORDER BY sort-condition
 LIMIT number
 </pre>
 <p>However, you can omit everything except the FROM clause. Specify the clauses that are not omitted in this order. The LET clause can be specified multiple times.</p>
-<p>In the FROM clause, describe the search <a href="./notation.html">pattern</a> with double quotation marks. If you want to use double quotation marks in your pattern, you must escape them with \.</p>
-<p>Only the maximum number can be specified in the LIMIT clause. The time limit can not be specified, so if you want to stop the search halfway, press the stop button. If you omit the LIMIT clause, the search continues indefinitely.</p>
+<p>In the FROM clause, describe the search <a href="./notation.html">pattern</a> with double quotation marks. For example:</p>
+<pre>
+FROM "[531]*"
+</pre>
+<p>If you want to use double quotation marks in your pattern, you must escape them with \.</p>
+<p>In the LIMIT clause, only the maximum number can be specified as follows:</p>
+<pre>
+LIMIT 10
+</pre>
+<p>The time limit can not be specified, so if you want to stop the search halfway, press the stop button. If you omit the LIMIT clause, the search continues indefinitely.</p>
 
 <section>
 <h2>Acquisition condition</h2>
-<p>Specify the acquisition condition by combining variables, properties, methods, and operators in the WHERE clause. For example:</p>
+<p>Specify the acquisition condition by combining variables, properties, methods, operators, and constants in the WHERE clause. For example:</p>
 <pre>
 WHERE $0.balls == 3
 </pre>
