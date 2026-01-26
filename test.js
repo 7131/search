@@ -57,26 +57,26 @@ Controller.prototype = {
     "_setRowNumbers": function(rows) {
         for (let i = 1; i < rows.length; i++) {
             const number = rows[i].cells[ColNum.NUMBER];
-            number.innerText = i;
+            number.textContent = i;
             number.classList.add("symbol");
         }
 
         // get the last row
         let last = rows[rows.length - 1];
-        if (last.cells[ColNum.TARGET].innerText != "") {
+        if (last.cells[ColNum.TARGET].textContent != "") {
             last = last.parentNode.appendChild(last.cloneNode(true));
         }
-        last.cells[ColNum.NUMBER].innerText = "total";
-        last.cells[ColNum.TARGET].innerText = "";
-        last.cells[ColNum.EXPECT].innerText = "";
-        last.cells[ColNum.RESULT].innerText = "";
+        last.cells[ColNum.NUMBER].textContent = "total";
+        last.cells[ColNum.TARGET].textContent = "";
+        last.cells[ColNum.EXPECT].textContent = "";
+        last.cells[ColNum.RESULT].textContent = "";
     },
 
     // reset table rows
     "_resetTable": function(rows) {
         for (let i = 1; i < rows.length; i++) {
             const result = rows[i].cells[ColNum.RESULT];
-            result.innerText = "";
+            result.textContent = "";
             result.classList.remove("error");
         }
     },
@@ -85,10 +85,10 @@ Controller.prototype = {
     "_searchStandard": function(row) {
         // preparation
         const pattern = row.cells[ColNum.TARGET].innerText;
-        if (row.cells[ColNum.EXPECT].innerText == "") {
+        if (row.cells[ColNum.EXPECT].textContent == "") {
             this._count = 0;
         } else {
-            const expect = row.cells[ColNum.EXPECT].innerText.split(" ");
+            const expect = row.cells[ColNum.EXPECT].textContent.split(" ");
             this._count = expect.length;
         }
         this._actual = [];
@@ -171,7 +171,7 @@ Controller.prototype = {
     "_showProgress": function(number, second) {
         const value = Math.floor(second * 10) / 10;
         const rows = this._rows.get(this._button);
-        rows[this._index].cells[ColNum.RESULT].innerText = value;
+        rows[this._index].cells[ColNum.RESULT].textContent = value;
     },
 
     // show the result of standard version
@@ -198,10 +198,10 @@ Controller.prototype = {
         // get the result string
         const rows = this._rows.get(this._button);
         const row = rows[this._index];
-        if (text == row.cells[ColNum.EXPECT].innerText) {
-            row.cells[ColNum.RESULT].innerText = "OK";
+        if (text == row.cells[ColNum.EXPECT].textContent) {
+            row.cells[ColNum.RESULT].textContent = "OK";
         } else {
-            row.cells[ColNum.RESULT].innerText = text;
+            row.cells[ColNum.RESULT].textContent = text;
             row.cells[ColNum.RESULT].classList.add("error");
             this._errors.push(this._index);
         }
@@ -209,7 +209,7 @@ Controller.prototype = {
         // execute the next test
         do {
             this._index++;
-        } while (this._index < rows.length && rows[this._index].cells[ColNum.TARGET].innerText == "");
+        } while (this._index < rows.length && rows[this._index].cells[ColNum.TARGET].textContent == "");
         if (this._index < rows.length) {
             const search = this._function.get(this._button);
             search(rows[this._index]);
@@ -219,9 +219,9 @@ Controller.prototype = {
         // finished
         const last = rows[rows.length - 1];
         if (this._errors.length == 0) {
-            last.cells[ColNum.RESULT].innerText = "All OK";
+            last.cells[ColNum.RESULT].textContent = "All OK";
         } else {
-            last.cells[ColNum.RESULT].innerText = `NG: ${this._errors.join()}`;
+            last.cells[ColNum.RESULT].textContent = `NG: ${this._errors.join()}`;
             last.cells[ColNum.RESULT].classList.add("error");
         }
         this._function.forEach((val, key) => key.disabled = false);
@@ -281,13 +281,13 @@ Controller.prototype = {
     "_setError": function(message) {
         const rows = this._rows.get(this._button);
         const result = rows[this._index].cells[ColNum.RESULT];
-        result.innerText = `parsing failure: ${message}`;
+        result.textContent = `parsing failure: ${message}`;
         result.classList.add("error");
         this._errors.push(this._index);
 
         // finished
         const last = rows[rows.length - 1];
-        last.cells[ColNum.RESULT].innerText = `NG: ${this._errors.join()}`;
+        last.cells[ColNum.RESULT].textContent = `NG: ${this._errors.join()}`;
         last.cells[ColNum.RESULT].classList.add("error");
     },
 

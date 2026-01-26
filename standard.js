@@ -28,10 +28,10 @@ Controller.prototype = {
         this._limitTime = document.getElementById("limit_time");
 
         // range of stop conditions
-        this._minCount = this._getInt(document.getElementById("min_count").innerText);
-        this._maxCount = this._getInt(document.getElementById("max_count").innerText);
-        this._minTime = this._getInt(document.getElementById("min_time").innerText);
-        this._maxTime = this._getInt(document.getElementById("max_time").innerText);
+        this._minCount = this._getInt(document.getElementById("min_count").textContent);
+        this._maxCount = this._getInt(document.getElementById("max_count").textContent);
+        this._minTime = this._getInt(document.getElementById("min_time").textContent);
+        this._maxTime = this._getInt(document.getElementById("max_time").textContent);
 
         // display condition elements
         this._settingBalls = document.getElementById("setting_balls");
@@ -55,8 +55,8 @@ Controller.prototype = {
         ];
 
         // range of display conditions
-        this._minNumbers = this._getInt(document.getElementById("min_numbers").innerText);
-        this._maxNumbers = this._getInt(document.getElementById("max_numbers").innerText);
+        this._minNumbers = this._getInt(document.getElementById("min_numbers").textContent);
+        this._maxNumbers = this._getInt(document.getElementById("max_numbers").textContent);
 
         // events
         this._searchButton.addEventListener("click", this._start.bind(this));
@@ -79,8 +79,8 @@ Controller.prototype = {
     "_start": function(e) {
         // clear display
         this._values = [];
-        this._messageArea.innerHTML = "";
-        this._resultArea.innerHTML = "";
+        this._messageArea.textContent = "";
+        this._resultArea.textContent = "";
         this._resultCount.classList.remove("error");
         this._resultTime.classList.remove("error");
         this._showProgress(0, 0);
@@ -190,26 +190,26 @@ Controller.prototype = {
 
     // show the progress
     "_showProgress": function(number, second) {
-        this._resultTotal.innerText = number.toLocaleString();
-        this._resultCount.innerText = this._values.length.toLocaleString();
-        this._resultTime.innerText = Math.floor(second * 10 + 0.5) / 10;
+        this._resultTotal.textContent = number.toLocaleString();
+        this._resultCount.textContent = this._values.length.toLocaleString();
+        this._resultTime.textContent = Math.floor(second * 10 + 0.5) / 10;
     },
 
     // show the result
     "_showResult": function(completed) {
         // check if it is completed
         if (!completed) {
-            if (parseFloat(this._limitCount.value) <= parseFloat(this._resultCount.innerText)) {
+            if (parseFloat(this._limitCount.value) <= parseFloat(this._resultCount.textContent)) {
                 this._resultCount.classList.add("error");
             }
-            if (parseFloat(this._limitTime.value) <= parseFloat(this._resultTime.innerText)) {
+            if (parseFloat(this._limitTime.value) <= parseFloat(this._resultTime.textContent)) {
                 this._resultTime.classList.add("error");
             }
         }
 
         // title
         const h2 = document.createElement("h2");
-        h2.innerText = "Result";
+        h2.textContent = "Result";
         this._resultArea.appendChild(h2);
         if (!Array.isArray(this._values)) {
             this._searchButton.disabled = false;
@@ -237,7 +237,7 @@ Controller.prototype = {
             if (this._settingBalls.checked) {
                 text += `(${value.getProperty("balls")})`;
             }
-            li.innerText = text;
+            li.textContent = text;
             ul.appendChild(li);
         }
         this._resultArea.appendChild(ul);
@@ -299,12 +299,12 @@ Controller.prototype = {
         const head = document.createElement("div");
         const ok = document.createElement("div");
         const ng = document.createElement("div");
-        head.innerHTML = "Error";
+        head.textContent = "Error";
         head.classList.add("error");
-        ok.innerHTML = valid;
-        ng.innerHTML = invalid;
+        ok.textContent = valid;
+        ng.textContent = invalid;
         ng.classList.add("error");
-        this._messageArea.innerHTML = "";
+        this._messageArea.textContent = "";
         this._messageArea.appendChild(head);
         this._messageArea.appendChild(ok);
         this._messageArea.appendChild(ng);

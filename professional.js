@@ -35,8 +35,8 @@ Controller.prototype = {
     "_start": function(e) {
         // clear display
         this._values = [];
-        this._messageArea.innerHTML = "";
-        this._resultArea.innerHTML = "";
+        this._messageArea.textContent = "";
+        this._resultArea.textContent = "";
         this._showProgress(0, 0);
 
         // query analysis
@@ -91,16 +91,16 @@ Controller.prototype = {
 
     // show the progress
     "_showProgress": function(number, second) {
-        this._resultTotal.innerText = number.toLocaleString();
-        this._resultCount.innerText = this._values.length.toLocaleString();
-        this._resultTime.innerText = Math.floor(second * 10 + 0.5) / 10;
+        this._resultTotal.textContent = number.toLocaleString();
+        this._resultCount.textContent = this._values.length.toLocaleString();
+        this._resultTime.textContent = Math.floor(second * 10 + 0.5) / 10;
     },
 
     // show the result
     "_showResult": function(completed) {
         // title
         const h2 = document.createElement("h2");
-        h2.innerText = "Result";
+        h2.textContent = "Result";
         this._resultArea.appendChild(h2);
         if (!Array.isArray(this._values)) {
             this._startButton.disabled = false;
@@ -115,7 +115,7 @@ Controller.prototype = {
         const ul = document.createElement("ul");
         for (const value of this._values) {
             const li = document.createElement("li");
-            li.innerText = value.text;
+            li.textContent = value.text;
             ul.appendChild(li);
         }
         this._resultArea.appendChild(ul);
@@ -171,12 +171,12 @@ Controller.prototype = {
         const head = document.createElement("div");
         const ok = document.createElement("div");
         const ng = document.createElement("div");
-        head.innerHTML = title;
+        head.textContent = title;
         head.classList.add("error");
-        ok.innerHTML = valid;
-        ng.innerHTML = invalid;
+        ok.textContent = valid;
+        ng.textContent = invalid;
         ng.classList.add("error");
-        this._messageArea.innerHTML = "";
+        this._messageArea.textContent = "";
         this._messageArea.appendChild(head);
         this._messageArea.appendChild(ok);
         this._messageArea.appendChild(ng);
