@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" type="text/css" href="./test.css">
+<script src="../iterator.js"></script>
+<script src="../pattern.js"></script>
+<script src="../parser.js"></script>
+<script src="../syntax.js"></script>
+<script src="../semantic.js"></script>
+<script src="../query.js"></script>
+<script src="./test.js"></script>
+<title>Test for Siteswap Search Service</title>
+</head>
+
+<body>
+<nav>
+<ul>
+  <li><a href="../standard.html">Standard</a></li>
+  <li><a href="../notation.html">notation</a></li>
+  <li>|</li>
+  <li><a href="../professional.html">Professional</a></li>
+  <li><a href="../ssql.html">SsQL</a></li>
+</ul>
+</nav>
+
+<header>
+<h1>Test for Siteswap Search Service</h1>
+<p>Press the "Execute" button to run the test line by line. If a test takes a long time, it will be cut off in 3 seconds.</p>
+</header>
+
+<main>
+<section>
+<h2>Standard version</h2>
+<p>All conditions are left at their defaults. That is, up to 100 valid siteswaps are generated in the order they are searched. However, in the infinite search, only the number indicated in the expected column is checked from the beginning. In the finite search, it is checked whether all the items match.</p>
+<table id="patterns">
+  <tr><th>No.</th><th>pattern</th><th>expected</th><th>result</th></tr>
+  <tr><td></td><td>[531]*</td><td>5 3 1 55 35 15 53 33 13 51 31 11</td><td></td></tr>
+  <tr><td></td><td>3*</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>3+</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>3?</td><td>3</td><td></td></tr>
+  <tr><td></td><td>3{2}</td><td>33</td><td></td></tr>
+  <tr><td></td><td>3{3,}</td><td>333 3333 33333 333333 3333333</td><td></td></tr>
+  <tr><td></td><td>3{4,5}</td><td>3333 33333</td><td></td></tr>
+  <tr><td></td><td>51+</td><td>51 5111</td><td></td></tr>
+  <tr><td></td><td>#</td><td>0 1 2 3 4 5 6 7 8 9</td><td></td></tr>
+  <tr><td></td><td>$</td><td>a b c d e f g h i j k l m n o p q r s t u v w x y z</td><td></td></tr>
+  <tr><td></td><td>.</td><td>0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w x y z</td><td></td></tr>
+  <tr><td></td><td>[531]</td><td>5 3 1</td><td></td></tr>
+  <tr><td></td><td>[a-e]</td><td>a b c d e</td><td></td></tr>
+  <tr><td></td><td>[9-a]</td><td>9 a</td><td></td></tr>
+  <tr><td></td><td>[^x]</td><td>0 1 2 3 4 5 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w y z</td><td></td></tr>
+  <tr><td></td><td>[^531]</td><td>0 2 4 6 7 8 9 a b c d e f g h i j k l m n o p q r s t u v w x y z</td><td></td></tr>
+  <tr><td></td><td>[^a-e]</td><td>0 1 2 3 4 5 6 7 8 9 f g h i j k l m n o p q r s t u v w x y z</td><td></td></tr>
+  <tr><td></td><td>[51]+</td><td>5 1 55 15 51 11 555</td><td></td></tr>
+  <tr><td></td><td>[abaa-b]</td><td>a b</td><td></td></tr>
+  <tr><td></td><td>[ab]</td><td>a b</td><td></td></tr>
+  <tr><td></td><td>a|b</td><td>a b</td><td></td></tr>
+  <tr><td></td><td>(ab)</td><td></td><td></td></tr>
+  <tr><td></td><td>(31)</td><td>31</td><td></td></tr>
+  <tr><td></td><td>(51)+</td><td>51 5151 515151 51515151</td><td></td></tr>
+  <tr><td></td><td>(ab|ba)</td><td></td><td></td></tr>
+  <tr><td></td><td>(31|13)</td><td>31 13</td><td></td></tr>
+  <tr><td></td><td>(53*1)+</td><td>51 5151 531 515151 51515151 531531</td><td></td></tr>
+  <tr><td></td><td>&#xFF21;&#xFF22;&#xFF23;</td><td>abc</td><td></td></tr>
+  <tr><td></td><td>1.23</td><td>1223 1623 1a23 1e23 1i23 1m23 1q23 1u23 1y23</td><td></td></tr>
+  <tr><td></td><td>1<code>\</code>.23</td><td>1.23</td><td></td></tr>
+  <tr><td></td><td>5<code>\</code>.31</td><td>5.31</td><td></td></tr>
+  <tr><td></td><td>&lt;5<code>\</code>,3<code>\</code>,1&gt;</td><td>&lt;5,3,1&gt;</td><td></td></tr>
+  <tr><td></td><td>5/3=1</td><td>5/3=1</td><td></td></tr>
+  <tr><td></td><td>[4-6]{2,3}</td><td>44 64 55 46 66 444 564 645 555 456 666</td><td></td></tr>
+  <tr><td></td><td>74?1</td><td>71 741</td><td></td></tr>
+  <tr><td></td><td>5#1</td><td>501 531 561 591</td><td></td></tr>
+  <tr><td></td><td>(51|53|57){0,2}13</td><td>13 5313 5713</td><td></td></tr>
+  <tr><td></td><td>2+4+</td><td>24</td><td></td></tr>
+  <tr><td></td><td>1*3*5+</td><td>5 15 35 55 555</td><td></td></tr>
+  <tr><td></td><td>123+</td><td>123</td><td></td></tr>
+  <tr><td></td><td>74*1</td><td>71 741 7441</td><td></td></tr>
+  <tr><td></td><td>(1(2*|5)3)+</td><td>13 153 1313 153153 123</td><td></td></tr>
+</table>
+<div>
+  <button id="standard">Execute</button>
+</div>
+</section>
+
+<section>
+<h2>Professional version</h2>
+<p>Here, up to the number specified by LIMIT clause is generated and checked. If not specified, all generated items will be checked.</p>
+<table id="queries">
+  <tr><th>No.</th><th>SsQL</th><th>expected</th><th>result</th></tr>
+  <tr><td></td><td>FROM "[531]*"<br>LET $std = $0.standard<br>WHERE $0.valid<br>SELECT DISTINCT $std<br>ORDER BY $0.balls<br>LIMIT 10</td><td>1 31 3 51 531 5511 5313 53 5551 5</td><td></td></tr>
+  <tr><td></td><td>FROM &quot;<code>\</code>&quot;74?1<code>\</code>&quot;&quot;</td><td>"71" "741"</td><td></td></tr>
+  <tr><td></td><td>FROM "3+"<br>LIMIT 5</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>FROM "3+" LIMIT 5</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>FROM"3+"LIMIT5</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>FROM "3+"<br>LET $max = 3 + 3<br>LIMIT $max - 1</td><td>3 33 333 3333 33333</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $0.balls==3</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "(5+)([13])"<br>SELECT $0 "," $1 "," $2<br>LIMIT 5</td><td>51,5,1 53,5,3 551,55,1 553,55,3 5551,555,1</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.pattern</td><td>315315</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.length</td><td>6</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.sum</td><td>18</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.reverse</td><td>513513</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.min</td><td>153153</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.max</td><td>531531</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.omission</td><td>315</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.standard</td><td>531</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.jugglable</td><td>1</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.valid</td><td>1</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.balls</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.period</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.state</td><td>19</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.int10</td><td>315315</td><td></td></tr>
+  <tr><td></td><td>FROM "315315"<br>SELECT $.int36</td><td>183315353</td><td></td></tr>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.jugglable</td><td>1 1 0</td><td></td></tr>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.valid</td><td>1 0 0</td><td></td></tr>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.balls</td><td>3 2 -1</td><td></td></tr>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.period</td><td>2 -1 -1</td><td></td></tr>
+  <tr><td></td><td>FROM "5[124]"<br>SELECT $.state</td><td>11 10 -1</td><td></td></tr>
+  <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $</td><td>a 2a -1.2</td><td></td></tr>
+  <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $.int10</td><td>0 2 -1</td><td></td></tr>
+  <tr><td></td><td>FROM &quot;a|2a|<code>\</code>-1<code>\</code>.2&quot;<br>SELECT $.int36</td><td>10 82 -1</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.at(1)</td><td>2</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.rotate(1)</td><td>23451</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.skip(1)</td><td>2345</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.take(1)</td><td>1</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.at(-2)</td><td>4</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.rotate(-2)</td><td>45123</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.skip(-2)</td><td>123</td><td></td></tr>
+  <tr><td></td><td>FROM "12345"<br>SELECT $.take(-2)</td><td>45</td><td></td></tr>
+  <tr><td></td><td>FROM "[12]{3}"<br>WHERE $.every($i =&gt; $.at($i)==1)</td><td>111</td><td></td></tr>
+  <tr><td></td><td>FROM "[12]{3}"<br>WHERE $.take(2).some($i,$a =&gt; $a.at($i)==1)</td><td>111 211 121 112 212 122</td><td></td></tr>
+  <tr><td></td><td>FROM "[12]{3}"<br>WHERE $.take(2).some($i =&gt; $.take(2).at($i)==1)</td><td>111 211 121 112 212 122</td><td></td></tr>
+  <tr><td></td><td>FROM "123"<br>WHERE $.every($i =&gt; $i.some($j =&gt; 1))</td><td>123</td><td></td></tr>
+  <tr><td></td><td>FROM"##"<br>WHERE $.every($i,$a =&gt; $a.rotate($i)==$a)</td><td>00 11 22 33 44 55 66 77 88 99</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $*2==10</td><td>5</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $/2==4</td><td>8 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $%2==1</td><td>1 3 5 7 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $%2!=$%4</td><td>2 3 6 7</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $+2==5</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $-2==5</td><td>7</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&2==12</td><td>1</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $==8</td><td>8</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $!=8</td><td>0 1 2 3 4 5 6 7 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&lt;&gt;8</td><td>0 1 2 3 4 5 6 7 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&lt;8</td><td>0 1 2 3 4 5 6 7</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&lt;=8</td><td>0 1 2 3 4 5 6 7 8</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&gt;8</td><td>9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&gt;=8</td><td>8 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $ IN(2,4,8)</td><td>2 4 8</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $ NOT IN(2,4,8)</td><td>0 1 3 5 6 7 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE NOT $ IN(2,4,8)</td><td>0 1 3 5 6 7 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE NOT $ NOT IN(2,4,8)</td><td>2 4 8</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE NOT $&gt;5</td><td>0 1 2 3 4 5</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE 2&lt;$ AND $&lt;7</td><td>3 4 5 6</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE $&lt;2 OR 7&lt;$</td><td>0 1 8 9</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE 2*$+4==14</td><td>5</td><td></td></tr>
+  <tr><td></td><td>FROM "#"<br>WHERE 2*($+4)==14</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE 1</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE NOT 1</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE NOT 0</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE NOT ""</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE NOT "0"</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE NOT " "</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE 0 AND "0"</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE "" AND 1</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE "1" AND 0</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE $ AND " "</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE 0 OR "0"</td><td></td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE "" OR 1</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE "1" OR 0</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>WHERE $ OR " "</td><td>3</td><td></td></tr>
+  <tr><td></td><td>FROM "#{4}"<br>WHERE $.standard IN("71", "62", "53")</td><td>7171 6262 5353 3535 2626 1717</td><td></td></tr>
+  <tr><td></td><td>FROM "[12][34]"<br>SELECT $ "(" $.balls ")"</td><td>13(2) 23(2) 14(1) 24(3)</td><td></td></tr>
+  <tr><td></td><td>FROM "3"<br>SELECT $.int10 "+1=" $.int10 + 1</td><td>3+1=4</td><td></td></tr>
+  <tr><td></td><td>FROM "[12][34]"<br>SELECT DISTINCT $.state</td><td>5 8 11</td><td></td></tr>
+  <tr><td></td><td>FROM "3|441|531"<br>ORDER BY $.period DESC, $</td><td>441 531 3</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"</td><td>51 42 60 3 531 441</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period</td><td>3 51 42 60 531 441</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period ASC</td><td>3 51 42 60 531 441</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period DESC</td><td>531 441 51 42 60 3</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period, $</td><td>3 42 51 60 441 531</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period, $ ASC</td><td>3 42 51 60 441 531</td><td></td></tr>
+  <tr><td></td><td>FROM "51|42|60|3|531|441"<br>ORDER BY $.period, $ DESC</td><td>3 60 51 42 531 441</td><td></td></tr>
+  <tr><td></td><td>FROM "[1-3]"<br>LET $const = "123"<br>SELECT $const</td><td>123 123 123</td><td></td></tr>
+  <tr><td></td><td>FROM "12(#)"<br>LET $var1 = $1<br>LET $var2 = $var1 + 3<br>LET $var3 = $0.at($index)<br>WHERE $0.every($index =&gt; $var3 &lt; 3)<br>SELECT $var1 "+3=" $var2</td><td>0+3=3 1+3=4 2+3=5</td><td></td></tr>
+  <tr><td></td><td>-- 1 line comment<br>FROM "#"<br>/* Multi-<br>line<br>comment */</td><td>0 1 2 3 4 5 6 7 8 9</td><td></td></tr>
+  <tr><td></td><td>/*a*/ FROM /*b*/ "#" /*c*/ --d</td><td>0 1 2 3 4 5 6 7 8 9</td><td></td></tr>
+  <tr><td></td><td><br> &nbsp; FROM<br><br>"#"</td><td>0 1 2 3 4 5 6 7 8 9</td><td></td></tr>
+  <tr><td></td><td>&#xFF46;&#xFF52;&#xFF4F;&#xFF4D;&#x3000;&#x201C;&#xFF21;&#xFF22;&#xFF23;&#x201D;</td><td>abc</td><td></td></tr>
+  <tr><td></td><td>FROM "(42(3+))+"<br>WHERE $2==33<br>SELECT $0 "," $1 "," $2<br>LIMIT 2</td><td>4233,4233,33 4234233,4233,33</td><td></td></tr>
+  <tr><td></td><td>FROM "(2+)|3+"<br>SELECT "'" $1 "'"<br>LIMIT 5</td><td>'2' '' '22' '' '222'</td><td></td></tr>
+  <tr><td></td><td>FROM "[123][456][789]"<br>WHERE $.valid</td><td>147 267 348 258 159 369</td><td></td></tr>
+  <tr><td></td><td>FROM "[123][456][789]"<br>WHERE $.reverse.valid</td><td>147 357 258 168 249 369</td><td></td></tr>
+  <tr><td></td><td>FROM "[123][456][789]"<br>WHERE ($ &amp; $.reverse).valid</td><td>147 258 369</td><td></td></tr>
+  <tr><td></td><td>FROM "#{3}"<br>WHERE $.period == $.length AND $.reverse == $<br>LIMIT 5</td><td>030 060 090 141 171</td><td></td></tr>
+  <tr><td></td><td>FROM "(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2<br>SELECT $ "=" $.balls</td><td>2x7=14 05x2=10</td><td></td></tr>
+  <tr><td></td><td>FROM "(#+)x(#+)x(#+)"<br>WHERE $.valid AND $.balls == $1 * $2 * $3</td><td>3x5x1 5x1x3</td><td></td></tr>
+</table>
+<div>
+  <button id="professional">Execute</button>
+</div>
+</section>
+
+</main>
+</body>
+
+</html>
