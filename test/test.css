@@ -36,8 +36,12 @@ table tr td {
     vertical-align: top;
 }
 
-code {
-    font-family: "Courier New", monospace;
+pre {
+    margin: 0ex;
+}
+
+.hidden {
+    display: none;
 }
 
 .symbol {
