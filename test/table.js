@@ -379,14 +379,22 @@ class TestTable extends TableDealer {
         } else {
             actual = this.#method(data.params);
         }
-        const result = JSON.stringify(actual, this.replaceEvent);
-        if (result == JSON.stringify(data.expect)) {
-            return "";
+        let expect = data.expect;
+
+        // compare the results
+        if (typeof actual != "string" && !(actual instanceof String)) {
+            actual = JSON.stringify(actual, this.replaceEvent);
+            if (typeof expect == "string" || expect instanceof String) {
+                expect = JSON.stringify(JSON.parse(expect));
+            }
         }
-        if (typeof actual == "string" || actual instanceof String) {
-            return actual;
+        if (typeof expect != "string" && !(expect instanceof String)) {
+            expect = JSON.stringify(expect);
+        }
+        if (actual == expect) {
+            return "";
         } else {
-            return result;
+            return actual;
         }
     }
 

@@ -20,7 +20,7 @@ class TestBase extends TestTable {
         this.search(super.getText(this.index, "params"));
     }
 
-    // execute search (template)
+    // execute search (template method)
     search(pattern) {
     }
 
@@ -30,12 +30,12 @@ class TestBase extends TestTable {
         super.setText(this.index, "result", value);
     }
 
-    // acceptance process (template)
+    // acceptance process (template method)
     accept(patterns) {
         return false;
     }
 
-    // completion process (template)
+    // completion process (template method)
     complete(completed) {
     }
 
