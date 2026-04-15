@@ -242,6 +242,7 @@ class Controller {
     #all;
     #tests = { "standard": StandardTest, "professional": ProfessionalTest };
     #buttons = new Map();
+    #count = 0;
 
     // constructor
     constructor() {
@@ -260,7 +261,7 @@ class Controller {
             }
             const test = this.#tests[id];
             const instance = new test(id, table.tBodies[0]);
-            instance.completeEvent = this.#showButtons.bind(this);
+            instance.completeEvent = this.#setButtons.bind(this);
 
             // get button
             const button = section.querySelector("button");
@@ -275,8 +276,8 @@ class Controller {
 
     // execute all tests
     #executeAll(e) {
-        this.#all.disabled = true;
-        this.#buttons.keys().forEach(elem => elem.disabled = true);
+        this.#setButtons(true);
+        this.#count = this.#buttons.size;
         for (const instance of this.#buttons.values()) {
             instance.start();
         }
@@ -284,16 +285,21 @@ class Controller {
 
     // execute a test
     #executeTest(e) {
-        const button = e.currentTarget;
-        button.disabled = true;
-        const instance = this.#buttons.get(button);
-        instance.start();
+        this.#setButtons(true);
+        this.#count = 1;
+        this.#buttons.get(e.currentTarget).start();
     }
 
-    // show the buttons
-    #showButtons() {
-        this.#buttons.keys().forEach(elem => elem.disabled = false);
-        this.#all.disabled = false;
+    // set the buttons
+    #setButtons(disabled) {
+        if (!disabled) {
+            this.#count--;
+            if (0 < this.#count) {
+                return;
+            }
+        }
+        this.#buttons.keys().forEach(elem => elem.disabled = disabled);
+        this.#all.disabled = disabled;
     }
 
 }
