@@ -54,7 +54,7 @@ WHERE $0.balls == 3
 <p>If the condition is satisfied, the string is acquired, and if not, it is not acquired. If you omit the WHERE clause, you get all the generated strings.</p>
 <p>Variables include auto-defined variables and user-defined variables. Auto-defined variables are specified by $ + numbers such as $0, $1, $2, .... User-defined variables will be described later. $0 represents the entire string, and $1, $2, etc. represent the first group, second group, and so on. You can write $ instead of $0 as an abbreviation. If the pattern specified in the FROM clause is (5+)([13]), the string are assigned to the variable as follows.</p>
 <table>
-  <tr><th>&nbsp;</th><th>$0</th><th>$1</th><th>$2</th></tr>
+  <tr><th></th><th>$0</th><th>$1</th><th>$2</th></tr>
   <tr><td>1st</td><td>51</td><td>5</td><td>1</td></tr>
   <tr><td>2nd</td><td>53</td><td>5</td><td>3</td></tr>
   <tr><td>3rd</td><td>551</td><td>55</td><td>1</td></tr>
