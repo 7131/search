@@ -16,7 +16,7 @@ For example, if you want to generate siteswaps with a height of 5 or less, simpl
 [0-5]+
 ```
 
-For ease of use, only juggleable patterns are searched by default, and the search terminates after 100 hits or 3 seconds.
+For ease of use, only jugglable patterns are searched by default, and the search terminates after 100 hits or 3 seconds.
 You can set conditions such as "only 3 balls" or "excluding the same siteswap".
 
 # Professional version
