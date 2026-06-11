@@ -1,8 +1,8 @@
 // Object common to patterns
-const PatternCommon = {
+class PatternCommon {
 
     // convert string to big integer
-    "toBigInt": function(text, radix) {
+    static toBigInt(text, radix) {
         // check the arguments
         if (isNaN(radix) || radix < 2 || 36 < radix) {
             radix = 10;
@@ -27,184 +27,190 @@ const PatternCommon = {
             value = -value;
         }
         return value;
-    },
+    }
 
     // convert to lowercase letters
-    "toSmall": function(text) {
-        const half = text.replace(/[\uFF01-\uFF5E]/g, PatternCommon._toHankaku);
+    static toSmall(text) {
+        const half = text.replace(/[\uFF01-\uFF5E]/g, PatternCommon.#toHankaku);
         const quote = half.replace(/[\u201C\u201D]/g, "\"").replace("\u2018", "`").replace("\u2019", "'");
         const other = quote.replace("\u3000", " ").replace("\u301C", "~").replace("\uFFE5", "\u00A5");
         return other.toLowerCase();
-    },
+    }
 
     // convert to half-width characters
-    "_toHankaku": function(text) {
+    static #toHankaku(text) {
         return String.fromCharCode(text.charCodeAt(0) - 0xFEE0);
-    },
+    }
 
 }
 
 // Selection iterator class
-const SelectionIterator = function(iterators) {
-    // fields
-    this._originals = iterators;
-    this._infinites = iterators.filter(elem => elem.endless);
-    this._iterators = this._originals;
-    this._position = 0;
+class SelectionIterator {
+    #originals;
+    #infinites;
+    #iterators;
+    #position = 0;
 
-    // properties
-    this.endless = (0 < this._infinites.length);
-}
+    // constructor
+    constructor(iterators) {
+        // fields
+        this.#originals = iterators;
+        this.#infinites = iterators.filter(elem => elem.endless);
+        this.#iterators = this.#originals;
 
-// Selection iterator prototype
-SelectionIterator.prototype = {
+        // properties
+        this.endless = (0 < this.#infinites.length);
+    }
 
     // reset fields
-    "reset": function(cycle) {
+    reset(cycle) {
         if (cycle == 0) {
-            this._iterators = this._originals;
+            this.#iterators = this.#originals;
         } else {
-            this._iterators = this._infinites;
+            this.#iterators = this.#infinites;
         }
-        this._position = 0;
+        this.#position = 0;
 
         // initialization for each iterator
-        this._iterators.forEach(elem => elem.reset(cycle));
-    },
+        this.#iterators.forEach(elem => elem.reset(cycle));
+    }
 
     // create next pattern
-    "createNext": function() {
+    createNext() {
         // whether it is finished
         if (this.finished()) {
             return;
         }
-        if (this._iterators.length <= this._position) {
+        if (this.#iterators.length <= this.#position) {
             return;
         }
 
         // next pattern
-        if (this._iterators[this._position].finished()) {
-            this._position++;
+        if (this.#iterators[this.#position].finished()) {
+            this.#position++;
         } else {
-            this._iterators[this._position].createNext();
+            this.#iterators[this.#position].createNext();
         }
-    },
+    }
 
     // get current pattern
-    "getCurrent": function() {
-        if (this._iterators.length <= this._position) {
+    getCurrent() {
+        if (this.#iterators.length <= this.#position) {
             return "";
         } else {
-            return this._iterators[this._position].getCurrent();
+            return this.#iterators[this.#position].getCurrent();
         }
-    },
+    }
 
     // get current pattern list
-    "getPatterns": function() {
-        if (this._iterators.length <= this._position) {
+    getPatterns() {
+        if (this.#iterators.length <= this.#position) {
             return [];
         }
-        const iterator = this._iterators[this._position];
+        const iterator = this.#iterators[this.#position];
         return [ iterator.getCurrent() ].concat(iterator.getPatterns());
-    },
+    }
 
     // whether it is finished
-    "finished": function() {
+    finished() {
         // check the fields
-        if (this._position < this._iterators.length - 1) {
+        if (this.#position < this.#iterators.length - 1) {
             return false;
         }
-        if (this._iterators.length <= this._position) {
+        if (this.#iterators.length <= this.#position) {
             return true;
         }
 
         // whether the last iterator is finished
-        return this._iterators[this._position].finished();
-    },
+        return this.#iterators[this.#position].finished();
+    }
 
     // copy this instance
-    "copy": function() {
-        return new SelectionIterator(this._originals.map(elem => elem.copy()));
-    },
+    copy() {
+        return new SelectionIterator(this.#originals.map(elem => elem.copy()));
+    }
 
 }
 
 // Sequence iterator class
-const SequenceIterator = function(iterators) {
-    // fields
-    this._originals = iterators;
-    this._infinites = iterators.filter(elem => elem.endless);
-    this._finites = iterators.filter(elem => !elem.endless);
-    this._divisors = [];
-    this._index = 0;
+class SequenceIterator {
+    #originals;
+    #infinites;
+    #finites;
+    #divisors = [];
+    #index = 0;
 
-    // properties
-    this.endless = (0 < this._infinites.length);
-}
+    // constructor
+    constructor(iterators) {
+        // fields
+        this.#originals = iterators;
+        this.#infinites = iterators.filter(elem => elem.endless);
+        this.#finites = iterators.filter(elem => !elem.endless);
 
-// Sequence iterator prototype
-SequenceIterator.prototype = {
+        // properties
+        this.endless = (0 < this.#infinites.length);
+    }
 
     // reset fields
-    "reset": function(cycle) {
+    reset(cycle) {
         // finite pattern
-        this._finites.forEach(elem => elem.reset(0));
+        this.#finites.forEach(elem => elem.reset(0));
 
         // infinite pattern
-        this._divisors = this._getDivisors(this._infinites.length, cycle);
-        this._index = 0;
-        const cycles = this._divisors[this._index];
-        this._infinites.forEach((val, idx) => val.reset(cycles[idx]));
-    },
+        this.#divisors = this.#getDivisors(this.#infinites.length, cycle);
+        this.#index = 0;
+        const cycles = this.#divisors[this.#index];
+        this.#infinites.forEach((val, idx) => val.reset(cycles[idx]));
+    }
 
     // create next pattern
-    "createNext": function() {
+    createNext() {
         // whether it is finished
         if (this.finished()) {
             return;
         }
 
         // next pattern
-        if (!this._createFinite()) {
-            this._createInfinite();
+        if (!this.#createFinite()) {
+            this.#createInfinite();
         }
-    },
+    }
 
     // get current pattern
-    "getCurrent": function() {
-        return this._originals.map(elem => elem.getCurrent()).join("");
-    },
+    getCurrent() {
+        return this.#originals.map(elem => elem.getCurrent()).join("");
+    }
 
     // get current pattern list
-    "getPatterns": function() {
-        return this._originals.map(elem => elem.getPatterns()).flat();
-    },
+    getPatterns() {
+        return this.#originals.map(elem => elem.getPatterns()).flat();
+    }
 
     // whether it is finished
-    "finished": function() {
+    finished() {
         // check the fields
-        if (this._index < this._divisors.length - 1) {
+        if (this.#index < this.#divisors.length - 1) {
             return false;
         }
 
         // whether all iterators are finished
         let pos = 0;
-        while (pos < this._originals.length) {
-            if (!this._originals[pos].finished()) {
+        while (pos < this.#originals.length) {
+            if (!this.#originals[pos].finished()) {
                 return false;
             }
             pos++;
         }
         return true;
-    },
+    }
 
     // copy this instance
-    "copy": function() {
-        return new SequenceIterator(this._originals.map(elem => elem.copy()));
-    },
+    copy() {
+        return new SequenceIterator(this.#originals.map(elem => elem.copy()));
+    }
 
     // get divisor list
-    "_getDivisors": function(division, total) {
+    #getDivisors(division, total) {
         // check the arguments
         const divisors = [];
         if (division < 1 || total < 0) {
@@ -219,20 +225,20 @@ SequenceIterator.prototype = {
 
         // number of divisions is 2 or more
         for (let i = total; 0 <= i; i--) {
-            for (const part of this._getDivisors(division - 1, total - i)) {
+            for (const part of this.#getDivisors(division - 1, total - i)) {
                 part.unshift(i);
                 divisors.push(part);
             }
         }
         return divisors;
-    },
+    }
 
     // create next finite pattern
-    "_createFinite": function() {
+    #createFinite() {
         // search for finite pattern that has not yet finished
-        const length = this._finites.length;
+        const length = this.#finites.length;
         let pos = 0;
-        while (pos < length && this._finites[pos].finished()) {
+        while (pos < length && this.#finites[pos].finished()) {
             pos++;
         }
         if (pos == length) {
@@ -241,295 +247,305 @@ SequenceIterator.prototype = {
         }
 
         // found
-        this._finites.slice(0, pos).forEach(elem => elem.reset(0));
-        this._finites[pos].createNext();
+        this.#finites.slice(0, pos).forEach(elem => elem.reset(0));
+        this.#finites[pos].createNext();
         return true;
-    },
+    }
 
     // create next infinite pattern
-    "_createInfinite": function() {
+    #createInfinite() {
         // search for infinite pattern that has not yet finished
-        const length = this._infinites.length;
+        const length = this.#infinites.length;
         let pos = 0;
-        while (pos < length && this._infinites[pos].finished()) {
+        while (pos < length && this.#infinites[pos].finished()) {
             pos++;
         }
         if (pos == length) {
             // not found
-            this._index++;
-            if (this._divisors.length <= this._index) {
+            this.#index++;
+            if (this.#divisors.length <= this.#index) {
                 return false;
             }
 
             // next cycle
-            const cycles = this._divisors[this._index];
-            this._infinites.forEach((val, idx) => val.reset(cycles[idx]));
+            const cycles = this.#divisors[this.#index];
+            this.#infinites.forEach((val, idx) => val.reset(cycles[idx]));
         } else {
             // found
-            const cycles = this._divisors[this._index];
-            this._infinites.slice(0, pos).forEach((val, idx) => val.reset(cycles[idx]));
-            this._infinites[pos].createNext();
+            const cycles = this.#divisors[this.#index];
+            this.#infinites.slice(0, pos).forEach((val, idx) => val.reset(cycles[idx]));
+            this.#infinites[pos].createNext();
         }
 
         // initialize the finite patterns
-        this._finites.forEach(elem => elem.reset(0));
+        this.#finites.forEach(elem => elem.reset(0));
         return true;
-    },
+    }
 
 }
 
 // Factor iterator class
-const FactorIterator = function(iterator, min, max) {
-    // fields
-    this._original = iterator;
-    this._store = [];
-    this._map = {};
-    this._iterator = null;
-    this._unlimited = (max < 0);
-    this._min = parseInt(min, 10);
-    if (this._min < 0) {
-        this._min = 0;
-    }
-    this._max = parseInt(max, 10);
-    if (this._max < this._min) {
-        this._max = this._min;
-    }
-    this._divisors = [];
-    this._index = 0;
+class FactorIterator {
+    #original;
+    #unlimited;
+    #min;
+    #max;
+    #store = [];
+    #map = {};
+    #iterator = null;
+    #divisors = [];
+    #index = 0;
 
-    // properties
-    this.endless = (this._unlimited || this._original.endless);
-}
+    // constructor
+    constructor(iterator, min, max) {
+        // fields
+        this.#original = iterator;
+        this.#unlimited = (max < 0);
+        this.#min = parseInt(min, 10);
+        if (this.#min < 0) {
+            this.#min = 0;
+        }
+        this.#max = parseInt(max, 10);
+        if (this.#max < this.#min) {
+            this.#max = this.#min;
+        }
 
-// Factor iterator prototype
-FactorIterator.prototype = {
+        // properties
+        this.endless = (this.#unlimited || this.#original.endless);
+    }
 
     // reset fields
-    "reset": function(cycle) {
-        this._divisors = [];
-        if (this._original.endless) {
-            if (this._unlimited) {
+    reset(cycle) {
+        this.#divisors = [];
+        if (this.#original.endless) {
+            if (this.#unlimited) {
                 // both pattern and repeat count are infinite
                 for (let i = 0; i <= cycle; i++) {
-                    this._divisors.push([ this._min + cycle - i, i ]);
+                    this.#divisors.push([ this.#min + cycle - i, i ]);
                 }
             } else {
                 // only pattern is infinite
-                for (let i = this._min; i <= this._max; i++) {
-                    this._divisors.push([ i, cycle ]);
+                for (let i = this.#min; i <= this.#max; i++) {
+                    this.#divisors.push([ i, cycle ]);
                 }
             }
         } else {
-            if (this._unlimited) {
+            if (this.#unlimited) {
                 // only repeat count is infinite
-                this._divisors.push([ this._min + cycle, 0 ]);
+                this.#divisors.push([ this.#min + cycle, 0 ]);
             } else {
                 // both pattern and repeat count are finite
-                for (let i = this._min; i <= this._max; i++) {
-                    this._divisors.push([ i, 0 ]);
+                for (let i = this.#min; i <= this.#max; i++) {
+                    this.#divisors.push([ i, 0 ]);
                 }
             }
         }
 
         // create a iterator class
-        this._index = 0;
-        this._getIterator(0);
-    },
+        this.#index = 0;
+        this.#getIterator(0);
+    }
 
     // create next pattern
-    "createNext": function() {
+    createNext() {
         // whether it is finished
         if (this.finished()) {
             return;
         }
 
         // next pattern
-        if (this._iterator.finished()) {
-            this._index++;
-            this._getIterator(this._index);
+        if (this.#iterator.finished()) {
+            this.#index++;
+            this.#getIterator(this.#index);
         } else {
-            this._iterator.createNext();
+            this.#iterator.createNext();
         }
-    },
+    }
 
     // get current pattern
-    "getCurrent": function() {
-        return this._iterator.getCurrent();
-    },
+    getCurrent() {
+        return this.#iterator.getCurrent();
+    }
 
     // get current pattern list
-    "getPatterns": function() {
+    getPatterns() {
         // the last pattern
-        const cycles = this._divisors[this._index];
+        const cycles = this.#divisors[this.#index];
         const last = cycles[0] - 1;
         if (last < 0) {
             return [];
         }
-        return this._store[last].getPatterns();
-    },
+        return this.#store[last].getPatterns();
+    }
 
     // whether it is finished
-    "finished": function() {
+    finished() {
         // check the fields
-        if (this._index < this._divisors.length - 1) {
+        if (this.#index < this.#divisors.length - 1) {
             return false;
         }
 
         // whether current iterator is finished
-        return this._iterator.finished();
-    },
+        return this.#iterator.finished();
+    }
 
     // copy this instance
-    "copy": function() {
+    copy() {
         // get the number of iterations
-        let max = this._max;
-        if (this._unlimited) {
+        let max = this.#max;
+        if (this.#unlimited) {
             max = -1;
         }
 
         // create a new instance
-        const iterator = this._original.copy();
-        return new FactorIterator(iterator, this._min, max);
-    },
+        const iterator = this.#original.copy();
+        return new FactorIterator(iterator, this.#min, max);
+    }
 
     // get iterator classes
-    "_getIterator": function(index) {
+    #getIterator(index) {
         // check existing patterns
-        const cycles = this._divisors[index];
+        const cycles = this.#divisors[index];
         const iter = cycles[0];
-        if (!this._map[iter]) {
+        if (!this.#map[iter]) {
             // not found
-            for (let i = this._store.length; i < iter; i++) {
-                this._store.push(this._original.copy());
+            for (let i = this.#store.length; i < iter; i++) {
+                this.#store.push(this.#original.copy());
             }
 
             // create the missing pattern
-            this._map[iter] = new SequenceIterator(this._store.slice(0, iter));
+            this.#map[iter] = new SequenceIterator(this.#store.slice(0, iter));
         }
 
         // initialization for the iterator
-        this._iterator = this._map[iter];
-        this._iterator.reset(cycles[1]);
-    },
+        this.#iterator = this.#map[iter];
+        this.#iterator.reset(cycles[1]);
+    }
 
 }
 
 // Finite iterator class
-const FiniteIterator = function(texts) {
-    // fields
-    this._texts = texts.concat();
-    this._last = this._texts.length - 1;
-    this._step = 0;
+class FiniteIterator {
+    #texts;
+    #last;
+    #step = 0;
 
-    // properties
-    this.endless = false;
-}
+    // constructor
+    constructor(texts) {
+        // fields
+        this.#texts = texts.concat();
+        this.#last = this.#texts.length - 1;
 
-// Finite iterator prototype
-FiniteIterator.prototype = {
+        // properties
+        this.endless = false;
+    }
 
     // reset fields
-    "reset": function(cycle) {
-        this._step = 0;
-    },
+    reset(cycle) {
+        this.#step = 0;
+    }
 
     // create next pattern
-    "createNext": function() {
+    createNext() {
         // whether it is finished
         if (this.finished()) {
             return;
         }
 
         // next pattern
-        this._step++;
-    },
+        this.#step++;
+    }
 
     // get current pattern
-    "getCurrent": function() {
-        if (this._step < 0 || this._last < this._step) {
+    getCurrent() {
+        if (this.#step < 0 || this.#last < this.#step) {
             return "";
         } else {
-            return this._texts[this._step];
+            return this.#texts[this.#step];
         }
-    },
+    }
 
     // get current pattern list
-    "getPatterns": function() {
+    getPatterns() {
         return [];
-    },
+    }
 
     // whether it is finished
-    "finished": function() {
-        return this._last <= this._step;
-    },
+    finished() {
+        return this.#last <= this.#step;
+    }
 
     // copy this instance
-    "copy": function() {
-        return new FiniteIterator(this._texts);
-    },
+    copy() {
+        return new FiniteIterator(this.#texts);
+    }
 
 }
 
 // Pattern creator class
-const PatternCreator = function(iterator) {
-    // fields
-    this._iterator = iterator;
-    this._interval = 1;
-    this._block = 100;
+class PatternCreator {
+    #iterator;
+    #begin;
+    #number = 0;
+    #cycle = 0;
+    #interval = 1;
+    #block = 100;
 
-    // events
-    this.progressEvent = function(number, second) { };
-    this.completeEvent = function(completed) { };
-    this.acceptEvent = function(patterns) { return true; };
-}
+    // constructor
+    constructor(iterator) {
+        // fields
+        this.#iterator = iterator;
 
-// Pattern creator prototype
-PatternCreator.prototype = {
+        // events
+        this.progressEvent = function (number, second) { };
+        this.completeEvent = function (completed) { };
+        this.acceptEvent = function (patterns) { return true; };
+    }
 
     // start searching
-    "start": function() {
-        this._begin = Date.now();
+    start() {
+        this.#begin = Date.now();
 
         // reset fields
-        this._number = 0;
-        this._cycle = 0;
-        this._iterator.reset(this._cycle);
-        if (!this.acceptEvent(this._iterator.getPatterns())) {
+        this.#number = 0;
+        this.#cycle = 0;
+        this.#iterator.reset(this.#cycle);
+        if (!this.acceptEvent(this.#iterator.getPatterns())) {
             this.progressEvent(1, 0);
-            this.completeEvent(!this._iterator.endless && this._iterator.finished());
+            this.completeEvent(!this.#iterator.endless && this.#iterator.finished());
             return;
         }
 
         // search
-        setTimeout(this._execute.bind(this), this._interval);
-    },
+        setTimeout(this.#execute.bind(this), this.#interval);
+    }
 
     // execute searching
-    "_execute": function() {
+    #execute() {
         // set next end time
         const current = Date.now();
-        const over = (current - this._begin) % this._block;
-        const next = current - over + this._block;
+        const over = (current - this.#begin) % this.#block;
+        const next = current - over + this.#block;
 
         // run for a fixed amount of time
         let stopped = false;
         let num = 0;
         while (Date.now() < next) {
             num++;
-            if (this._iterator.finished()) {
+            if (this.#iterator.finished()) {
                 // end the search
-                if (!this._iterator.endless) {
+                if (!this.#iterator.endless) {
                     stopped = true;
                     break;
                 }
-                this._cycle++;
-                this._iterator.reset(this._cycle);
+                this.#cycle++;
+                this.#iterator.reset(this.#cycle);
             } else {
-                this._iterator.createNext();
+                this.#iterator.createNext();
             }
 
             // next time
-            if (!this.acceptEvent(this._iterator.getPatterns())) {
+            if (!this.acceptEvent(this.#iterator.getPatterns())) {
                 num++;
                 stopped = true;
                 break;
@@ -537,82 +553,86 @@ PatternCreator.prototype = {
         }
 
         // report of progress
-        this._number += num;
-        const second = (Date.now() - this._begin) / 1000;
-        this.progressEvent(this._number, second);
+        this.#number += num;
+        const second = (Date.now() - this.#begin) / 1000;
+        this.progressEvent(this.#number, second);
 
         // whether it is stopped
         if (stopped) {
-            const finished = !this._iterator.endless && this._iterator.finished();
-            setTimeout(this.completeEvent, this._interval, finished);
+            const finished = !this.#iterator.endless && this.#iterator.finished();
+            setTimeout(this.completeEvent, this.#interval, finished);
             return;
         }
 
         // continue
-        setTimeout(this._execute.bind(this), this._interval);
-    },
+        setTimeout(this.#execute.bind(this), this.#interval);
+    }
 
 }
 
 // Pattern value class
-const PatternValue = function(pattern) {
-    // fields
-    this._pattern = pattern.toString();
-    this._properties = { "pattern": pattern };
-    this._functions = {
-        "length": this._getLength.bind(this),
-        "sum": this._getSum.bind(this),
-        "reverse": this._getReverse.bind(this),
-        "min": this._getMin.bind(this),
-        "max": this._getMax.bind(this),
-        "omission": this._getOmission.bind(this),
-        "standard": this._getStandard.bind(this),
-        "jugglable": this._isJugglable.bind(this),
-        "valid": this._isValid.bind(this),
-        "balls": this._getBalls.bind(this),
-        "period": this._getPeriod.bind(this),
-        "state": this._getState.bind(this),
-        "int10": this._getInt10.bind(this),
-        "int36": this._getInt36.bind(this),
-    };
-}
+class PatternValue {
+    #pattern;
+    #properties;
+    #functions;
+    #numbers;
 
-// Pattern value prototype
-PatternValue.prototype = {
+    // constructor
+    constructor(pattern) {
+        // fields
+        this.#pattern = pattern.toString();
+        this.#properties = { "pattern": pattern };
+        this.#functions = {
+            "length": this.#getLength.bind(this),
+            "sum": this.#getSum.bind(this),
+            "reverse": this.#getReverse.bind(this),
+            "min": this.#getMin.bind(this),
+            "max": this.#getMax.bind(this),
+            "omission": this.#getOmission.bind(this),
+            "standard": this.#getStandard.bind(this),
+            "jugglable": this.#isJugglable.bind(this),
+            "valid": this.#isValid.bind(this),
+            "balls": this.#getBalls.bind(this),
+            "period": this.#getPeriod.bind(this),
+            "state": this.#getState.bind(this),
+            "int10": this.#getInt10.bind(this),
+            "int36": this.#getInt36.bind(this),
+        };
+    }
 
     // get the property
-    "getProperty": function(name) {
-        if (this._properties[name] == null) {
-            const method = this._functions[name];
+    getProperty(name) {
+        if (this.#properties[name] == null) {
+            const method = this.#functions[name];
             if (method == null) {
-                this._properties[name] = "";
+                this.#properties[name] = "";
             } else {
-                this._properties[name] = method();
+                this.#properties[name] = method();
             }
         }
-        return this._properties[name];
-    },
+        return this.#properties[name];
+    }
 
     // get pattern length
-    "_getLength": function() {
-        return this._pattern.length;
-    },
+    #getLength() {
+        return this.#pattern.length;
+    }
 
     // get the sum of heights
-    "_getSum": function() {
-        const letters = this._pattern.split("");
+    #getSum() {
+        const letters = this.#pattern.split("");
         const numbers = letters.map(elem => parseInt(elem, 36)).filter(elem => !isNaN(elem));
         return numbers.reduce((acc, cur) => acc + cur);
-    },
+    }
 
     // get reverse pattern
-    "_getReverse": function() {
-        return this._pattern.split("").reverse().join("");
-    },
+    #getReverse() {
+        return this.#pattern.split("").reverse().join("");
+    }
 
     // get minimum pattern
-    "_getMin": function() {
-        const target = this._pattern;
+    #getMin() {
+        const target = this.#pattern;
         if (target.length <= 1) {
             return target;
         }
@@ -629,13 +649,13 @@ PatternValue.prototype = {
         }
 
         // create a candidate string
-        const candidates = this._getCandidates(target, index);
+        const candidates = this.#getCandidates(target, index);
         return candidates[0];
-    },
+    }
 
     // get maximum pattern
-    "_getMax": function() {
-        const target = this._pattern;
+    #getMax() {
+        const target = this.#pattern;
         if (target.length <= 1) {
             return target;
         }
@@ -652,23 +672,23 @@ PatternValue.prototype = {
         }
 
         // create a candidate string
-        const candidates = this._getCandidates(target, index);
+        const candidates = this.#getCandidates(target, index);
         return candidates[candidates.length - 1];
-    },
+    }
 
     // get omission pattern
-    "_getOmission": function() {
-        return this._getOmissionText(this._pattern);
-    },
+    #getOmission() {
+        return this.#getOmissionText(this.#pattern);
+    }
 
     // get standard format
-    "_getStandard": function() {
-        return this._getOmissionText(this.getProperty("max"));
-    },
+    #getStandard() {
+        return this.#getOmissionText(this.getProperty("max"));
+    }
 
     // get whether jugglable
-    "_isJugglable": function() {
-        const numbers = this._getNumbers();
+    #isJugglable() {
+        const numbers = this.#getNumbers();
         const drops = {};
         let jugglable = (0 < numbers.length);
         for (let i = 0; i < numbers.length; i++) {
@@ -686,11 +706,11 @@ PatternValue.prototype = {
         } else {
             return 0;
         }
-    },
+    }
 
     // whether it is valid siteswap
-    "_isValid": function() {
-        const numbers = this._getNumbers();
+    #isValid() {
+        const numbers = this.#getNumbers();
         const drops = {};
         let valid = (0 < numbers.length);
         for (let i = 0; i < numbers.length; i++) {
@@ -708,14 +728,14 @@ PatternValue.prototype = {
         } else {
             return 0;
         }
-    },
+    }
 
     // get the number of balls
-    "_getBalls": function() {
+    #getBalls() {
         if (!this.getProperty("jugglable")) {
             return -1;
         }
-        const numbers = this._getNumbers();
+        const numbers = this.#getNumbers();
         if (this.getProperty("valid")) {
             // siteswap
             return numbers.reduce((acc, cur) => acc + cur) / numbers.length;
@@ -723,25 +743,25 @@ PatternValue.prototype = {
             // not siteswap
             return numbers.filter((value, key) => numbers.length <= value + key).length;
         }
-    },
+    }
 
     // get period of the pattern
-    "_getPeriod": function() {
+    #getPeriod() {
         if (!this.getProperty("valid")) {
             return -1;
         }
-        const numbers = this._getNumbers();
+        const numbers = this.#getNumbers();
         return numbers.length;
-    },
+    }
 
     // get the state number
-    "_getState": function() {
+    #getState() {
         if (!this.getProperty("jugglable")) {
             return -1;
         }
 
         // calculate maximum reach
-        const numbers = this._getNumbers();
+        const numbers = this.#getNumbers();
         const max = numbers.reduce((acc, cur, idx) => Math.max(acc, cur + idx), 0);
         if (max == 0) {
             return 0;
@@ -761,20 +781,20 @@ PatternValue.prototype = {
             return 0;
         }
         return value;
-    },
+    }
 
     // get base 10 value
-    "_getInt10": function() {
-        return PatternCommon.toBigInt(this._pattern, 10);
-    },
+    #getInt10() {
+        return PatternCommon.toBigInt(this.#pattern, 10);
+    }
 
     // get base 36 value
-    "_getInt36": function() {
-        return PatternCommon.toBigInt(this._pattern, 36);
-    },
+    #getInt36() {
+        return PatternCommon.toBigInt(this.#pattern, 36);
+    }
 
     // get candidate string
-    "_getCandidates": function(text, index) {
+    #getCandidates(text, index) {
         // first candidate
         const first = text.substring(index) + text.substring(0, index);
         const candidates = [ first ];
@@ -791,10 +811,10 @@ PatternValue.prototype = {
         }
         candidates.sort();
         return candidates;
-    },
+    }
 
     // get string abbreviation
-    "_getOmissionText": function(text) {
+    #getOmissionText(text) {
         const length = text.length;
         const max = Math.floor(length / 2);
         let pos = 1;
@@ -809,19 +829,19 @@ PatternValue.prototype = {
             pos++;
         }
         return text;
-    },
+    }
 
     // convert string to numeric array
-    "_getNumbers": function() {
-        if (this._numbers != null) {
-            return this._numbers;
+    #getNumbers() {
+        if (this.#numbers != null) {
+            return this.#numbers;
         }
 
         // create only when undefined
         const letters = this.getProperty("omission").split("");
-        this._numbers = letters.map(elem => parseInt(elem, 36)).filter(elem => !isNaN(elem));
-        return this._numbers;
-    },
+        this.#numbers = letters.map(elem => parseInt(elem, 36)).filter(elem => !isNaN(elem));
+        return this.#numbers;
+    }
 
 }
 

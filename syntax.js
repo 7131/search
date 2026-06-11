@@ -1,14 +1,14 @@
 // WHERE syntax class
-const SyntaxWhere = function() {
-    // properties
-    this.condition = null;
-}
+class SyntaxWhere {
 
-// WHERE syntax prototype
-SyntaxWhere.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.condition = null;
+    }
 
     // whether the conditions are met
-    "isValid": function(symbols) {
+    isValid(symbols) {
         // check the properties
         if (this.condition == null) {
             return true;
@@ -20,41 +20,41 @@ SyntaxWhere.prototype = {
         } else {
             return false;
         }
-    },
+    }
 
 }
 
 // SELECT syntax class
-const SyntaxSelect = function() {
-    // properties
-    this.distinct = false;
-    this.list = [];
-}
+class SyntaxSelect {
 
-// SELECT syntax prototype
-SyntaxSelect.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.distinct = false;
+        this.list = [];
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         if (this.list.length == 0) {
             return symbols.getText(0);
         }
         return this.list.map(elem => elem.getText(symbols)).join("");
-    },
+    }
 
 }
 
 // ORDER BY syntax class
-const SyntaxOrder = function() {
-    // properties
-    this.list = [];
-}
+class SyntaxOrder {
 
-// ORDER BY syntax prototype
-SyntaxOrder.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.list = [];
+    }
 
     // compare the magnitude of two values
-    "compare": function(a, b) {
+    compare(a, b) {
         for (const single of this.list) {
             // compare in order
             const x = single.value.getText(a.symbols);
@@ -72,21 +72,21 @@ SyntaxOrder.prototype = {
             }
         }
         return 0;
-    },
+    }
 
 }
 
 // Search condition class
-const SyntaxCondition = function() {
-    // properties
-    this.list = [];
-}
+class SyntaxCondition {
 
-// Search condition prototype
-SyntaxCondition.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.list = [];
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // first text
         let text = this.list[0].getText(symbols);
         if (this.list.length == 1) {
@@ -104,21 +104,21 @@ SyntaxCondition.prototype = {
             }
         }
         return 0;
-    },
+    }
 
 }
 
 // Condition part class
-const SyntaxPart = function() {
-    // properties
-    this.list = [];
-}
+class SyntaxPart {
 
-// Condition part prototype
-SyntaxPart.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.list = [];
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // first text
         let text = this.list[0].getText(symbols);
         if (this.list.length == 1) {
@@ -136,22 +136,22 @@ SyntaxPart.prototype = {
             }
         }
         return 1;
-    },
+    }
 
 }
 
 // Condition unit class
-const SyntaxUnit = function() {
-    // properties
-    this.not = false;
-    this.expression = null;
-}
+class SyntaxUnit {
 
-// Condition unit prototype
-SyntaxUnit.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.not = false;
+        this.expression = null;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // text
         const text = this.expression.getText(symbols);
         if (!this.not) {
@@ -163,24 +163,24 @@ SyntaxUnit.prototype = {
             return 0;
         }
         return 1;
-    },
+    }
 
 }
 
 // Condition expression class
-const SyntaxExpression = function(first) {
-    // properties
-    this.first = first;
-    this.compare = "";
-    this.second = null;
-    this.clause = null;
-}
+class SyntaxExpression {
 
-// Condition expression prototype
-SyntaxExpression.prototype = {
+    // constructor
+    constructor(first) {
+        // properties
+        this.first = first;
+        this.compare = "";
+        this.second = null;
+        this.clause = null;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         let result = false;
         let text = this.first.getText(symbols);
         if (this.clause == null) {
@@ -248,29 +248,29 @@ SyntaxExpression.prototype = {
         } else {
             return 0;
         }
-    },
+    }
 
 }
 
 // Operator term class
-const SyntaxTerm = function(first) {
-    // properties
-    this.first = first;
-    this.operators = [];
-    this.follows = [];
-}
+class SyntaxTerm {
 
-// Operator term prototype
-SyntaxTerm.prototype = {
+    // constructor
+    constructor(first) {
+        // properties
+        this.first = first;
+        this.operators = [];
+        this.follows = [];
+    }
 
     // add an operator
-    "add": function(operator, follow) {
+    add(operator, follow) {
         this.operators.push(operator);
         this.follows.push(follow);
-    },
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // check the properties
         let text = this.first.getText(symbols);
         if (this.operators.length == 0) {
@@ -295,30 +295,30 @@ SyntaxTerm.prototype = {
             }
         }
         return text;
-    },
+    }
 
 }
 
 // Operator factor class
-const SyntaxFactor = function(first) {
-    // properties
-    this.first = first;
-    this.operators = [];
-    this.follows = [];
+class SyntaxFactor {
 
-}
+    // constructor
+    constructor(first) {
+        // properties
+        this.first = first;
+        this.operators = [];
+        this.follows = [];
 
-// Operator factor prototype
-SyntaxFactor.prototype = {
+    }
 
     // add an operator
-    "add": function(operator, follow) {
+    add(operator, follow) {
         this.operators.push(operator);
         this.follows.push(follow);
-    },
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // check the properties
         const text = this.first.getText(symbols);
         if (this.operators.length == 0) {
@@ -344,22 +344,22 @@ SyntaxFactor.prototype = {
             }
         }
         return value;
-    },
+    }
 
 }
 
 // Operator value class
-const SyntaxValue = function(element) {
-    // properties
-    this.element = element;
-    this.follows = [];
-}
+class SyntaxValue {
 
-// Operator value prototype
-SyntaxValue.prototype = {
+    // constructor
+    constructor(element) {
+        // properties
+        this.element = element;
+        this.follows = [];
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // convert to pattern value
         let text = this.element.getText(symbols);
         for (const follow of this.follows) {
@@ -367,126 +367,129 @@ SyntaxValue.prototype = {
             text = follow.getText(symbols);
         }
         return text;
-    },
+    }
 
 }
 
 // Property class
-const SyntaxProperty = function(name) {
-    // properties
-    this.name = name;
-    this.value = null;
-}
+class SyntaxProperty {
 
-// Property prototype
-SyntaxProperty.prototype = {
+    // constructor
+    constructor(name) {
+        // properties
+        this.name = name;
+        this.value = null;
+    }
 
     // set pattern value
-    "setValue": function(pattern) {
+    setValue(pattern) {
         this.value = new PatternValue(pattern);
-    },
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         return this.value.getProperty(this.name);
-    },
+    }
 
 }
 
 // Method class
-const SyntaxMethod = function(name, param) {
-    // fields
-    this._name = name;
-    this._param = param;
-    this._value = null;
-    this._functions = {
-        "at": this._getAt.bind(this),
-        "rotate": this._getRotate.bind(this),
-        "skip": this._getSkip.bind(this),
-        "take": this._getTake.bind(this),
-    };
-}
+class SyntaxMethod {
+    #name;
+    #param;
+    #value;
+    #functions;
 
-// Method prototype
-SyntaxMethod.prototype = {
+    // constructor
+    constructor(name, param) {
+        // fields
+        this.#name = name;
+        this.#param = param;
+        this.#functions = {
+            "at": this.#getAt.bind(this),
+            "rotate": this.#getRotate.bind(this),
+            "skip": this.#getSkip.bind(this),
+            "take": this.#getTake.bind(this),
+        };
+    }
 
     // set pattern value
-    "setValue": function(pattern) {
-        this._value = `${pattern}`;
-    },
+    setValue(pattern) {
+        this.#value = `${pattern}`;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // get method
-        const method = this._functions[this._name];
+        const method = this.#functions[this.#name];
         if (method == null) {
-            return this._value;
+            return this.#value;
         }
 
         // execute the method
-        const number = parseInt(this._param.getText(symbols), 10);
-        return method(number, this._value.length);
-    },
+        const number = parseInt(this.#param.getText(symbols), 10);
+        return method(number, this.#value.length);
+    }
 
     // get the value at the specified position
-    "_getAt": function(number, length) {
+    #getAt(number, length) {
         if (length <= number || length < -number) {
             return "";
         }
         if (number < 0) {
-            return this._value[number + length];
+            return this.#value[number + length];
         } else {
-            return this._value[number];
+            return this.#value[number];
         }
-    },
+    }
 
     // get the rotated value
-    "_getRotate": function(number, length) {
+    #getRotate(number, length) {
         let rotate = number % length;
         if (rotate < 0) {
             rotate += length;
         }
-        return this._value.substring(rotate) + this._value.substring(0, rotate);
-    },
+        return this.#value.substring(rotate) + this.#value.substring(0, rotate);
+    }
 
     // get the skipped value
-    "_getSkip": function(number, length) {
+    #getSkip(number, length) {
         if (length <= number || length < -number) {
             return "";
         }
         if (number < 0) {
-            return this._value.substring(0, number + length);
+            return this.#value.substring(0, number + length);
         } else {
-            return this._value.substring(number);
+            return this.#value.substring(number);
         }
-    },
+    }
 
     // get the value from the beginning
-    "_getTake": function(number, length) {
+    #getTake(number, length) {
         if (length <= number || length < -number) {
-            return this._value;
+            return this.#value;
         }
         if (number < 0) {
-            return this._value.substring(number + length);
+            return this.#value.substring(number + length);
         } else {
-            return this._value.substring(0, number);
+            return this.#value.substring(0, number);
         }
-    },
+    }
 
 }
 
 // Method parameter class
-const SyntaxParameter = function() {
-    // properties
-    this.term = null;
-    this.value = null;
-}
+class SyntaxParameter {
 
-// Method parameter prototype
-SyntaxParameter.prototype = {
+    // constructor
+    constructor() {
+        // properties
+        this.term = null;
+        this.value = null;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         if (this.term != null) {
             return this.term.getText(symbols);
         }
@@ -494,196 +497,197 @@ SyntaxParameter.prototype = {
             return `-${this.value.getText(symbols)}`;
         }
         return "";
-    },
+    }
 
 }
 
 // Iterator class
-const SyntaxIterator = function(name, lambda) {
-    // fields
-    this._name = name;
-    this._lambda = lambda;
-    this._value = null;
-    this._functions = {
-        "every": this._testsEvery.bind(this),
-        "some": this._testsSome.bind(this),
-    };
-}
+class SyntaxIterator {
+    #name;
+    #lambda;
+    #value;
+    #functions;
 
-// Iterator prototype
-SyntaxIterator.prototype = {
+    // constructor
+    constructor(name, lambda) {
+        // fields
+        this.#name = name;
+        this.#lambda = lambda;
+        this.#functions = {
+            "every": this.#testsEvery.bind(this),
+            "some": this.#testsSome.bind(this),
+        };
+    }
 
     // set pattern value
-    "setValue": function(pattern) {
-        this._value = `${pattern}`;
-    },
+    setValue(pattern) {
+        this.#value = `${pattern}`;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         // set user-defined variables
-        if (this._lambda.whole != null) {
-            symbols.setText(this._lambda.whole, this._value);
+        if (this.#lambda.whole != null) {
+            symbols.setText(this.#lambda.whole, this.#value);
         }
 
         // execution of iterator
         let result = "";
-        const method = this._functions[this._name];
+        const method = this.#functions[this.#name];
         if (method != null) {
             result = method(symbols);
         }
 
         // delete user-defined variables
-        symbols.setText(this._lambda.index, null);
-        if (this._lambda.whole != null) {
-            symbols.setText(this._lambda.whole, null);
+        symbols.setText(this.#lambda.index, null);
+        if (this.#lambda.whole != null) {
+            symbols.setText(this.#lambda.whole, null);
         }
         return result;
-    },
+    }
 
     // test for all indexes
-    "_testsEvery": function(symbols) {
-        for (let i = 0; i < this._value.length; i++) {
-            symbols.setText(this._lambda.index, i);
-            const text = this._lambda.getText(symbols);
+    #testsEvery(symbols) {
+        for (let i = 0; i < this.#value.length; i++) {
+            symbols.setText(this.#lambda.index, i);
+            const text = this.#lambda.getText(symbols);
             if (!text || text === "0") {
                 return 0;
             }
         }
         return 1;
-    },
+    }
 
     // test for any index
-    "_testsSome": function(symbols) {
-        for (let i = 0; i < this._value.length; i++) {
-            symbols.setText(this._lambda.index, i);
-            const text = this._lambda.getText(symbols);
+    #testsSome(symbols) {
+        for (let i = 0; i < this.#value.length; i++) {
+            symbols.setText(this.#lambda.index, i);
+            const text = this.#lambda.getText(symbols);
             if (text && text !== "0") {
                 return 1;
             }
         }
         return 0;
-    },
+    }
 
 }
 
 // Lambda expression class
-const SyntaxLambda = function(index) {
-    // properties
-    this.index = index;
-    this.whole = null;
-    this.condition = null;
-}
+class SyntaxLambda {
 
-// Lambda expression prototype
-SyntaxLambda.prototype = {
+    // constructor
+    constructor(index) {
+        // properties
+        this.index = index;
+        this.whole = null;
+        this.condition = null;
+    }
 
     // get result text
-    "getText": function(symbols) {
+    getText(symbols) {
         return this.condition.getText(symbols);
-    },
+    }
 
 }
 
 // Auto-defined variable class
-const SyntaxAuto = function(number) {
-    // fields
-    if (isNaN(number)) {
-        this._number = 0;
-    } else {
-        this._number = number;
-    }
-}
+class SyntaxAuto {
+    #number = 0;
 
-// Auto-defined variable prototype
-SyntaxAuto.prototype = {
+    // constructor
+    constructor(number) {
+        if (!isNaN(number)) {
+            this.#number = number;
+        }
+    }
 
     // get result text
-    "getText": function(symbols) {
-        return symbols.getText(this._number);
-    },
+    getText(symbols) {
+        return symbols.getText(this.#number);
+    }
 
 }
 
 // User-defined variable class
-const SyntaxUser = function(name) {
-    // fields
-    this._name = name;
-}
+class SyntaxUser {
+    #name;
 
-// User-defined variable prototype
-SyntaxUser.prototype = {
+    // constructor
+    constructor(name) {
+        this.#name = name;
+    }
 
     // get result text
-    "getText": function(symbols) {
-        return symbols.getText(this._name);
-    },
+    getText(symbols) {
+        return symbols.getText(this.#name);
+    }
 
 }
 
 // Literal value class
-const SyntaxLiteral = function(text) {
-    // fields
-    this._text = text;
-}
+class SyntaxLiteral {
+    #text;
 
-// Literal value prototype
-SyntaxLiteral.prototype = {
+    // constructor
+    constructor(text) {
+        this.#text = text;
+    }
 
     // get result text
-    "getText": function(symbols) {
-        return this._text;
-    },
+    getText(symbols) {
+        return this.#text;
+    }
 
 }
 
 // Symbol table class
-const SymbolTable = function(patterns) {
-    // fields
-    this._auto = patterns;
-    this._user = {};
-    this._term = {};
-}
+class SymbolTable {
+    #auto;
+    #user = {};
+    #term = {};
 
-// Symbol table prototype
-SymbolTable.prototype = {
+    // constructor
+    constructor(patterns) {
+        this.#auto = patterns;
+    }
 
     // set the text of a variable
-    "setText": function(name, text) {
+    setText(name, text) {
         if (!isNaN(name)) {
             return;
         }
         if (text == null) {
-            delete this._user[name];
+            delete this.#user[name];
         } else {
-            this._user[name] = text;
+            this.#user[name] = text;
         }
-    },
+    }
 
     // set the operator term
-    "setTerm": function(pair) {
-        this._term[pair.name] = pair.term;
-    },
+    setTerm(pair) {
+        this.#term[pair.name] = pair.term;
+    }
 
     // get the text of a variable
-    "getText": function(name) {
+    getText(name) {
         if (isNaN(name)) {
             // user-defined variable
             if (name == null) {
                 return "";
             }
-            if (this._term[name] == null) {
-                return this._user[name];
+            if (this.#term[name] == null) {
+                return this.#user[name];
             } else {
-                return this._term[name].getText(this);
+                return this.#term[name].getText(this);
             }
         }
 
         // auto-defined variable
-        if (name < 0 || this._auto.length <= name) {
+        if (name < 0 || this.#auto.length <= name) {
             return "";
         }
-        return this._auto[name];
-    },
+        return this.#auto[name];
+    }
 
 }
 

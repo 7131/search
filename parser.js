@@ -1,13 +1,13 @@
 // Token class
-const Token = function(label) {
-    this.setPattern(label, "");
-}
+class Token {
 
-// Token prototype
-Token.prototype = {
+    // constructor
+    constructor(label) {
+        this.setPattern(label, "");
+    }
 
     // set the pattern
-    "setPattern": function(label, text) {
+    setPattern(label, text) {
         if (label == null) {
             this.label = "";
         } else {
@@ -19,125 +19,130 @@ Token.prototype = {
             this.text = text;
         }
         this.length = text.length;
-    },
+    }
 
 }
 
 // Syntax tree class
-const Tree = function(label, text) {
-    if (label == null) {
-        this.label = "";
-    } else {
-        this.label = label;
+class Tree {
+
+    // constructor
+    constructor(label, text) {
+        if (label == null) {
+            this.label = "";
+        } else {
+            this.label = label;
+        }
+        if (text == null) {
+            this.text = "";
+        } else {
+            this.text = text;
+        }
+        this.children = [];
     }
-    if (text == null) {
-        this.text = "";
-    } else {
-        this.text = text;
-    }
-    this.children = [];
+
 }
 
 // State stack class
-const StateStack = function() {
-    this._stack = [];
-}
-
-// State stack prototype
-StateStack.prototype = {
+class StateStack {
+    #stack = [];
 
     // push a state pair to the stack top
-    "push": function(tree, state) {
+    push(tree, state) {
         const pair = { "tree": tree, "state": state };
-        this._stack.push(pair);
-    },
+        this.#stack.push(pair);
+    }
 
     // pop a state pair from the stack top, remove it, and return the tree
-    "popTree": function() {
-        const last = this._stack.length - 1;
+    popTree() {
+        const last = this.#stack.length - 1;
         if (last < 0) {
             return null;
         } else {
-            const pair = this._stack.pop();
+            const pair = this.#stack.pop();
             return pair.tree;
         }
-    },
+    }
 
     // peek the state number of the stack top
-    "peekState": function() {
-        const last = this._stack.length - 1;
+    peekState() {
+        const last = this.#stack.length - 1;
         if (last < 0) {
             return 0;
         } else {
-            return this._stack[last].state;
+            return this.#stack[last].state;
         }
-    },
+    }
 
     // get the number of the stack items
-    "getCount": function() {
-        return this._stack.length;
-    },
+    getCount() {
+        return this.#stack.length;
+    }
 
 }
 
 // Syntax parser class
-const Parser = function(grammar, converter) {
-    // terminal symbols
-    const terms = grammar.terminals.concat(grammar.dummies);
-    this._terminals = terms.map(this._quoteSingle);
-    this._dummies = grammar.dummies.map(this._quoteSingle);
-    this._elements = terms.map(elem => new RegExp(`^(${elem})`, grammar.flag));
+class Parser {
+    #terminals;
+    #dummies;
+    #elements;
+    #converter;
+    #rules = [];
+    #table = [];
 
-    // production rules
-    this._rules = [];
-    const nonterms = [];
-    for (let i = 0; i < grammar.rules.length; i++) {
-        const pair = grammar.rules[i].split("=");
-        const symbol = pair[0];
-        this._rules.push({ "symbol": symbol, "count": parseInt(pair[1], 10) });
-        if (0 < i && nonterms.indexOf(symbol) < 0) {
-            // non-terminal symbols
-            nonterms.push(symbol);
-        }
-    }
-    nonterms.unshift("$");
-    const symbols = grammar.terminals.map(this._quoteSingle).concat(nonterms);
+    // constructor
+    constructor(grammar, converter) {
+        // terminal symbols
+        const terms = grammar.terminals.concat(grammar.dummies);
+        this.#terminals = terms.map(this.#quoteSingle);
+        this.#dummies = grammar.dummies.map(this.#quoteSingle);
+        this.#elements = terms.map(elem => new RegExp(`^(${elem})`, grammar.flag));
 
-    // parsing table
-    this._table = [];
-    for (const line of grammar.table) {
-        const row = {};
-        for (let i = 0; i < symbols.length; i++) {
-            const match = line[i].match(/^(s|r|g)([0-9]+)$/);
-            if (match) {
-                const symbol = match[1];
-                const number = parseInt(match[2], 10);
-                row[symbols[i]] = { "symbol": symbol, "number": number };
+        // production rules
+        const nonterms = [];
+        for (let i = 0; i < grammar.rules.length; i++) {
+            const pair = grammar.rules[i].split("=");
+            const symbol = pair[0];
+            this.#rules.push({ "symbol": symbol, "count": parseInt(pair[1], 10) });
+            if (0 < i && nonterms.indexOf(symbol) < 0) {
+                // non-terminal symbols
+                nonterms.push(symbol);
             }
         }
-        this._table.push(row);
-    }
-    this._converter = converter;
-}
+        nonterms.unshift("$");
+        const symbols = grammar.terminals.map(this.#quoteSingle).concat(nonterms);
 
-// Syntax parser prototype
-Parser.prototype = {
+        // parsing table
+        for (const line of grammar.table) {
+            const row = {};
+            for (let i = 0; i < symbols.length; i++) {
+                const match = line[i].match(/^(s|r|g)([0-9]+)$/);
+                if (match) {
+                    const symbol = match[1];
+                    const number = parseInt(match[2], 10);
+                    row[symbols[i]] = { "symbol": symbol, "number": number };
+                }
+            }
+            this.#table.push(row);
+        }
+        this.#converter = converter;
+    }
 
     // lexical analysis
-    "tokenize": function(text) {
+    tokenize(text) {
         const tokens = [];
         while (0 < text.length) {
             const max = new Token();
-            for (let i = 0; i < this._elements.length; i++) {
-                const result = this._elements[i].exec(text);
+            for (let i = 0; i < this.#elements.length; i++) {
+                const result = this.#elements[i].exec(text);
                 if (result != null && max.length < result[0].length) {
                     // get the longest and the first token
-                    max.setPattern(this._terminals[i], result[0]);
+                    max.setPattern(this.#terminals[i], result[0]);
                 }
             }
             if (0 < max.length) {
                 // found a token
-                if (this._dummies.indexOf(max.label) < 0) {
+                if (this.#dummies.indexOf(max.label) < 0) {
                     tokens.push(max);
                 }
                 text = text.substring(max.length);
@@ -153,10 +158,10 @@ Parser.prototype = {
             return { "tokens": null, "valid": valid.trim(), "invalid": text };
         }
         return { "tokens": tokens };
-    },
+    }
 
     // syntactic analysis
-    "parse": function(tokens) {
+    parse(tokens) {
         const stack = new StateStack();
 
         // dealing all tokens
@@ -166,7 +171,7 @@ Parser.prototype = {
             const label = next.label;
 
             // execute an action
-            const action = this._table[stack.peekState()][label];
+            const action = this.#table[stack.peekState()][label];
             if (!action) {
                 break;
             }
@@ -177,7 +182,7 @@ Parser.prototype = {
                 tokens.shift();
             } else {
                 // reduce
-                const rule = this._rules[action.number];
+                const rule = this.#rules[action.number];
                 let nodes = [];
                 for (let i = 0; i < rule.count; i++) {
                     const top = stack.popTree();
@@ -192,8 +197,8 @@ Parser.prototype = {
                 // create a syntax tree
                 const node = new Tree(rule.symbol);
                 node.children = nodes;
-                if (this._converter[node.label]) {
-                    this._converter[node.label](node);
+                if (this.#converter[node.label]) {
+                    this.#converter[node.label](node);
                 }
 
                 // accept
@@ -202,7 +207,7 @@ Parser.prototype = {
                 }
 
                 // transit
-                const goto = this._table[stack.peekState()][node.label];
+                const goto = this.#table[stack.peekState()][node.label];
                 if (!goto) {
                     break;
                 }
@@ -213,25 +218,25 @@ Parser.prototype = {
         // the case of not to accept
         let valid = "";
         while (0 < stack.getCount()) {
-            valid = `${this._joinTree(stack.popTree())} ${valid}`;
+            valid = `${this.#joinTree(stack.popTree())} ${valid}`;
         }
         const invalid = tokens.map(elem => elem.text).join(" ");
         return { "tree": null, "valid": valid.trim(), "invalid": invalid.trim() };
-    },
+    }
 
     // add the single quatations
-    "_quoteSingle": function(cur) {
+    #quoteSingle(cur) {
         const text = cur.replace(/\\(.)/g, "$1");
         return `'${text}'`;
-    },
+    }
 
     // join the tree strings
-    "_joinTree": function(tree) {
+    #joinTree(tree) {
         if (tree.text != "") {
             return tree.text;
         }
-        return tree.children.map(this._joinTree, this).join(" ");
-    },
+        return tree.children.map(this.#joinTree, this).join(" ");
+    }
 
 }
 

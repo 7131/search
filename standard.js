@@ -1,159 +1,187 @@
 // Controller class
-const Controller = function() {
-    // fields
-    this._parser = new Parser(PatternGrammar, PatternConverter);
+class Controller {
+    #pattern;
+    #searchButton;
+    #messageArea;
+    #resultTotal;
+    #resultCount;
+    #resultTime;
+    #resultArea;
+    #limitCount;
+    #limitTime;
+    #minCount;
+    #maxCount;
+    #minTime;
+    #maxTime;
+    #settingBalls;
+    #settingSort;
+    #settingIteration;
+    #settingAll;
+    #settingNumbers;
+    #valueNumbers;
+    #settingSingle;
+    #settingRotation;
+    #groupSort;
+    #groupNumbers;
+    #groupSingle;
+    #groupAll;
+    #minNumbers;
+    #maxNumbers;
+    #stopCount;
+    #stopTime;
+    #acceptNumbers;
+    #parser = new Parser(PatternGrammar, PatternConverter);
+    #values = [];
 
-    // events
-    window.addEventListener("load", this._initialize.bind(this));
-}
-
-// Controller prototype
-Controller.prototype = {
+    // constructor
+    constructor() {
+        window.addEventListener("load", this.#initialize.bind(this));
+    }
 
     // initialize the private fields
-    "_initialize": function(e) {
+    #initialize(e) {
         // input elements
-        this._pattern = document.getElementById("pattern");
-        this._searchButton = document.getElementById("search");
-        this._messageArea = document.getElementById("message_area");
+        this.#pattern = document.getElementById("pattern");
+        this.#searchButton = document.getElementById("search");
+        this.#messageArea = document.getElementById("message_area");
 
         // result elements
-        this._resultTotal = document.getElementById("result_total");
-        this._resultCount = document.getElementById("result_count");
-        this._resultTime = document.getElementById("result_time");
-        this._resultArea = document.getElementById("result_area");
+        this.#resultTotal = document.getElementById("result_total");
+        this.#resultCount = document.getElementById("result_count");
+        this.#resultTime = document.getElementById("result_time");
+        this.#resultArea = document.getElementById("result_area");
 
         // stop condition elements
-        this._limitCount = document.getElementById("limit_count");
-        this._limitTime = document.getElementById("limit_time");
+        this.#limitCount = document.getElementById("limit_count");
+        this.#limitTime = document.getElementById("limit_time");
 
         // range of stop conditions
-        this._minCount = this._getInt(document.getElementById("min_count").textContent);
-        this._maxCount = this._getInt(document.getElementById("max_count").textContent);
-        this._minTime = this._getInt(document.getElementById("min_time").textContent);
-        this._maxTime = this._getInt(document.getElementById("max_time").textContent);
+        this.#minCount = this.#getInt(document.getElementById("min_count").textContent);
+        this.#maxCount = this.#getInt(document.getElementById("max_count").textContent);
+        this.#minTime = this.#getInt(document.getElementById("min_time").textContent);
+        this.#maxTime = this.#getInt(document.getElementById("max_time").textContent);
 
         // display condition elements
-        this._settingBalls = document.getElementById("setting_balls");
-        this._settingSort = document.getElementById("setting_sort");
-        this._settingIteration = document.getElementById("setting_repetition");
-        this._settingAll = document.getElementById("setting_all");
-        this._settingNumbers = document.getElementById("setting_numbers");
-        this._valueNumbers = document.getElementById("value_numbers");
-        this._settingSingle = document.getElementById("setting_single");
-        this._settingRotation = document.getElementById("setting_rotation");
-        this._groupSort = [
+        this.#settingBalls = document.getElementById("setting_balls");
+        this.#settingSort = document.getElementById("setting_sort");
+        this.#settingIteration = document.getElementById("setting_repetition");
+        this.#settingAll = document.getElementById("setting_all");
+        this.#settingNumbers = document.getElementById("setting_numbers");
+        this.#valueNumbers = document.getElementById("value_numbers");
+        this.#settingSingle = document.getElementById("setting_single");
+        this.#settingRotation = document.getElementById("setting_rotation");
+        this.#groupSort = [
             document.getElementById("sort_length"),
             document.getElementById("sort_balls"),
             document.getElementById("sort_dictionary"),
         ];
-        this._groupNumbers = [ this._valueNumbers ];
-        this._groupSingle = [ this._settingRotation ];
-        this._groupAll = [
+        this.#groupNumbers = [ this.#valueNumbers ];
+        this.#groupSingle = [ this.#settingRotation ];
+        this.#groupAll = [
             document.getElementById("area_numbers"),
             document.getElementById("area_single"),
         ];
 
         // range of display conditions
-        this._minNumbers = this._getInt(document.getElementById("min_numbers").textContent);
-        this._maxNumbers = this._getInt(document.getElementById("max_numbers").textContent);
+        this.#minNumbers = this.#getInt(document.getElementById("min_numbers").textContent);
+        this.#maxNumbers = this.#getInt(document.getElementById("max_numbers").textContent);
 
         // events
-        this._searchButton.addEventListener("click", this._start.bind(this));
-        this._limitCount.addEventListener("input", this._inputCount.bind(this));
-        this._limitTime.addEventListener("input", this._inputTime.bind(this));
-        this._settingSort.addEventListener("change", this._changeSort.bind(this));
-        this._settingAll.addEventListener("change", this._changeAll.bind(this));
-        this._settingNumbers.addEventListener("change", this._changeNumbers.bind(this));
-        this._valueNumbers.addEventListener("input", this._inputNumbers.bind(this));
-        this._settingSingle.addEventListener("change", this._changeSingle.bind(this));
+        this.#searchButton.addEventListener("click", this.#start.bind(this));
+        this.#limitCount.addEventListener("input", this.#inputCount.bind(this));
+        this.#limitTime.addEventListener("input", this.#inputTime.bind(this));
+        this.#settingSort.addEventListener("change", this.#changeSort.bind(this));
+        this.#settingAll.addEventListener("change", this.#changeAll.bind(this));
+        this.#settingNumbers.addEventListener("change", this.#changeNumbers.bind(this));
+        this.#valueNumbers.addEventListener("input", this.#inputNumbers.bind(this));
+        this.#settingSingle.addEventListener("change", this.#changeSingle.bind(this));
 
         // initialize the page
-        this._changeSort(null);
-        this._changeNumbers(null);
-        this._changeSingle(null);
-        this._changeAll(null);
-    },
+        this.#changeSort(null);
+        this.#changeNumbers(null);
+        this.#changeSingle(null);
+        this.#changeAll(null);
+    }
 
     // "Search" button process
-    "_start": function(e) {
+    #start(e) {
         // clear display
-        this._values = [];
-        this._messageArea.textContent = "";
-        this._resultArea.textContent = "";
-        this._resultCount.classList.remove("error");
-        this._resultTime.classList.remove("error");
-        this._showProgress(0, 0);
+        this.#values = [];
+        this.#messageArea.textContent = "";
+        this.#resultArea.textContent = "";
+        this.#resultCount.classList.remove("error");
+        this.#resultTime.classList.remove("error");
+        this.#showProgress(0, 0);
 
         // pattern analysis
-        const lex = this._parser.tokenize(PatternCommon.toSmall(this._pattern.value));
+        const lex = this.#parser.tokenize(PatternCommon.toSmall(this.#pattern.value));
         if (lex.tokens == null) {
-            this._setError(lex.valid, lex.invalid);
+            this.#setError(lex.valid, lex.invalid);
             return;
         }
-        const syntax = this._parser.parse(lex.tokens);
+        const syntax = this.#parser.parse(lex.tokens);
         if (syntax.tree == null) {
-            this._setError(syntax.valid, syntax.invalid);
+            this.#setError(syntax.valid, syntax.invalid);
             return;
         }
 
         // preparation for execution
         const creator = new PatternCreator(syntax.tree.iterator);
-        creator.progressEvent = this._showProgress.bind(this);
-        creator.completeEvent = this._showResult.bind(this);
-        creator.acceptEvent = this._accept.bind(this);
+        creator.progressEvent = this.#showProgress.bind(this);
+        creator.completeEvent = this.#showResult.bind(this);
+        creator.acceptEvent = this.#accept.bind(this);
 
         // get the stop conditions
-        this._stopCount = this._getValidInt(this._limitCount.value, this._minCount, this._maxCount, 100);
-        this._stopTime = Date.now() + 1000 * this._getValidInt(this._limitTime.value, this._minTime, this._maxTime, 3);
-        this._acceptNumbers = this._getValidInt(this._valueNumbers.value, this._minNumbers, this._maxNumbers, 3);
+        this.#stopCount = this.#getValidInt(this.#limitCount.value, this.#minCount, this.#maxCount, 100);
+        this.#stopTime = Date.now() + 1000 * this.#getValidInt(this.#limitTime.value, this.#minTime, this.#maxTime, 3);
+        this.#acceptNumbers = this.#getValidInt(this.#valueNumbers.value, this.#minNumbers, this.#maxNumbers, 3);
 
         // execution
-        this._searchButton.disabled = true;
+        this.#searchButton.disabled = true;
         creator.start();
-    },
+    }
 
     // input the maximum number
-    "_inputCount": function(e) {
-        this._setStatus(this._limitCount, this._minCount, this._maxCount);
-    },
+    #inputCount(e) {
+        this.#setStatus(this.#limitCount, this.#minCount, this.#maxCount);
+    }
 
     // input the time limit
-    "_inputTime": function(e) {
-        this._setStatus(this._limitTime, this._minTime, this._maxTime);
-    },
+    #inputTime(e) {
+        this.#setStatus(this.#limitTime, this.#minTime, this.#maxTime);
+    }
 
     // change whether to sort
-    "_changeSort": function(e) {
-        this._setEnabled(this._groupSort, this._settingSort.checked);
-    },
+    #changeSort(e) {
+        this.#setEnabled(this.#groupSort, this.#settingSort.checked);
+    }
 
     // change whether to show all items
-    "_changeAll": function(e) {
-        if (this._settingAll.checked) {
-            this._groupAll.forEach(elem => elem.classList.add("hidden"));
+    #changeAll(e) {
+        if (this.#settingAll.checked) {
+            this.#groupAll.forEach(elem => elem.classList.add("hidden"));
         } else {
-            this._groupAll.forEach(elem => elem.classList.remove("hidden"));
+            this.#groupAll.forEach(elem => elem.classList.remove("hidden"));
         }
-    },
+    }
 
     // change whether to specify the number of balls
-    "_changeNumbers": function(e) {
-        this._setEnabled(this._groupNumbers, this._settingNumbers.checked);
-    },
+    #changeNumbers(e) {
+        this.#setEnabled(this.#groupNumbers, this.#settingNumbers.checked);
+    }
 
     // input the number of balls
-    "_inputNumbers": function(e) {
-        this._setStatus(this._valueNumbers, this._minNumbers, this._maxNumbers);
-    },
+    #inputNumbers(e) {
+        this.#setStatus(this.#valueNumbers, this.#minNumbers, this.#maxNumbers);
+    }
 
     // change whether to exclude same value
-    "_changeSingle": function(e) {
-        this._setEnabled(this._groupSingle, this._settingSingle.checked);
-    },
+    #changeSingle(e) {
+        this.#setEnabled(this.#groupSingle, this.#settingSingle.checked);
+    }
 
     // set textbox status
-    "_setStatus": function(input, min, max) {
+    #setStatus(input, min, max) {
         const number = parseInt(input.value, 10);
         if (isNaN(number) || number < min || max < number) {
             // invalid
@@ -162,133 +190,133 @@ Controller.prototype = {
             // valid
             input.classList.remove("invalid");
         }
-    },
+    }
 
     // switch enable/disable of input item
-    "_setEnabled": function(group, enabled) {
+    #setEnabled(group, enabled) {
         group.forEach(elem => elem.disabled = !enabled);
-    },
+    }
 
     // get an integer value
-    "_getInt": function(text) {
+    #getInt(text) {
         const after = text.replace(/,/g, "");
         let number = parseInt(after, 10);
         if (isNaN(number)) {
             number = 0;
         }
         return number;
-    },
+    }
 
     // get a valid integer value
-    "_getValidInt": function(text, min, max, init) {
-        let number = this._getInt(text);
+    #getValidInt(text, min, max, init) {
+        let number = this.#getInt(text);
         if (number < min || max < number) {
             number = init;
         }
         return number;
-    },
+    }
 
     // show the progress
-    "_showProgress": function(number, second) {
-        this._resultTotal.textContent = number.toLocaleString();
-        this._resultCount.textContent = this._values.length.toLocaleString();
-        this._resultTime.textContent = Math.floor(second * 10 + 0.5) / 10;
-    },
+    #showProgress(number, second) {
+        this.#resultTotal.textContent = number.toLocaleString();
+        this.#resultCount.textContent = this.#values.length.toLocaleString();
+        this.#resultTime.textContent = Math.floor(second * 10 + 0.5) / 10;
+    }
 
     // show the result
-    "_showResult": function(completed) {
+    #showResult(completed) {
         // check if it is completed
         if (!completed) {
-            if (parseFloat(this._limitCount.value) <= parseFloat(this._resultCount.textContent)) {
-                this._resultCount.classList.add("error");
+            if (parseFloat(this.#limitCount.value) <= parseFloat(this.#resultCount.textContent)) {
+                this.#resultCount.classList.add("error");
             }
-            if (parseFloat(this._limitTime.value) <= parseFloat(this._resultTime.textContent)) {
-                this._resultTime.classList.add("error");
+            if (parseFloat(this.#limitTime.value) <= parseFloat(this.#resultTime.textContent)) {
+                this.#resultTime.classList.add("error");
             }
         }
 
         // title
         const h2 = document.createElement("h2");
         h2.textContent = "Result";
-        this._resultArea.appendChild(h2);
-        if (!Array.isArray(this._values)) {
-            this._searchButton.disabled = false;
+        this.#resultArea.appendChild(h2);
+        if (!Array.isArray(this.#values)) {
+            this.#searchButton.disabled = false;
             return;
         }
 
         // sort
-        if (this._settingSort.checked) {
-            if (this._groupSort[0].checked) {
-                this._values.sort((a, b) => a.getProperty("length") - b.getProperty("length"));
-            } else if (this._groupSort[1].checked) {
-                this._values.sort((a, b) => a.getProperty("balls") - b.getProperty("balls"));
+        if (this.#settingSort.checked) {
+            if (this.#groupSort[0].checked) {
+                this.#values.sort((a, b) => a.getProperty("length") - b.getProperty("length"));
+            } else if (this.#groupSort[1].checked) {
+                this.#values.sort((a, b) => a.getProperty("balls") - b.getProperty("balls"));
             } else {
-                this._values.sort(this._comparePatterns);
+                this.#values.sort(this.#comparePatterns);
             }
         }
 
         // list
         const ul = document.createElement("ul");
-        for (const value of this._values) {
+        for (const value of this.#values) {
             const li = document.createElement("li");
             let text = value.getProperty("pattern");
 
             // show the number of balls
-            if (this._settingBalls.checked) {
+            if (this.#settingBalls.checked) {
                 text += `(${value.getProperty("balls")})`;
             }
             li.textContent = text;
             ul.appendChild(li);
         }
-        this._resultArea.appendChild(ul);
-        this._searchButton.disabled = false;
-    },
+        this.#resultArea.appendChild(ul);
+        this.#searchButton.disabled = false;
+    }
 
     // accept pattern
-    "_accept": function(patterns) {
+    #accept(patterns) {
         // check time limit
-        if (this._stopTime <= Date.now()) {
+        if (this.#stopTime <= Date.now()) {
             return false;
         }
 
         // create pattern value
         let value = new PatternValue(patterns[0]);
-        if (this._settingIteration.checked) {
+        if (this.#settingIteration.checked) {
             value = new PatternValue(value.getProperty("omission"));
         }
 
         // display settings
-        if (!this._settingAll.checked) {
+        if (!this.#settingAll.checked) {
             if (!value.getProperty("valid")) {
                 return true;
             }
 
             // number of balls
-            if (this._settingNumbers.checked) {
-                if (value.getProperty("balls") != this._acceptNumbers) {
+            if (this.#settingNumbers.checked) {
+                if (value.getProperty("balls") != this.#acceptNumbers) {
                     return true;
                 }
             }
 
             // equivalence exclusion
-            if (this._settingSingle.checked) {
+            if (this.#settingSingle.checked) {
                 let name = "pattern";
-                if (this._settingRotation.checked) {
+                if (this.#settingRotation.checked) {
                     // circular equivalence
                     name = "standard";
                 }
                 const text = value.getProperty(name);
-                if (0 < this._values.filter(elem => elem.getProperty(name) == text).length) {
+                if (0 < this.#values.filter(elem => elem.getProperty(name) == text).length) {
                     return true;
                 }
             }
         }
-        this._values.push(value);
-        return this._values.length < this._stopCount;
-    },
+        this.#values.push(value);
+        return this.#values.length < this.#stopCount;
+    }
 
     // set an error
-    "_setError": function(valid, invalid) {
+    #setError(valid, invalid) {
         // check the arguments
         if (0 < valid.length && 0 < invalid.length) {
             valid = `OK: ${valid}`;
@@ -304,14 +332,14 @@ Controller.prototype = {
         ok.textContent = valid;
         ng.textContent = invalid;
         ng.classList.add("error");
-        this._messageArea.textContent = "";
-        this._messageArea.appendChild(head);
-        this._messageArea.appendChild(ok);
-        this._messageArea.appendChild(ng);
-    },
+        this.#messageArea.textContent = "";
+        this.#messageArea.appendChild(head);
+        this.#messageArea.appendChild(ok);
+        this.#messageArea.appendChild(ng);
+    }
 
     // compare patterns
-    "_comparePatterns": function(a, b) {
+    #comparePatterns(a, b) {
         const x = a.getProperty("pattern");
         const y = b.getProperty("pattern");
         if (x < y) {
@@ -321,7 +349,7 @@ Controller.prototype = {
             return 1;
         }
         return 0;
-    },
+    }
 
 }
 

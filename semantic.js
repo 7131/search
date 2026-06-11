@@ -1,56 +1,51 @@
 // Semantic analyzer class
-const SemanticAnalyzer = function() {
-    // fields
-    this._symbols = new Set();
-    this._duplicate = new Set();
-    this._used = new Set();
-    this._undefined = new Set();
-}
-
-// Semantic analyzer prototype
-SemanticAnalyzer.prototype = {
+class SemanticAnalyzer {
+    #symbols = new Set();
+    #duplicate = new Set();
+    #used = new Set();
+    #undefined = new Set();
 
     // validate syntax
-    "validate": function(tree) {
+    validate(tree) {
         // classify
         const definitions = [];
         const expressions = [];
         for (const clause of tree.children) {
             if (clause.label == "Let") {
                 const name = clause.children[1].children[0].text;
-                const reference = this._getReference(clause.children[3]);
+                const reference = this.#getReference(clause.children[3]);
                 definitions.push({ "name": name, "reference": reference, "tree": clause.children[3] });
-                if (this._symbols.has(name)) {
-                    this._duplicate.add(name);
+                if (this.#symbols.has(name)) {
+                    this.#duplicate.add(name);
                 }
-                this._symbols.add(name);
+                this.#symbols.add(name);
             } else {
-                expressions.push(this._getLast(clause.children));
+                expressions.push(this.#getLast(clause.children));
             }
         }
-        const empties = this._getEmpties(definitions);
+        const empties = this.#getEmpties(definitions);
         const parts = definitions.filter(elem => !empties.has(elem.name));
 
         // circular reference
-        const circular = this._getCircular(parts);
+        const circular = this.#getCircular(parts);
         if (0 < circular.size) {
-            return this._getError("circular reference of variables", parts.map(elem => elem.name), circular);
+            return this.#getError("circular reference of variables", parts.map(elem => elem.name), circular);
         }
 
         // using variables
         const current = Array.from(empties);
-        expressions.forEach(elem => this._validateReference(current, elem, parts));
-        if (0 < this._duplicate.size) {
-            return this._getError("duplicate variables", this._symbols, this._duplicate);
+        expressions.forEach(elem => this.#validateReference(current, elem, parts));
+        if (0 < this.#duplicate.size) {
+            return this.#getError("duplicate variables", this.#symbols, this.#duplicate);
         }
-        if (0 < this._undefined.size) {
-            return this._getError("using undefined variables", this._used, this._undefined);
+        if (0 < this.#undefined.size) {
+            return this.#getError("using undefined variables", this.#used, this.#undefined);
         }
         return { "message": "" };
-    },
+    }
 
     // get unreferenced variables
-    "_getEmpties": function(definitions) {
+    #getEmpties(definitions) {
         // classify variables
         const empties = new Set();
         const rest = new Map();
@@ -78,10 +73,10 @@ SemanticAnalyzer.prototype = {
             }
         }
         return empties;
-    },
+    }
 
     // get circular references
-    "_getCircular": function(definitions) {
+    #getCircular(definitions) {
         // classify variables
         const circular = new Set();
         const rest = new Map();
@@ -109,10 +104,10 @@ SemanticAnalyzer.prototype = {
             rest.keys().filter(elem => rest.get(elem).has(elem)).forEach(elem => circular.add(elem));
         }
         return circular;
-    },
+    }
 
     // get referencing variables
-    "_getReference": function(tree) {
+    #getReference(tree) {
         const reference = new Set();
         if (tree.label == "Element") {
             // using a variable
@@ -122,13 +117,13 @@ SemanticAnalyzer.prototype = {
             }
         } else {
             // other
-            tree.children.forEach(elem => this._getReference(elem).forEach(reference.add, reference));
+            tree.children.forEach(elem => this.#getReference(elem).forEach(reference.add, reference));
         }
         return reference;
-    },
+    }
 
     // validate referencing variables
-    "_validateReference": function(current, tree, definitions) {
+    #validateReference(current, tree, definitions) {
         switch (tree.label) {
             case "Element":
                 // using a variable
@@ -137,14 +132,14 @@ SemanticAnalyzer.prototype = {
                     break;
                 }
                 const name = first.children[0].text;
-                this._used.add(name);
+                this.#used.add(name);
                 if (0 <= current.indexOf(name)) {
                     break;
                 }
                 const selection = definitions.filter(elem => elem.name == name);
-                selection.forEach(elem => this._validateReference(current, elem.tree, definitions));
+                selection.forEach(elem => this.#validateReference(current, elem.tree, definitions));
                 if (selection.length == 0) {
-                    this._undefined.add(name);
+                    this.#undefined.add(name);
                 }
                 break;
 
@@ -152,44 +147,44 @@ SemanticAnalyzer.prototype = {
                 // defining a variable
                 const index = tree.children[0].children[0].text;
                 if (0 <= current.indexOf(index)) {
-                    this._duplicate.add(index);
+                    this.#duplicate.add(index);
                 }
-                this._symbols.add(index);
+                this.#symbols.add(index);
                 current.push(index);
                 const next = tree.children[2];
                 const whole = next.children[0].text;
                 if (next.label == "User") {
                     if (0 <= current.indexOf(whole)) {
-                        this._duplicate.add(whole);
+                        this.#duplicate.add(whole);
                     }
-                    this._symbols.add(whole);
+                    this.#symbols.add(whole);
                     current.push(whole);
-                    this._validateReference(current, this._getLast(tree.children), definitions);
+                    this.#validateReference(current, this.#getLast(tree.children), definitions);
                     current.pop();
                 } else {
-                    this._validateReference(current, this._getLast(tree.children), definitions);
+                    this.#validateReference(current, this.#getLast(tree.children), definitions);
                 }
                 current.pop();
                 break;
 
             default:
                 // other
-                tree.children.forEach(elem => this._validateReference(current, elem, definitions));
+                tree.children.forEach(elem => this.#validateReference(current, elem, definitions));
                 break;
         }
-    },
+    }
 
     // get the error
-    "_getError": function(message, symbols, errors) {
+    #getError(message, symbols, errors) {
         const valid = Array.from(symbols).filter(elem => !errors.has(elem)).join();
         const invalid = Array.from(errors).join();
         return { "message": message, "valid": valid, "invalid": invalid };
-    },
+    }
 
     // get the last element of an array
-    "_getLast": function(array) {
+    #getLast(array) {
         return array[array.length - 1];
-    },
+    }
 
 }
 
