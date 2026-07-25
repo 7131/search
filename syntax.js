@@ -595,7 +595,8 @@ class SyntaxAuto {
     #number = 0;
 
     // constructor
-    constructor(number) {
+    constructor(name) {
+        const number = parseInt(name, 10);
         if (!isNaN(number)) {
             this.#number = number;
         }
@@ -653,7 +654,7 @@ class SymbolTable {
 
     // set the text of a variable
     setText(name, text) {
-        if (!isNaN(name)) {
+        if (!isNaN(parseInt(name, 10))) {
             return;
         }
         if (text == null) {
@@ -670,7 +671,8 @@ class SymbolTable {
 
     // get the text of a variable
     getText(name) {
-        if (isNaN(name)) {
+        const number = parseInt(name, 10);
+        if (isNaN(number)) {
             // user-defined variable
             if (name == null) {
                 return "";
@@ -683,10 +685,10 @@ class SymbolTable {
         }
 
         // auto-defined variable
-        if (name < 0 || this.#auto.length <= name) {
+        if (number < 0 || this.#auto.length <= number) {
             return "";
         }
-        return this.#auto[name];
+        return this.#auto[number];
     }
 
 }

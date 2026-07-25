@@ -3,7 +3,7 @@ class PatternCommon {
 
     // convert string to big integer
     static toBigInt(text, radix) {
-        // check the arguments
+        radix = parseInt(radix, 10);
         if (isNaN(radix) || radix < 2 || 36 < radix) {
             radix = 10;
         }
