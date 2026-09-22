@@ -126,10 +126,10 @@ class Controller {
         }
 
         // preparation for execution
-        const creator = new PatternCreator(syntax.tree.iterator);
-        creator.progressEvent = this.#showProgress.bind(this);
-        creator.completeEvent = this.#showResult.bind(this);
-        creator.acceptEvent = this.#accept.bind(this);
+        const generator = new PatternGenerator(syntax.tree.iterator);
+        generator.progressEvent = this.#showProgress.bind(this);
+        generator.completeEvent = this.#showResult.bind(this);
+        generator.acceptEvent = this.#accept.bind(this);
 
         // get the stop conditions
         this.#stopCount = this.#getValidInt(this.#limitCount.value, this.#minCount, this.#maxCount, 100);
@@ -138,7 +138,7 @@ class Controller {
 
         // execution
         this.#searchButton.disabled = true;
-        creator.start();
+        generator.start();
     }
 
     // input the maximum number

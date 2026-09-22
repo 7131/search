@@ -75,8 +75,8 @@ class SelectionIterator {
         this.#iterators.forEach(elem => elem.reset(cycle));
     }
 
-    // create next pattern
-    createNext() {
+    // generate next pattern
+    generateNext() {
         // whether it is finished
         if (this.finished()) {
             return;
@@ -89,7 +89,7 @@ class SelectionIterator {
         if (this.#iterators[this.#position].finished()) {
             this.#position++;
         } else {
-            this.#iterators[this.#position].createNext();
+            this.#iterators[this.#position].generateNext();
         }
     }
 
@@ -163,16 +163,16 @@ class SequenceIterator {
         this.#infinites.forEach((val, idx) => val.reset(cycles[idx]));
     }
 
-    // create next pattern
-    createNext() {
+    // generate next pattern
+    generateNext() {
         // whether it is finished
         if (this.finished()) {
             return;
         }
 
         // next pattern
-        if (!this.#createFinite()) {
-            this.#createInfinite();
+        if (!this.#generateFinite()) {
+            this.#generateInfinite();
         }
     }
 
@@ -233,8 +233,8 @@ class SequenceIterator {
         return divisors;
     }
 
-    // create next finite pattern
-    #createFinite() {
+    // generate next finite pattern
+    #generateFinite() {
         // search for finite pattern that has not yet finished
         const length = this.#finites.length;
         let pos = 0;
@@ -248,12 +248,12 @@ class SequenceIterator {
 
         // found
         this.#finites.slice(0, pos).forEach(elem => elem.reset(0));
-        this.#finites[pos].createNext();
+        this.#finites[pos].generateNext();
         return true;
     }
 
-    // create next infinite pattern
-    #createInfinite() {
+    // generate next infinite pattern
+    #generateInfinite() {
         // search for infinite pattern that has not yet finished
         const length = this.#infinites.length;
         let pos = 0;
@@ -274,7 +274,7 @@ class SequenceIterator {
             // found
             const cycles = this.#divisors[this.#index];
             this.#infinites.slice(0, pos).forEach((val, idx) => val.reset(cycles[idx]));
-            this.#infinites[pos].createNext();
+            this.#infinites[pos].generateNext();
         }
 
         // initialize the finite patterns
@@ -346,8 +346,8 @@ class FactorIterator {
         this.#getIterator(0);
     }
 
-    // create next pattern
-    createNext() {
+    // generate next pattern
+    generateNext() {
         // whether it is finished
         if (this.finished()) {
             return;
@@ -358,7 +358,7 @@ class FactorIterator {
             this.#index++;
             this.#getIterator(this.#index);
         } else {
-            this.#iterator.createNext();
+            this.#iterator.generateNext();
         }
     }
 
@@ -445,8 +445,8 @@ class FiniteIterator {
         this.#step = 0;
     }
 
-    // create next pattern
-    createNext() {
+    // generate next pattern
+    generateNext() {
         // whether it is finished
         if (this.finished()) {
             return;
@@ -482,8 +482,8 @@ class FiniteIterator {
 
 }
 
-// Pattern creator class
-class PatternCreator {
+// Pattern generator class
+class PatternGenerator {
     #iterator;
     #begin;
     #number = 0;
@@ -541,7 +541,7 @@ class PatternCreator {
                 this.#cycle++;
                 this.#iterator.reset(this.#cycle);
             } else {
-                this.#iterator.createNext();
+                this.#iterator.generateNext();
             }
 
             // next time

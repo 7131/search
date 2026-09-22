@@ -5,7 +5,7 @@ class TestBase extends TestTable {
     // constructor
     constructor(id, body, data) {
         super(id, body);
-        super.create(data);
+        super.generate(data);
         this.parser = new Parser(PatternGrammar, PatternConverter);
         this.index = 0;
         this.stopTime = 0;
@@ -104,15 +104,15 @@ class StandardTest extends TestBase {
         }
 
         // preparation for execution
-        const creator = new PatternCreator(syntax.tree.iterator);
-        creator.progressEvent = super.progress.bind(this);
-        creator.acceptEvent = this.accept.bind(this);
-        creator.completeEvent = this.complete.bind(this);
+        const generator = new PatternGenerator(syntax.tree.iterator);
+        generator.progressEvent = super.progress.bind(this);
+        generator.acceptEvent = this.accept.bind(this);
+        generator.completeEvent = this.complete.bind(this);
 
         // execution
         this.#endless = syntax.tree.iterator.endless;
         this.stopTime = Date.now() + 3000;
-        creator.start();
+        generator.start();
     }
 
     // acceptance process
@@ -187,14 +187,14 @@ class ProfessionalTest extends TestBase {
         }
 
         // preparation for execution
-        const creator = new PatternCreator(syntax.tree.iterator);
-        creator.progressEvent = super.progress.bind(this);
-        creator.acceptEvent = this.accept.bind(this);
-        creator.completeEvent = this.complete.bind(this);
+        const generator = new PatternGenerator(syntax.tree.iterator);
+        generator.progressEvent = super.progress.bind(this);
+        generator.acceptEvent = this.accept.bind(this);
+        generator.completeEvent = this.complete.bind(this);
 
         // execution
         this.stopTime = Date.now() + 3000;
-        creator.start();
+        generator.start();
     }
 
     // acceptance process
